@@ -1,0 +1,16 @@
+﻿{
+  "users": {
+    "craig": {
+      "name": "craig",
+      "password": "maldonado",
+      "displayName": "craig",
+      "points": 0
+    },
+    "derrick":{
+      "name": "derrick",
+      "password": "ilovecrashtor",
+      "displayName": "d-rock",
+      "points": 0
+    }
+  }
+}

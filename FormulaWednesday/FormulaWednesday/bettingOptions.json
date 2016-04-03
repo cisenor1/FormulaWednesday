@@ -1,0 +1,13 @@
+﻿{
+  "bettingOptions": [
+    {
+      "name": "low",
+      "points": 1
+    },
+    {
+      "name": "high",
+      "points": 110
+    }
+
+  ]
+}
