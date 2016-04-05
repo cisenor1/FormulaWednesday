@@ -1,0 +1,16 @@
+﻿<div class="form-group">
+    <p>Drivers sorted by:</p>
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default" data-bind="click:sortDriversByName">Name</button>
+        <button type="button" class="btn btn-default" data-bind="click:sortDriversByTeam">Team</button>
+    </div>
+</div>
+<form class="form" id="challenge-form">
+    <ul data-bind="foreach: challenges" class="list-group">
+        <li class="form-group list-group-item">
+            <h2 data-bind="text: message" class="list-group-item-heading"></h2>
+            <p data-bind="text: description" class="list-group-item-text"></p>
+            <select class="form-control" data-bind="options: $parent.drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... '"></select>
+        </li>
+    </ul>
+</form>

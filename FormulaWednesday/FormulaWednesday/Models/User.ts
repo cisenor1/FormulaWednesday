@@ -1,6 +1,7 @@
 ﻿interface User {
+    id: string;
     name: string;
-    password: string;
-    displayName: string;
+    email: string;
+    role: string;
     points: number;
 }

@@ -1,96 +1,127 @@
 ﻿/// <reference path="../models/user.ts" />
 /// <reference path="typings/knockout/knockout.d.ts" />
-var nameObservable: KnockoutObservable<string> = ko.observable("");
-var pwObservable: KnockoutObservable<string> = ko.observable("");
-var loggedIn: KnockoutObservable<boolean> = ko.observable(false);
-var credentialsKey: string = "formulawednesday.user";
-var credentials: Credentials;
-var logOutText: string = "Log out of ";
-var logOutMessage: KnockoutObservable<string> = ko.observable(logOutText + nameObservable());
-var user: User;
-var firebaseUser: string = "formulawednesday@gmail.com";
-var firebasePassword: string = "crashtorislife";
-var firebaseUrl: string = "https://formulawednesday.firebaseio.com/";
-var firebase: Firebase;
-var fireAuth: FirebaseAuthData;
-var username: string;
+declare var md5;
+class FormulaWednesdayApp {
+    currentPage = ko.observable("header");
+    nameObservable: KnockoutObservable<string> = ko.observable("");
+    pwObservable: KnockoutObservable<string> = ko.observable("");
+    loggedIn: KnockoutObservable<boolean> = ko.observable(false);
+    credentialsKey: string = "formulawednesday.user";
+    currentPageKey: string = "formulawednesday.page";
+    credentials: Credentials;
+    logOutText: string = "Log out of ";
+    logOutMessage: KnockoutObservable<string> = ko.observable(this.logOutText + this.nameObservable());
+    user: User;
+    isAdmin: KnockoutObservable<boolean> = ko.observable(false);
+    challenges: KnockoutObservableArray<Challenge> = ko.observableArray([]);
+    drivers: KnockoutObservableArray<Driver> = ko.observableArray([]);
+    teams: KnockoutObservableArray<Team> = ko.observableArray([]);
+    pageContent: string = "page-content-div";
 
-var md5: any;
-function doLogIn() {
-    if (!nameObservable()) {
-        return;
+    constructor() {
+
     }
-    var hashed = md5(pwObservable());
-    logInProcedure(nameObservable(), hashed);
-}
 
-function doLogOut() {
-    window.localStorage.removeItem(credentialsKey);
-    loggedIn(false);
-    nameObservable("");
-}
-
-function logInProcedure(name, password) {
-    checkForUser(name, password).then((success) => {
-        if (success) {
-            credentials = {
-                name: name,
-                password: password
-            }
-            window.localStorage.setItem(credentialsKey, JSON.stringify(credentials));
-            username = name.split('@')[0];
-            loggedIn(true);
-            buildForm();
+    initialize() {
+        this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
+        var page = window.localStorage.getItem(this.currentPageKey);
+        if (this.credentials) {
+            this.logInProcedure(this.credentials.name, this.credentials.password);
         }
-    }).catch((error) => {
-        alert(error.message);
-    });
-}
 
-function checkForUser(name: string, password: string): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-        var fbCred: FirebaseCredentials = {
-            email: name,
+        this.currentPage.subscribe((page) => {
+            this.loadPage(page);
+        });
+
+        if (page) {
+            this.currentPage(page);
+        }
+        ko.applyBindings(this);
+    }
+
+    doLogIn() {
+        if (!this.nameObservable()) {
+            return;
+        }
+        var hashed = md5(this.pwObservable());
+        this.logInProcedure(this.nameObservable(), hashed);
+    }
+
+    doLogOut() {
+        window.localStorage.removeItem(this.credentialsKey);
+        window.localStorage.removeItem(this.currentPageKey);
+        this.loggedIn(false);
+        this.isAdmin(false);
+        this.launchHomepage();
+        this.nameObservable("");
+        this.pwObservable("");
+    }
+
+    logInProcedure(name, password) {
+        var credentials = {
+            name: name,
             password: password
         };
-
-        firebase = new Firebase(firebaseUrl);
-        firebase.authWithPassword(fbCred).then((auth) => {
-            fireAuth = auth;
-            // output user
-            var userUrl = firebaseUrl + "users/" + username;
-            var fb = new Firebase(userUrl);
-            fb.once("value", (ds) => {
-                var user: User = ds.val();
-                logOutMessage(logOutText + user.name);
-            });
-            resolve(true);
-        });
-    });
-
-}
-
-function buildForm() {
-    if (!loggedIn()) {
-        return;
+        FirebaseUtilities.getUserInfo(credentials).then((user) => {
+            window.localStorage.setItem(this.credentialsKey, JSON.stringify(credentials));
+            this.loggedIn(true);
+            this.user = user;
+            this.isAdmin(user.role.toLowerCase() == "admin");
+            this.logOutMessage(this.logOutText + user.name);
+        }).catch((error: Error) => alert(error.message));
     }
 
-}
+    loadPage(page: string) {
+        if (this.loggedIn()) {
+            window.localStorage.setItem(this.currentPageKey, page);
+        }
 
-var viewModel = {
-    doLogIn: doLogIn,
-    loginName: nameObservable,
-    loggedIn: loggedIn,
-    logOutMessage: logOutMessage,
-    logOut: doLogOut,
-    password: pwObservable
+        var newPage: Page;
+
+        switch (page) {
+            case "header":
+                newPage = new HomePage();
+                break;
+            case "challenges":
+                newPage = new ChallengesPage(this);
+                break;
+            default:
+                newPage = new HomePage();
+                break;
+        }
+
+        newPage.getViewModel().then((vm) => {
+            newPage.getMarkup().then((markup) => {
+                var ele = document.getElementById(this.pageContent);
+                ele.innerHTML = markup;
+                ko.applyBindings(vm, ele);
+            });
+        });
+    }
+
+    buildForm() {
+        if (!this.loggedIn()) {
+            return;
+        }
+    }
+
+    launchHomepage() {
+        this.currentPage("header");
+    }
+
+    launchAdmin() {
+        if (this.user.role.toLowerCase() !== "admin") {
+            return;
+        }
+        window.location.href = window.location.origin + "/admin.html";
+    }
+
+    launchChallenges() {
+        this.currentPage('challenges');
+    }
 }
 
 window.onload = function () {
-    credentials = JSON.parse(window.localStorage.getItem(credentialsKey));
-    if (credentials) {
-        logInProcedure(credentials.name, credentials.password);
-    }
-    ko.applyBindings(viewModel);
+    var formulawednesdayapp = new FormulaWednesdayApp();
+    formulawednesdayapp.initialize();
 }
-

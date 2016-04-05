@@ -1,0 +1,10 @@
+﻿<div class="panel" data-bind="visible: currentPage() == 'admin'">
+    <form class="form" id="admin-form">
+        <ul data-bind="foreach: drivers">
+            <li class="form-group">
+                <h2 data-bind="text: name"></h2>
+                <h3 data-bind="text: team"></h3>
+            </li>
+        </ul>
+    </form>
+</div>

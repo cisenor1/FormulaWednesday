@@ -5,10 +5,8 @@
     <meta charset="utf-8" />
     <script src="Hashing/md5.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
-    <script src="Pages/Challenges/Challenges.js"></script>
     <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
-    <script src="Scripts/firebaseUtilities.js"></script>
-    <script src="Scripts/app.js"></script>
+    <script src="Scripts/admin.js"></script>
     <!-- Latest compiled and minified CSS -->
     <link href="Styles/styles.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -32,7 +30,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li data-bind="visible: isAdmin()">
-                        <a href="" data-bind="click: launchAdmin">Admin</a>
+                        <a href="#" data-bind="click: launchAdmin">Admin</a>
                     </li>
                     <li data-bind="visible: loggedIn()">
                         <a href="#" data-bind="click: launchChallenges">Challenges</a>
@@ -40,18 +38,17 @@
                 </ul>
                 <form data-bind="visible: !loggedIn()" class="navbar-form navbar-right" role="search">
                     <div class="form-group">
-                        <input type="text" class="form-control" data-bind="value: nameObservable" placeholder="Name">
-                        <input type="password" class="form-control" data-bind="value: pwObservable" placeholder="Password">
+                        <input type="text" class="form-control" data-bind="value: loginName" placeholder="Name">
+                        <input type="password" class="form-control" data-bind="value: password" placeholder="Password">
                     </div>
                     <button type="submit" data-bind="click: doLogIn" class="btn btn-default">Log In</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="navbar-right" data-bind="visible: loggedIn()"><a href="#" data-bind="text: logOutMessage, click: doLogOut"></a></li>
+                    <li class="navbar-right" data-bind="visible: loggedIn()"><a href="#" data-bind="text: logOutMessage, click: logOut    "></a></li>
                     <li><a href="#">Link</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
-    <div id="page-content-div"></div>
 </body>
 </html>
