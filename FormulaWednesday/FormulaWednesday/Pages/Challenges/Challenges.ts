@@ -1,6 +1,5 @@
 ﻿declare var fetch;
-class ChallengesPage implements Page {
-    app: FormulaWednesdayApp;
+class ChallengesPage extends PageBase implements Page  {
     vm: ChallengesVM = {
         drivers: ko.observableArray<Driver>(),
         teams: ko.observableArray<Team>(),
@@ -8,11 +7,11 @@ class ChallengesPage implements Page {
         sortDriversByName: this.sortDriversByName,
         sortDriversByTeam: this.sortDriversByTeam
     };
-    vmPromise: Promise<ChallengesVM>;
     markupUri: string = "Pages/Challenges/Challenges.html";
+
     // constructor will do heavy lifting
     constructor(app: FormulaWednesdayApp) {
-        this.app = app;
+        super(app);
         this.createVM();
     }
 
@@ -20,18 +19,7 @@ class ChallengesPage implements Page {
         if (!this.app.user) {
             return false;
         }
-        this.vmPromise = new Promise<any>((resolve, reject) => {
-            var promises = [];
-            promises.push(FirebaseUtilities.getChallenges());
-            promises.push(FirebaseUtilities.getTeams());
-            promises.push(FirebaseUtilities.getDrivers());
-            Promise.all(promises).then((values) => {
-                this.vm.challenges(<any>values[0]);
-                this.vm.teams(<any>values[1]);
-                this.vm.drivers(<any>values[2]);
-                resolve(this.vm);
-            });
-        });
+        super.createVM();
     }
 
     getMarkup(): Promise<string> {
@@ -47,28 +35,7 @@ class ChallengesPage implements Page {
     getViewModel(): Promise<any> {
         return this.vmPromise;
     }
-
-    sortDriversByName() {
-        this.vm.drivers.sort((aDriver: Driver, bDriver: Driver) => {
-            var aName = aDriver.name;
-            var bName = bDriver.name;
-            return aName.localeCompare(bName);
-        });
-    }
-
-    sortDriversByTeam() {
-        this.vm.drivers.sort((aDriver: Driver, bDriver: Driver) => {
-            var aTeam = aDriver.team;
-            var bTeam = bDriver.team;
-            return aTeam.localeCompare(bTeam);
-        });
-    }
 }
 
-interface ChallengesVM {
-    challenges?: KnockoutObservableArray<Challenge>;
-    teams?: KnockoutObservableArray<Team>;
-    drivers?: KnockoutObservableArray<Driver>;
-    sortDriversByName?: () => void;
-    sortDriversByTeam?: () => void;
+interface ChallengesVM extends ViewModelBase{
 }

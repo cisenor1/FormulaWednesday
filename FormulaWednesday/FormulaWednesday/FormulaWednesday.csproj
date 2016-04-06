@@ -100,6 +100,7 @@
     <TypeScriptCompile Include="Models\Driver.ts" />
     <TypeScriptCompile Include="Models\Page.ts" />
     <TypeScriptCompile Include="Models\Team.ts" />
+    <TypeScriptCompile Include="Models\PageBase.ts" />
     <TypeScriptCompile Include="Pages\Admin\Admin.ts" />
     <TypeScriptCompile Include="Pages\Challenges\Challenges.ts" />
     <TypeScriptCompile Include="Pages\Homepage\Homepage.ts" />

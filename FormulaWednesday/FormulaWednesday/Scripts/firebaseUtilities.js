@@ -85,4 +85,3 @@ var FirebaseUtilities = (function () {
     FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
     return FirebaseUtilities;
 })();
-//# sourceMappingURL=firebaseUtilities.js.map

@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <script src="Hashing/md5.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+    <script src="Models/PageBase.js"></script>
     <script src="Pages/Challenges/Challenges.js"></script>
     <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
     <script src="Scripts/firebaseUtilities.js"></script>
@@ -31,8 +32,15 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li data-bind="visible: isAdmin()">
-                        <a href="" data-bind="click: launchAdmin">Admin</a>
+                    <li class="dropdown" data-bind="visible: isAdmin()">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            Admin <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="" data-bind="click: launchAdmin">Admin</a>
+                            </li>
+                        </ul>
                     </li>
                     <li data-bind="visible: loggedIn()">
                         <a href="#" data-bind="click: launchChallenges">Challenges</a>

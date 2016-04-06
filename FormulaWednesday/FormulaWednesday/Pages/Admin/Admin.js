@@ -1,5 +1,6 @@
 var AdminPage = (function () {
     function AdminPage() {
+        this.markupUri = "Pages/Admin/Admin.html";
     }
     AdminPage.prototype.getMarkup = function () {
         return new Promise(function (resolve, reject) {
@@ -13,4 +14,3 @@ var AdminPage = (function () {
     };
     return AdminPage;
 })();
-//# sourceMappingURL=Admin.js.map

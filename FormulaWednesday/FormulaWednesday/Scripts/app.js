@@ -21,45 +21,50 @@ var FormulaWednesdayApp = (function () {
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
         var page = window.localStorage.getItem(this.currentPageKey);
         if (this.credentials) {
-            this.logInProcedure(this.credentials.name, this.credentials.password);
+            this.logInProcedure(this.credentials.name, this.credentials.password).then(function (user) {
+                _this.completeLogIn(user);
+                if (page) {
+                    _this.currentPage(page);
+                }
+            });
         }
         this.currentPage.subscribe(function (page) {
             _this.loadPage(page);
         });
-        if (page) {
-            this.currentPage(page);
-        }
         ko.applyBindings(this);
     };
+    FormulaWednesdayApp.prototype.completeLogIn = function (user) {
+        window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
+        this.loggedIn(true);
+        this.user = user;
+        this.isAdmin(user.role.toLowerCase() == "admin");
+        this.logOutMessage(this.logOutText + user.name);
+    };
     FormulaWednesdayApp.prototype.doLogIn = function () {
+        var _this = this;
         if (!this.nameObservable()) {
             return;
         }
         var hashed = md5(this.pwObservable());
-        this.logInProcedure(this.nameObservable(), hashed);
+        this.logInProcedure(this.nameObservable(), hashed).then(function (user) {
+            _this.completeLogIn(user);
+        });
     };
     FormulaWednesdayApp.prototype.doLogOut = function () {
         window.localStorage.removeItem(this.credentialsKey);
         window.localStorage.removeItem(this.currentPageKey);
         this.loggedIn(false);
         this.isAdmin(false);
-        this.launchHomepage();
         this.nameObservable("");
         this.pwObservable("");
+        this.launchHomepage();
     };
     FormulaWednesdayApp.prototype.logInProcedure = function (name, password) {
-        var _this = this;
         var credentials = {
             name: name,
             password: password
         };
-        FirebaseUtilities.getUserInfo(credentials).then(function (user) {
-            window.localStorage.setItem(_this.credentialsKey, JSON.stringify(credentials));
-            _this.loggedIn(true);
-            _this.user = user;
-            _this.isAdmin(user.role.toLowerCase() == "admin");
-            _this.logOutMessage(_this.logOutText + user.name);
-        }).catch(function (error) { return alert(error.message); });
+        return FirebaseUtilities.getUserInfo(credentials);
     };
     FormulaWednesdayApp.prototype.loadPage = function (page) {
         var _this = this;
@@ -109,4 +114,3 @@ window.onload = function () {
     var formulawednesdayapp = new FormulaWednesdayApp();
     formulawednesdayapp.initialize();
 };
-//# sourceMappingURL=app.js.map

@@ -1,6 +1,13 @@
-var ChallengesPage = (function () {
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var ChallengesPage = (function (_super) {
+    __extends(ChallengesPage, _super);
     // constructor will do heavy lifting
     function ChallengesPage(app) {
+        _super.call(this, app);
         this.vm = {
             drivers: ko.observableArray(),
             teams: ko.observableArray(),
@@ -9,26 +16,13 @@ var ChallengesPage = (function () {
             sortDriversByTeam: this.sortDriversByTeam
         };
         this.markupUri = "Pages/Challenges/Challenges.html";
-        this.app = app;
         this.createVM();
     }
     ChallengesPage.prototype.createVM = function () {
-        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        this.vmPromise = new Promise(function (resolve, reject) {
-            var promises = [];
-            promises.push(FirebaseUtilities.getChallenges());
-            promises.push(FirebaseUtilities.getTeams());
-            promises.push(FirebaseUtilities.getDrivers());
-            Promise.all(promises).then(function (values) {
-                _this.vm.challenges(values[0]);
-                _this.vm.teams(values[1]);
-                _this.vm.drivers(values[2]);
-                resolve(_this.vm);
-            });
-        });
+        _super.prototype.createVM.call(this);
     };
     ChallengesPage.prototype.getMarkup = function () {
         var _this = this;
@@ -43,20 +37,5 @@ var ChallengesPage = (function () {
     ChallengesPage.prototype.getViewModel = function () {
         return this.vmPromise;
     };
-    ChallengesPage.prototype.sortDriversByName = function () {
-        this.vm.drivers.sort(function (aDriver, bDriver) {
-            var aName = aDriver.name;
-            var bName = bDriver.name;
-            return aName.localeCompare(bName);
-        });
-    };
-    ChallengesPage.prototype.sortDriversByTeam = function () {
-        this.vm.drivers.sort(function (aDriver, bDriver) {
-            var aTeam = aDriver.team;
-            var bTeam = bDriver.team;
-            return aTeam.localeCompare(bTeam);
-        });
-    };
     return ChallengesPage;
-})();
-//# sourceMappingURL=Challenges.js.map
+})(PageBase);

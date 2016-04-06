@@ -26,17 +26,26 @@ class FormulaWednesdayApp {
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
         var page = window.localStorage.getItem(this.currentPageKey);
         if (this.credentials) {
-            this.logInProcedure(this.credentials.name, this.credentials.password);
+            this.logInProcedure(this.credentials.name, this.credentials.password).then((user: User) => {
+                this.completeLogIn(user);
+                if (page) {
+                    this.currentPage(page);
+                }
+            });
         }
 
         this.currentPage.subscribe((page) => {
             this.loadPage(page);
         });
-
-        if (page) {
-            this.currentPage(page);
-        }
         ko.applyBindings(this);
+    }
+
+    completeLogIn(user: User) {
+        window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
+        this.loggedIn(true);
+        this.user = user;
+        this.isAdmin(user.role.toLowerCase() == "admin");
+        this.logOutMessage(this.logOutText + user.name);
     }
 
     doLogIn() {
@@ -44,7 +53,9 @@ class FormulaWednesdayApp {
             return;
         }
         var hashed = md5(this.pwObservable());
-        this.logInProcedure(this.nameObservable(), hashed);
+        this.logInProcedure(this.nameObservable(), hashed).then((user) => {
+            this.completeLogIn(user);
+        });
     }
 
     doLogOut() {
@@ -52,23 +63,17 @@ class FormulaWednesdayApp {
         window.localStorage.removeItem(this.currentPageKey);
         this.loggedIn(false);
         this.isAdmin(false);
-        this.launchHomepage();
         this.nameObservable("");
         this.pwObservable("");
+        this.launchHomepage();
     }
 
-    logInProcedure(name, password) {
+    logInProcedure(name, password): Promise<User> {
         var credentials = {
             name: name,
             password: password
         };
-        FirebaseUtilities.getUserInfo(credentials).then((user) => {
-            window.localStorage.setItem(this.credentialsKey, JSON.stringify(credentials));
-            this.loggedIn(true);
-            this.user = user;
-            this.isAdmin(user.role.toLowerCase() == "admin");
-            this.logOutMessage(this.logOutText + user.name);
-        }).catch((error: Error) => alert(error.message));
+        return FirebaseUtilities.getUserInfo(credentials);
     }
 
     loadPage(page: string) {

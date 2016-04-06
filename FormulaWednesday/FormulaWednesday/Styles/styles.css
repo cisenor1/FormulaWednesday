@@ -5,3 +5,8 @@
     margin-bottom: 2em;
     list-style: none;
 }
+
+#page-content-div {
+    width:80%;
+    margin: 0 10%;
+}
