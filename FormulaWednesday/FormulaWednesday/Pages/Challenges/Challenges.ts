@@ -8,18 +8,30 @@ class ChallengesPage extends PageBase implements Page  {
         sortDriversByTeam: this.sortDriversByTeam
     };
     markupUri: string = "Pages/Challenges/Challenges.html";
+    divId = "challenges";
 
     // constructor will do heavy lifting
     constructor(app: FormulaWednesdayApp) {
         super(app);
-        this.createVM();
+        this.vmPromise = this.createVM();
     }
 
-    createVM() {
+    createVM(): Promise<any>{
         if (!this.app.user) {
-            return false;
+            return <any>false;
         }
-        super.createVM();
+        return new Promise<any>((resolve, reject) => {
+            var promises = [];
+            promises.push(FirebaseUtilities.getChallenges());
+            promises.push(FirebaseUtilities.getTeams());
+            promises.push(FirebaseUtilities.getDrivers());
+            Promise.all(promises).then((values) => {
+                this.vm.challenges(<any>values[0]);
+                this.vm.teams(<any>values[1]);
+                this.vm.drivers(<any>values[2]);
+                resolve(this.vm);
+            });
+        });
     }
 
     getMarkup(): Promise<string> {
@@ -32,7 +44,7 @@ class ChallengesPage extends PageBase implements Page  {
         });
     }
 
-    getViewModel(): Promise<any> {
+    getViewModel(): Promise<any>{
         return this.vmPromise;
     }
 }

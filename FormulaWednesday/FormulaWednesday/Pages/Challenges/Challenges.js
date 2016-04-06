@@ -16,13 +16,26 @@ var ChallengesPage = (function (_super) {
             sortDriversByTeam: this.sortDriversByTeam
         };
         this.markupUri = "Pages/Challenges/Challenges.html";
-        this.createVM();
+        this.divId = "challenges";
+        this.vmPromise = this.createVM();
     }
     ChallengesPage.prototype.createVM = function () {
+        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        _super.prototype.createVM.call(this);
+        return new Promise(function (resolve, reject) {
+            var promises = [];
+            promises.push(FirebaseUtilities.getChallenges());
+            promises.push(FirebaseUtilities.getTeams());
+            promises.push(FirebaseUtilities.getDrivers());
+            Promise.all(promises).then(function (values) {
+                _this.vm.challenges(values[0]);
+                _this.vm.teams(values[1]);
+                _this.vm.drivers(values[2]);
+                resolve(_this.vm);
+            });
+        });
     };
     ChallengesPage.prototype.getMarkup = function () {
         var _this = this;

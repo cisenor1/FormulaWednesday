@@ -1,0 +1,30 @@
+﻿<div class="panel">
+    <ul>
+        <li class="form-group list-group-item">
+            <button data-bind="click: addUser">Add User</button>
+            <div data-bind="visible: showAddUserPane">
+                <h3>Add User</h3>
+                <label>Name:</label><input type="text" data-bind="value: newName" />
+                <label>Id:</label><input type="text" data-bind="value: newId" />
+                <label>Role:</label><select type="text" data-bind="options: roles, value: roles"></select>
+            </div>
+        </li>
+    </ul>
+    <ul data-bind="foreach: users">
+        <li class="form-group list-group-item">
+            <div data-bind="visible: !editing()">
+                <h3 data-bind="text: name" class="list-group-item-heading"></h3>
+                <p data-bind="text: id" class="list-group-item-text"></p>
+                <p data-bind="text: points" class="list-group-item-text"></p>
+                <a data-bind="click: function(item){$parent.editUser(item)}, visible: !editing() && !$parent.editing()">Edit</a>
+            </div>
+            <div data-bind="visible: editing">
+                <input type="text" data-bind="value: name" class="list-group-item-heading" /><br />
+                <input type="text" data-bind="value: id" class="list-group-item-heading" /><br />
+                <input type="number" min="0" data-bind="value: points" class="list-group-item-heading" /><br />
+                <button data-bind="click: function(item){$parent.saveData(item)}">Save</button>
+                <button data-bind="click: function(item){$parent.cancel(item)}">Cancel</button>
+            </div>
+        </li>
+    </ul>
+</div>

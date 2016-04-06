@@ -2,7 +2,7 @@
 /// <reference path="typings/knockout/knockout.d.ts" />
 declare var md5;
 class FormulaWednesdayApp {
-    currentPage = ko.observable("header");
+    currentPage = ko.observable("homepage");
     nameObservable: KnockoutObservable<string> = ko.observable("");
     pwObservable: KnockoutObservable<string> = ko.observable("");
     loggedIn: KnockoutObservable<boolean> = ko.observable(false);
@@ -16,7 +16,28 @@ class FormulaWednesdayApp {
     challenges: KnockoutObservableArray<Challenge> = ko.observableArray([]);
     drivers: KnockoutObservableArray<Driver> = ko.observableArray([]);
     teams: KnockoutObservableArray<Team> = ko.observableArray([]);
+    races: KnockoutObservableArray<Race> = ko.observableArray([]);
     pageContent: string = "page-content-div";
+    raceDropdown: string = "race-dropdown";
+    adminDropdown: string = "admin-dropdown";
+    adminMenu: KnockoutObservableArray<MenuItem> = ko.observableArray([
+        {
+            binding: "admin-users",
+            label: "Users"
+        },
+        {
+            binding: "admin-drivers",
+            label: "Drivers"
+        },
+        {
+            binding: "admin-races",
+            label: "Races"
+        }, {
+            binding: "admin-challenges",
+            label: "Challenges"
+        }
+    ]);
+
 
     constructor() {
 
@@ -37,6 +58,9 @@ class FormulaWednesdayApp {
         this.currentPage.subscribe((page) => {
             this.loadPage(page);
         });
+        FirebaseUtilities.getRaces().then((races) => {
+            this.races(races);
+        });
         ko.applyBindings(this);
     }
 
@@ -44,8 +68,8 @@ class FormulaWednesdayApp {
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
-        this.isAdmin(user.role.toLowerCase() == "admin");
-        this.logOutMessage(this.logOutText + user.name);
+        this.isAdmin(user.role().toLowerCase() == "admin");
+        this.logOutMessage(this.logOutText + user.name());
     }
 
     doLogIn() {
@@ -69,11 +93,11 @@ class FormulaWednesdayApp {
     }
 
     logInProcedure(name, password): Promise<User> {
-        var credentials = {
+        this.credentials = {
             name: name,
             password: password
         };
-        return FirebaseUtilities.getUserInfo(credentials);
+        return FirebaseUtilities.getUserInfo(this.credentials);
     }
 
     loadPage(page: string) {
@@ -84,20 +108,33 @@ class FormulaWednesdayApp {
         var newPage: Page;
 
         switch (page) {
-            case "header":
-                newPage = new HomePage();
+            case "homepage":
+                newPage = new HomePage(this);
                 break;
             case "challenges":
                 newPage = new ChallengesPage(this);
                 break;
+            case "challenges":
+                newPage = new ChallengesPage(this);
+                break;
+            case "challenges":
+                newPage = new ChallengesPage(this);
+                break;
+            case "challenges":
+                newPage = new ChallengesPage(this);
+                break;
+            case "admin-users":
+                newPage = new UsersAdmin(this);
+                break;
             default:
-                newPage = new HomePage();
+                newPage = new HomePage(this);
                 break;
         }
 
         newPage.getViewModel().then((vm) => {
             newPage.getMarkup().then((markup) => {
                 var ele = document.getElementById(this.pageContent);
+                ko.cleanNode(ele);
                 ele.innerHTML = markup;
                 ko.applyBindings(vm, ele);
             });
@@ -111,11 +148,11 @@ class FormulaWednesdayApp {
     }
 
     launchHomepage() {
-        this.currentPage("header");
+        this.currentPage("homepage");
     }
 
     launchAdmin() {
-        if (this.user.role.toLowerCase() !== "admin") {
+        if (this.user.role().toLowerCase() !== "admin") {
             return;
         }
         window.location.href = window.location.origin + "/admin.html";
@@ -123,6 +160,10 @@ class FormulaWednesdayApp {
 
     launchChallenges() {
         this.currentPage('challenges');
+    }
+
+    launchAdminPage(item: MenuItem) {
+        this.currentPage(item.binding);
     }
 }
 

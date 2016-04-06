@@ -2,7 +2,7 @@
 /// <reference path="typings/knockout/knockout.d.ts" />
 var FormulaWednesdayApp = (function () {
     function FormulaWednesdayApp() {
-        this.currentPage = ko.observable("header");
+        this.currentPage = ko.observable("homepage");
         this.nameObservable = ko.observable("");
         this.pwObservable = ko.observable("");
         this.loggedIn = ko.observable(false);
@@ -14,7 +14,27 @@ var FormulaWednesdayApp = (function () {
         this.challenges = ko.observableArray([]);
         this.drivers = ko.observableArray([]);
         this.teams = ko.observableArray([]);
+        this.races = ko.observableArray([]);
         this.pageContent = "page-content-div";
+        this.raceDropdown = "race-dropdown";
+        this.adminDropdown = "admin-dropdown";
+        this.adminMenu = ko.observableArray([
+            {
+                binding: "admin-users",
+                label: "Users"
+            },
+            {
+                binding: "admin-drivers",
+                label: "Drivers"
+            },
+            {
+                binding: "admin-races",
+                label: "Races"
+            }, {
+                binding: "admin-challenges",
+                label: "Challenges"
+            }
+        ]);
     }
     FormulaWednesdayApp.prototype.initialize = function () {
         var _this = this;
@@ -31,14 +51,17 @@ var FormulaWednesdayApp = (function () {
         this.currentPage.subscribe(function (page) {
             _this.loadPage(page);
         });
+        FirebaseUtilities.getRaces().then(function (races) {
+            _this.races(races);
+        });
         ko.applyBindings(this);
     };
     FormulaWednesdayApp.prototype.completeLogIn = function (user) {
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
-        this.isAdmin(user.role.toLowerCase() == "admin");
-        this.logOutMessage(this.logOutText + user.name);
+        this.isAdmin(user.role().toLowerCase() == "admin");
+        this.logOutMessage(this.logOutText + user.name());
     };
     FormulaWednesdayApp.prototype.doLogIn = function () {
         var _this = this;
@@ -60,11 +83,11 @@ var FormulaWednesdayApp = (function () {
         this.launchHomepage();
     };
     FormulaWednesdayApp.prototype.logInProcedure = function (name, password) {
-        var credentials = {
+        this.credentials = {
             name: name,
             password: password
         };
-        return FirebaseUtilities.getUserInfo(credentials);
+        return FirebaseUtilities.getUserInfo(this.credentials);
     };
     FormulaWednesdayApp.prototype.loadPage = function (page) {
         var _this = this;
@@ -73,19 +96,32 @@ var FormulaWednesdayApp = (function () {
         }
         var newPage;
         switch (page) {
-            case "header":
-                newPage = new HomePage();
+            case "homepage":
+                newPage = new HomePage(this);
                 break;
             case "challenges":
                 newPage = new ChallengesPage(this);
                 break;
+            case "challenges":
+                newPage = new ChallengesPage(this);
+                break;
+            case "challenges":
+                newPage = new ChallengesPage(this);
+                break;
+            case "challenges":
+                newPage = new ChallengesPage(this);
+                break;
+            case "admin-users":
+                newPage = new UsersAdmin(this);
+                break;
             default:
-                newPage = new HomePage();
+                newPage = new HomePage(this);
                 break;
         }
         newPage.getViewModel().then(function (vm) {
             newPage.getMarkup().then(function (markup) {
                 var ele = document.getElementById(_this.pageContent);
+                ko.cleanNode(ele);
                 ele.innerHTML = markup;
                 ko.applyBindings(vm, ele);
             });
@@ -97,16 +133,19 @@ var FormulaWednesdayApp = (function () {
         }
     };
     FormulaWednesdayApp.prototype.launchHomepage = function () {
-        this.currentPage("header");
+        this.currentPage("homepage");
     };
     FormulaWednesdayApp.prototype.launchAdmin = function () {
-        if (this.user.role.toLowerCase() !== "admin") {
+        if (this.user.role().toLowerCase() !== "admin") {
             return;
         }
         window.location.href = window.location.origin + "/admin.html";
     };
     FormulaWednesdayApp.prototype.launchChallenges = function () {
         this.currentPage('challenges');
+    };
+    FormulaWednesdayApp.prototype.launchAdminPage = function (item) {
+        this.currentPage(item.binding);
     };
     return FormulaWednesdayApp;
 })();

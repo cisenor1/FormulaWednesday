@@ -70,11 +70,14 @@
   <ItemGroup>
     <Content Include="admin.html" />
     <Content Include="packages.config" />
+    <Content Include="Pages\Admin\Users.html" />
     <Content Include="Pages\Admin\Admin.html" />
     <Content Include="Pages\Challenges\Challenges.html" />
     <Content Include="Pages\Homepage\Homepage.html" />
     <Content Include="Scripts\fetch.js" />
     <Content Include="Scripts\firebaseUtilities.js" />
+    <Content Include="Scripts\knockout-3.4.0.debug.js" />
+    <Content Include="Scripts\knockout-3.4.0.js" />
     <Content Include="Styles\styles.css" />
     <Content Include="user.json" />
     <Content Include="bettingOptions.json" />
@@ -98,9 +101,12 @@
     <TypeScriptCompile Include="Models\Challenge.ts" />
     <TypeScriptCompile Include="Models\Credentials.ts" />
     <TypeScriptCompile Include="Models\Driver.ts" />
+    <TypeScriptCompile Include="Models\MenuItem.ts" />
     <TypeScriptCompile Include="Models\Page.ts" />
+    <TypeScriptCompile Include="Models\Race.ts" />
     <TypeScriptCompile Include="Models\Team.ts" />
     <TypeScriptCompile Include="Models\PageBase.ts" />
+    <TypeScriptCompile Include="Pages\Admin\Users.ts" />
     <TypeScriptCompile Include="Pages\Admin\Admin.ts" />
     <TypeScriptCompile Include="Pages\Challenges\Challenges.ts" />
     <TypeScriptCompile Include="Pages\Homepage\Homepage.ts" />

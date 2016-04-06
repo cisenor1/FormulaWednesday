@@ -1,7 +1,7 @@
 ﻿interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-    points: number;
+    id: KnockoutObservable<string>;
+    name: KnockoutObservable<string>;
+    role: KnockoutObservable<string>;
+    points: KnockoutObservable<number>;
+    editing: KnockoutObservable<boolean>;
 }
