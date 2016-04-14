@@ -5,8 +5,8 @@ class ChallengesPage extends PageBase implements Page {
         drivers: ko.observableArray<Driver>(),
         teams: ko.observableArray<Team>(),
         challenges: ko.observableArray<Challenge>(),
-        sortDriversByName: this.sortDriversByName,
-        sortDriversByTeam: this.sortDriversByTeam,
+        sortDriversByName: () => { this.sortDriversByName(); },
+        sortDriversByTeam: () => { this.sortDriversByTeam(); },
         title: ko.observable<string>(),
         date: ko.observable<string>(),
         cutoff: ko.observable<string>(),
@@ -50,6 +50,22 @@ class ChallengesPage extends PageBase implements Page {
                 }
                 resolve(this.vm);
             });
+        });
+    }
+
+    sortDriversByName() {
+        this.vm.drivers.sort((aDriver: Driver, bDriver: Driver) => {
+            var aName = aDriver.name;
+            var bName = bDriver.name;
+            return aName.localeCompare(bName);
+        });
+    }
+
+    sortDriversByTeam() {
+        this.vm.drivers.sort((aDriver: Driver, bDriver: Driver) => {
+            var aTeam = aDriver.team;
+            var bTeam = bDriver.team;
+            return aTeam.localeCompare(bTeam);
         });
     }
 

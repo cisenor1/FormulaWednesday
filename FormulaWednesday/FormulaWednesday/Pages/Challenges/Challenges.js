@@ -13,8 +13,8 @@ var ChallengesPage = (function (_super) {
             drivers: ko.observableArray(),
             teams: ko.observableArray(),
             challenges: ko.observableArray(),
-            sortDriversByName: this.sortDriversByName,
-            sortDriversByTeam: this.sortDriversByTeam,
+            sortDriversByName: function () { _this.sortDriversByName(); },
+            sortDriversByTeam: function () { _this.sortDriversByTeam(); },
             title: ko.observable(),
             date: ko.observable(),
             cutoff: ko.observable(),
@@ -54,6 +54,20 @@ var ChallengesPage = (function (_super) {
                 }
                 resolve(_this.vm);
             });
+        });
+    };
+    ChallengesPage.prototype.sortDriversByName = function () {
+        this.vm.drivers.sort(function (aDriver, bDriver) {
+            var aName = aDriver.name;
+            var bName = bDriver.name;
+            return aName.localeCompare(bName);
+        });
+    };
+    ChallengesPage.prototype.sortDriversByTeam = function () {
+        this.vm.drivers.sort(function (aDriver, bDriver) {
+            var aTeam = aDriver.team;
+            var bTeam = bDriver.team;
+            return aTeam.localeCompare(bTeam);
         });
     };
     ChallengesPage.prototype.processChoices = function (choices) {
