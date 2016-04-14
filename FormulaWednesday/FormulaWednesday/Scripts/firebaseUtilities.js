@@ -35,6 +35,7 @@ var FirebaseUtilities = (function () {
                 var c = [];
                 for (var p in values) {
                     var chal = values[p];
+                    chal.choice = ko.observable("");
                     chal.key = p;
                     c.push(chal);
                 }
@@ -49,9 +50,9 @@ var FirebaseUtilities = (function () {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
-                    var chal = values[p];
-                    chal.key = p;
-                    c.push(chal);
+                    var driver = values[p];
+                    driver.key = p;
+                    c.push(driver);
                 }
                 c.sort(function (aDriver, bDriver) {
                     var aTeam = aDriver.team;
@@ -64,16 +65,30 @@ var FirebaseUtilities = (function () {
     };
     FirebaseUtilities.getRaces = function () {
         return new Promise(function (resolve, reject) {
-            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races");
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/2016");
             fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
-                    var chal = values[p];
-                    chal.name = p;
-                    c.push(chal);
+                    var race = values[p];
+                    race.name = p;
+                    race.date = new Date(race.date);
+                    race.cutoff = new Date(race.cutoff);
+                    race.done = ko.observable(new Date() > race.cutoff);
+                    c.push(race);
                 }
+                c = c.sort(function (r1, r2) {
+                    return r1.date.getTime() - r2.date.getTime();
+                });
                 resolve(c);
+            }).catch(reject);
+        });
+    };
+    FirebaseUtilities.getUserChoices = function (user) {
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + user.id() + "/results/2016");
+            fb.once("value").then(function (ds) {
+                resolve(ds.val());
             }).catch(reject);
         });
     };
@@ -85,14 +100,14 @@ var FirebaseUtilities = (function () {
                 var c = [];
                 for (var p in values) {
                     var u = values[p];
-                    var chal = {
+                    var user = {
                         id: ko.observable(p),
                         points: ko.observable(u.points),
                         role: ko.observable(u.role),
                         name: ko.observable(u.name),
                         editing: ko.observable(false)
                     };
-                    c.push(chal);
+                    c.push(user);
                 }
                 resolve(c);
             }), function (error) { (reject); });
@@ -105,9 +120,9 @@ var FirebaseUtilities = (function () {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
-                    var chal = values[p];
-                    chal.key = p;
-                    c.push(chal);
+                    var team = values[p];
+                    team.key = p;
+                    c.push(team);
                 }
                 c.sort(function (aTeam, bTeam) {
                     var aName = aTeam.name;
@@ -126,9 +141,17 @@ var FirebaseUtilities = (function () {
                 name: user.name(),
                 points: user.points(),
                 role: user.role()
-            }).then(function () { resolve(true); }).catch(function (error) { return reject(error); });
+            }).then(function () { resolve(true); }).catch(reject);
+        });
+    };
+    FirebaseUtilities.saveChallengeChoices = function (user, race, challenges) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl + "users/" + user.id() + "/results/2016/" + race.name);
+            fb.set(challenges).then(function () { resolve(true); }).catch(reject);
         });
     };
     FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
     return FirebaseUtilities;
 })();
+//# sourceMappingURL=firebaseUtilities.js.map

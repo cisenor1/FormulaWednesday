@@ -32,7 +32,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">
-                    brand
+                    Formula Wednesday
                 </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -51,11 +51,8 @@
                             <span>Races </span><span class="caret"></span>
                         </a>
                         <ul data-bind="foreach: races" id="races-dropdown" class="list-group dropdown-menu">
-                            <li><a data-bind="text:title"></a></li>
+                            <li data-bind="css: { menuraceover: done() }"><a data-bind="text:title, click: function(item){$parent.launchRacePage(item)}"></a></li>
                         </ul>
-                    </li>
-                    <li data-bind="visible: loggedIn()">
-                        <a href="#" data-bind="click: launchChallenges">Challenges</a>
                     </li>
                 </ul>
                 <form data-bind="visible: !loggedIn()" class="navbar-form navbar-right" role="search">

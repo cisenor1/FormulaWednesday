@@ -37,5 +37,5 @@ interface ViewModelBase {
     drivers?: KnockoutObservableArray<Driver>;
     sortDriversByName?: () => void;
     sortDriversByTeam?: () => void;
-
+    title: KnockoutObservable<string>;
 }

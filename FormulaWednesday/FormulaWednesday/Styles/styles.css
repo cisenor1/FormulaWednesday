@@ -10,3 +10,27 @@
     width:80%;
     margin: 0 10%;
 }
+
+li.menuraceover {
+    background: rgba(255, 0, 0, 0.19);
+}
+#admin-dropdown li a,
+#races-dropdown li a {
+    cursor: pointer;
+    border: 1px rgba(255, 0, 0, 0.16) solid;
+    border-top: none;
+}
+
+.navbar-nav>li>.dropdown-menu {
+    margin-top: 0;
+    padding: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.btn-group, .btn-group-vertical {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 1em;
+}

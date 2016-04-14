@@ -8,6 +8,7 @@ var FormulaWednesdayApp = (function () {
         this.loggedIn = ko.observable(false);
         this.credentialsKey = "formulawednesday.user";
         this.currentPageKey = "formulawednesday.page";
+        this.currentRaceKey = "formulawednesday.race";
         this.logOutText = "Log out of ";
         this.logOutMessage = ko.observable(this.logOutText + this.nameObservable());
         this.isAdmin = ko.observable(false);
@@ -40,11 +41,23 @@ var FormulaWednesdayApp = (function () {
         var _this = this;
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
         var page = window.localStorage.getItem(this.currentPageKey);
+        var r = window.localStorage.getItem(this.currentRaceKey);
+        var race;
+        if (r !== "undefined") {
+            race = JSON.parse(r);
+        }
         if (this.credentials) {
             this.logInProcedure(this.credentials.name, this.credentials.password).then(function (user) {
                 _this.completeLogIn(user);
                 if (page) {
                     _this.currentPage(page);
+                }
+                if (race && race != "undefined") {
+                    _this.selectedRace = race;
+                    _this.selectedRace.date = new Date(Date.parse(_this.selectedRace.date));
+                    _this.selectedRace.cutoff = new Date(Date.parse(_this.selectedRace.cutoff));
+                    _this.selectedRace.done = ko.observable(_this.selectedRace.date < new Date(Date.now()));
+                    window.localStorage.setItem(_this.currentRaceKey, JSON.stringify(_this.selectedRace));
                 }
             });
         }
@@ -76,6 +89,7 @@ var FormulaWednesdayApp = (function () {
     FormulaWednesdayApp.prototype.doLogOut = function () {
         window.localStorage.removeItem(this.credentialsKey);
         window.localStorage.removeItem(this.currentPageKey);
+        window.localStorage.removeItem(this.currentRaceKey);
         this.loggedIn(false);
         this.isAdmin(false);
         this.nameObservable("");
@@ -95,20 +109,12 @@ var FormulaWednesdayApp = (function () {
             window.localStorage.setItem(this.currentPageKey, page);
         }
         var newPage;
-        switch (page) {
+        switch (page.split("#")[0]) {
             case "homepage":
                 newPage = new HomePage(this);
                 break;
             case "challenges":
-                newPage = new ChallengesPage(this);
-                break;
-            case "challenges":
-                newPage = new ChallengesPage(this);
-                break;
-            case "challenges":
-                newPage = new ChallengesPage(this);
-                break;
-            case "challenges":
+                window.localStorage.setItem(this.currentRaceKey, JSON.stringify(this.selectedRace));
                 newPage = new ChallengesPage(this);
                 break;
             case "admin-users":
@@ -147,9 +153,14 @@ var FormulaWednesdayApp = (function () {
     FormulaWednesdayApp.prototype.launchAdminPage = function (item) {
         this.currentPage(item.binding);
     };
+    FormulaWednesdayApp.prototype.launchRacePage = function (race) {
+        this.selectedRace = race;
+        this.currentPage('challenges#' + race.name);
+    };
     return FormulaWednesdayApp;
 })();
 window.onload = function () {
     var formulawednesdayapp = new FormulaWednesdayApp();
     formulawednesdayapp.initialize();
 };
+//# sourceMappingURL=app.js.map

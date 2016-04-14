@@ -2,8 +2,10 @@
     name: string,
     title: string,
     date: Date,
-    cutoffDate: Date,
+    cutoff: Date,
     country: string,
     city: string,
-    winner?: Driver
+    winner?: Driver,
+    results?: any; 
+    done: KnockoutObservable<boolean>;
 }
