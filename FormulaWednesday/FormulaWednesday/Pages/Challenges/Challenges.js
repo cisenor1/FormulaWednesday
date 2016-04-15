@@ -5,9 +5,10 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var ChallengesPage = (function (_super) {
     __extends(ChallengesPage, _super);
-    function ChallengesPage() {
+    // constructor will do heavy lifting
+    function ChallengesPage(app) {
         var _this = this;
-        _super.apply(this, arguments);
+        _super.call(this, app);
         this.vm = {
             drivers: ko.observableArray(),
             teams: ko.observableArray(),
@@ -26,6 +27,7 @@ var ChallengesPage = (function (_super) {
         };
         this.markupUri = "Pages/Challenges/Challenges.html";
         this.divId = "challenges";
+        this.vmPromise = this.createVM();
     }
     ChallengesPage.prototype.createVM = function () {
         var _this = this;
