@@ -1,8 +1,8 @@
-﻿class UsersAdmin extends PageBase implements Page {
+﻿class DriversAdmin extends PageBase implements Page {
 
-    markupUri: string = "Pages/Admin/Users.html";
-    divId: string = "users-admin";
-    users = ko.observableArray([]);
+    markupUri: string = "Pages/Admin/Drivers.html";
+    divId: string = "drivers-admin";
+    drivers = ko.observableArray([]);
     showAddUserPane = ko.observable(false);
     editing = ko.observable(false);
     cachedUser: User;
@@ -24,8 +24,8 @@
             return <any>false;
         }
         return new Promise<any>((resolve, reject) => {
-            FirebaseUtilities.getAllUsers().then((values) => {
-                this.users(values);
+            FirebaseUtilities.getDrivers().then((values) => {
+                this.drivers(values);
                 resolve(this);
             });
         });

@@ -10,17 +10,19 @@ var FirebaseUtilities = (function () {
             var firebase = new Firebase(FirebaseUtilities.firebaseUrl);
             firebase.authWithPassword(fbCred).then(function (auth) {
                 // output user
-                var id = credentials.name.split('@')[0];
-                var userUrl = FirebaseUtilities.firebaseUrl + "users/" + id;
+                var key = FormulaWednesdaysUtilities.getKeyFromEmail(fbCred.email);
+                var userUrl = FirebaseUtilities.firebaseUrl + "users/" + key;
                 var fb = new Firebase(userUrl);
                 fb.once("value").then(function (ds) {
                     var fbUser = ds.val();
                     var user = {
-                        id: ko.observable(id),
+                        key: ko.observable(key),
                         role: ko.observable(fbUser.role),
                         points: ko.observable(fbUser.points),
-                        name: ko.observable(fbUser.name),
-                        editing: ko.observable(false)
+                        username: ko.observable(fbUser.username),
+                        fullname: ko.observable(fbUser.fullname),
+                        editing: ko.observable(false),
+                        email: ko.observable(fbUser.email)
                     };
                     resolve(user);
                 });
@@ -86,7 +88,7 @@ var FirebaseUtilities = (function () {
     };
     FirebaseUtilities.getUserChoices = function (user) {
         return new Promise(function (resolve, reject) {
-            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + user.id() + "/results/2016");
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + user.key() + "/results/2016");
             fb.once("value").then(function (ds) {
                 resolve(ds.val());
             }).catch(reject);
@@ -101,11 +103,13 @@ var FirebaseUtilities = (function () {
                 for (var p in values) {
                     var u = values[p];
                     var user = {
-                        id: ko.observable(p),
+                        key: ko.observable(u.key),
                         points: ko.observable(u.points),
                         role: ko.observable(u.role),
-                        name: ko.observable(u.name),
-                        editing: ko.observable(false)
+                        fullname: ko.observable(u.fullname),
+                        username: ko.observable(u.username),
+                        editing: ko.observable(false),
+                        email: ko.observable(u.email)
                     };
                     c.push(user);
                 }
@@ -136,22 +140,57 @@ var FirebaseUtilities = (function () {
     FirebaseUtilities.saveUser = function (user) {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            var fb = new Firebase(_this.firebaseUrl + "users/" + user.id());
+            var fb = new Firebase(_this.firebaseUrl + "users/" + user.key());
             fb.set({
-                name: user.name(),
+                username: user.username(),
+                fullname: user.fullname(),
                 points: user.points(),
-                role: user.role()
+                role: user.role(),
+                email: user.email()
             }).then(function () { resolve(true); }).catch(reject);
         });
     };
     FirebaseUtilities.saveChallengeChoices = function (user, race, challenges) {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            var fb = new Firebase(_this.firebaseUrl + "users/" + user.id() + "/results/2016/" + race.name);
+            var fb = new Firebase(_this.firebaseUrl + "users/" + user.key() + "/results/2016/" + race.name);
             fb.set(challenges).then(function () { resolve(true); }).catch(reject);
+        });
+    };
+    FirebaseUtilities.createUser = function (user, hashedPassword) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl);
+            var fbCred = {
+                email: user.email(),
+                password: hashedPassword
+            };
+            fb.createUser(fbCred, function (error, userData) {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(userData);
+            });
+        });
+    };
+    FirebaseUtilities.addNewUser = function (user) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var email = user.email();
+            var processedEmail = FormulaWednesdaysUtilities.getKeyFromEmail(email);
+            var fb = new Firebase(_this.firebaseUrl + "users/" + processedEmail);
+            var newUser = {
+                "username": user.username(),
+                "fullname": user.fullname(),
+                "points": 0,
+                "email": user.email(),
+                "role": user.role(),
+                "key": processedEmail
+            };
+            fb.set(newUser).then(function () { resolve(true); }).catch(reject);
         });
     };
     FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
     return FirebaseUtilities;
 })();
-//# sourceMappingURL=firebaseUtilities.js.map

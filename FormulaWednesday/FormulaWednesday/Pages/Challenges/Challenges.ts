@@ -20,11 +20,6 @@ class ChallengesPage extends PageBase implements Page {
     markupUri: string = "Pages/Challenges/Challenges.html";
     divId = "challenges";
 
-    // constructor will do heavy lifting
-    constructor(app: FormulaWednesdayApp) {
-        super(app);
-        this.vmPromise = this.createVM();
-    }
 
     createVM(): Promise<any> {
         if (!this.app.user) {

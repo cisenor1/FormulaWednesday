@@ -34,3 +34,41 @@ li.menuraceover {
     vertical-align: middle;
     margin-bottom: 1em;
 }
+
+.input-group-addon:first-child {
+    border-right: 0;
+    width: 7em;
+    text-align: right;
+}
+
+.input-group {
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    width: 35em;
+    margin-bottom: 1em;
+}
+
+.fwed-button {
+    border-radius: 3px;
+    padding: 5px;
+    /* background: green; */
+}
+
+.fwed-user-points-box {
+    display: inline-block;
+    width: 29%;
+    /* line-height: 100%; */
+    font-size: 2em;
+}
+p.list-group-item-text.fwed-user-points {
+}
+
+p.list-group-item-text.fwed-user-username {
+    font-weight: bold;
+}
+
+.fwed-user-details {
+    display: inline-block;
+    width: 70%;
+}

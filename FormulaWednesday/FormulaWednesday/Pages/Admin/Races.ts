@@ -1,8 +1,8 @@
-﻿class UsersAdmin extends PageBase implements Page {
+﻿class RacesAdmin extends PageBase implements Page {
 
-    markupUri: string = "Pages/Admin/Users.html";
-    divId: string = "users-admin";
-    users = ko.observableArray([]);
+    markupUri: string = "Pages/Admin/Races.html";
+    divId: string = "races-admin";
+    races = ko.observableArray([]);
     showAddUserPane = ko.observable(false);
     editing = ko.observable(false);
     cachedUser: User;
@@ -24,8 +24,8 @@
             return <any>false;
         }
         return new Promise<any>((resolve, reject) => {
-            FirebaseUtilities.getAllUsers().then((values) => {
-                this.users(values);
+            FirebaseUtilities.getRaces().then((values) => {
+                this.races(values);
                 resolve(this);
             });
         });

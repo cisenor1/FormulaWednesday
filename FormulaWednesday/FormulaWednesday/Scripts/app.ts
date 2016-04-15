@@ -83,7 +83,7 @@ class FormulaWednesdayApp {
         this.loggedIn(true);
         this.user = user;
         this.isAdmin(user.role().toLowerCase() == "admin");
-        this.logOutMessage(this.logOutText + user.name());
+        this.logOutMessage(this.logOutText + user.username());
     }
 
     doLogIn() {
@@ -130,8 +130,20 @@ class FormulaWednesdayApp {
                 window.localStorage.setItem(this.currentRaceKey, JSON.stringify(this.selectedRace));
                 newPage = new ChallengesPage(this);
                 break;
+            case "preferences":
+                newPage = new PreferencesPage(this);
+                break;
             case "admin-users":
                 newPage = new UsersAdmin(this);
+                break;
+            case "admin-challenges":
+                newPage = new ChallengesAdmin(this);
+                break;
+            case "admin-races":
+                newPage = new RacesAdmin(this);
+                break;
+            case "admin-drivers":
+                newPage = new DriversAdmin(this);
                 break;
             default:
                 newPage = new HomePage(this);
@@ -172,7 +184,9 @@ class FormulaWednesdayApp {
     launchAdminPage(item: MenuItem) {
         this.currentPage(item.binding);
     }
-
+    launchUserPreferences() {
+        this.currentPage("preferences");
+    }
     launchRacePage(race: Race) {
         this.selectedRace = race;
         this.currentPage('challenges#' + race.name);

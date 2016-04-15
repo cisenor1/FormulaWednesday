@@ -3,13 +3,13 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var UsersAdmin = (function (_super) {
-    __extends(UsersAdmin, _super);
-    function UsersAdmin(app) {
+var RacesAdmin = (function (_super) {
+    __extends(RacesAdmin, _super);
+    function RacesAdmin(app) {
         _super.call(this, app);
-        this.markupUri = "Pages/Admin/Users.html";
-        this.divId = "users-admin";
-        this.users = ko.observableArray([]);
+        this.markupUri = "Pages/Admin/Races.html";
+        this.divId = "races-admin";
+        this.races = ko.observableArray([]);
         this.showAddUserPane = ko.observable(false);
         this.editing = ko.observable(false);
         this.newName = ko.observable("");
@@ -21,19 +21,19 @@ var UsersAdmin = (function (_super) {
         this.newPassConfirm = ko.observable("");
         this.vmPromise = this.createVM();
     }
-    UsersAdmin.prototype.createVM = function () {
+    RacesAdmin.prototype.createVM = function () {
         var _this = this;
         if (!this.app.user) {
             return false;
         }
         return new Promise(function (resolve, reject) {
-            FirebaseUtilities.getAllUsers().then(function (values) {
-                _this.users(values);
+            FirebaseUtilities.getRaces().then(function (values) {
+                _this.races(values);
                 resolve(_this);
             });
         });
     };
-    UsersAdmin.prototype.getMarkup = function () {
+    RacesAdmin.prototype.getMarkup = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             fetch(_this.markupUri).then(function (value) {
@@ -43,10 +43,10 @@ var UsersAdmin = (function (_super) {
             });
         });
     };
-    UsersAdmin.prototype.getViewModel = function () {
+    RacesAdmin.prototype.getViewModel = function () {
         return this.vmPromise;
     };
-    UsersAdmin.prototype.editUser = function (user) {
+    RacesAdmin.prototype.editUser = function (user) {
         this.cachedUser = {
             key: ko.observable(user.key()),
             points: ko.observable(user.points()),
@@ -59,13 +59,13 @@ var UsersAdmin = (function (_super) {
         this.editing(true);
         user.editing(true);
     };
-    UsersAdmin.prototype.saveData = function (item) {
+    RacesAdmin.prototype.saveData = function (item) {
         FirebaseUtilities.saveUser(item).then(function (success) {
         }).catch(function (e) { alert(e); });
         item.editing(false);
         this.editing(false);
     };
-    UsersAdmin.prototype.cancel = function (item) {
+    RacesAdmin.prototype.cancel = function (item) {
         var c = this.cachedUser;
         item.key(c.key());
         item.fullname(c.fullname());
@@ -75,10 +75,10 @@ var UsersAdmin = (function (_super) {
         item.editing(false);
         this.editing(false);
     };
-    UsersAdmin.prototype.addUser = function () {
+    RacesAdmin.prototype.addUser = function () {
         this.showAddUserPane(true);
     };
-    UsersAdmin.prototype.submitCreateUser = function () {
+    RacesAdmin.prototype.submitCreateUser = function () {
         var fullName = this.newName();
         var username = this.newId();
         if (!FormulaWednesdaysUtilities.validateUsername(username)) {
@@ -115,5 +115,5 @@ var UsersAdmin = (function (_super) {
             alert(e);
         });
     };
-    return UsersAdmin;
+    return RacesAdmin;
 })(PageBase);

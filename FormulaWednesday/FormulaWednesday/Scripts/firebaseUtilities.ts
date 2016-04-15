@@ -11,17 +11,19 @@
             var firebase = new Firebase(FirebaseUtilities.firebaseUrl);
             firebase.authWithPassword(fbCred).then((auth) => {
                 // output user
-                var id = credentials.name.split('@')[0];
-                var userUrl = FirebaseUtilities.firebaseUrl + "users/" + id;
+                var key = FormulaWednesdaysUtilities.getKeyFromEmail(fbCred.email);
+                var userUrl = FirebaseUtilities.firebaseUrl + "users/" + key;
                 var fb = new Firebase(userUrl);
                 fb.once("value").then((ds) => {
                     var fbUser = ds.val();
                     var user: User = {
-                        id: ko.observable(id),
+                        key: ko.observable(key),
                         role: ko.observable(fbUser.role),
                         points: ko.observable(fbUser.points),
-                        name: ko.observable(fbUser.name),
-                        editing: ko.observable(false)
+                        username: ko.observable(fbUser.username),
+                        fullname: ko.observable(fbUser.fullname),
+                        editing: ko.observable(false),
+                        email: ko.observable(fbUser.email)
                     };
                     resolve(user);
                 });
@@ -92,7 +94,7 @@
 
     static getUserChoices(user: User): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + user.id() + "/results/2016");
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + user.key() + "/results/2016");
             fb.once("value").then((ds) => {
                 resolve(ds.val());
             }).catch(reject);
@@ -108,11 +110,13 @@
                 for (var p in values) {
                     var u = values[p];
                     var user: User = {
-                        id: ko.observable(p),
+                        key: ko.observable(u.key),
                         points: ko.observable(u.points),
                         role: ko.observable(u.role),
-                        name: ko.observable(u.name),
-                        editing: ko.observable(false)
+                        fullname: ko.observable(u.fullname),
+                        username: ko.observable(u.username),
+                        editing: ko.observable(false),
+                        email: ko.observable(u.email)
                     }
                     c.push(user);
                 }
@@ -144,19 +148,55 @@
 
     static saveUser(user: User): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl + "users/" + user.id());
+            var fb = new Firebase(this.firebaseUrl + "users/" + user.key());
             fb.set({
-                name: user.name(),
+                username: user.username(),
+                fullname: user.fullname(),
                 points: user.points(),
-                role: user.role()
+                role: user.role(),
+                email: user.email()
             }).then(() => { resolve(true) }).catch(reject);
         });
     }
 
-    static saveChallengeChoices(user: User,race: Race, challenges:any): Promise<boolean> {
+    static saveChallengeChoices(user: User, race: Race, challenges: any): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl + "users/" + user.id() + "/results/2016/" + race.name );
+            var fb = new Firebase(this.firebaseUrl + "users/" + user.key() + "/results/2016/" + race.name);
             fb.set(challenges).then(() => { resolve(true) }).catch(reject);
+        });
+    }
+
+    static createUser(user: User, hashedPassword: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            var fb = new Firebase(this.firebaseUrl);
+            var fbCred: FirebaseCredentials = {
+                email: user.email(),
+                password: hashedPassword
+            }
+            fb.createUser(fbCred, (error, userData) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(userData);
+            });
+        });
+    }
+
+    static addNewUser(user: User): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            var email = user.email();
+            var processedEmail = FormulaWednesdaysUtilities.getKeyFromEmail(email);
+            var fb = new Firebase(this.firebaseUrl + "users/" + processedEmail);
+            var newUser = {
+                "username": user.username(),
+                "fullname": user.fullname(),
+                "points": 0,
+                "email": user.email(),
+                "role": user.role(),
+                "key":processedEmail
+            }
+            fb.set(newUser).then(() => { resolve(true) }).catch(reject);
         });
     }
 }

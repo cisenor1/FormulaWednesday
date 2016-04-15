@@ -5,10 +5,15 @@
     <meta charset="utf-8" />    
     <script src="Hashing/md5.js"></script>
     <script src="Models/PageBase.js"></script>
+    <script src="Scripts/FormulaWednesdaysUtilities.js"></script>
     <script src="Pages/Admin/Admin.js"></script>
     <script src="Pages/Admin/Users.js"></script>
     <script src="Pages/Challenges/Challenges.js"></script>
+    <script src="Pages/Preferences/Preferences.js"></script>
     <script src="Pages/Homepage/Homepage.js"></script>
+    <script src="Pages/Admin/Challenges.js"></script>
+    <script src="Pages/Admin/Drivers.js"></script>
+    <script src="Pages/Admin/Races.js"></script>
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
@@ -62,9 +67,14 @@
                     </div>
                     <button type="submit" data-bind="click: doLogIn" class="btn btn-default">Log In</button>
                 </form>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="navbar-right" data-bind="visible: loggedIn()"><a href="#" data-bind="text: logOutMessage, click: doLogOut"></a></li>
-                    <li><a href="#">Link</a></li>
+                <ul class="nav navbar-nav navbar-right" data-bind="visible: loggedIn()">
+                    <li class="navbar-right"><a href="#" data-bind="text: logOutMessage, click: doLogOut"></a></li>
+                    <li class="dropdown">
+                        <a class="glyphicon glyphicon-cog dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"></a>
+                        <ul id="options-dropdown" class="list-group dropdown-menu">
+                            <li><a href="#" data-bind="click: launchUserPreferences">Options</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
