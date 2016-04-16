@@ -1,1 +1,34 @@
-﻿Markup!
+﻿<div>
+    <h3 class="fwed-user-fullname" data-bind="text: fullname"></h3>
+    <div class="panel">
+        <form data-bind="submit: changePassword">
+            <h3>Change Password</h3>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">Old Password:</span>
+                <input class="form-control" type="password" required data-bind="value: oldPass" />
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">New Password:</span>
+                <input class="form-control" type="password"  required data-bind="value: newPass" />
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">Confirm:</span>
+                <input class="form-control" type="password" required data-bind="value: confirmPass" />
+            </div>
+            <div class="alert alert-danger" data-bind="visible: passwordAlert(), text: passwordAlert"></div>
+            <div class="alert alert-success" data-bind="visible: passwordSuccess(), text: passwordSuccess"></div>
+            <input type="submit" />
+        </form>
+    </div>
+    <div class="panel">
+        <form data-bind="submit: changeUsername">
+            <h3>Change Username</h3>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">Username:</span>
+                <input class="form-control" type="text" required data-bind="text: username, value: username" />
+            </div>
+            <div class="alert alert-danger" data-bind="visible: usernameAlert(), text: usernameAlert"></div>
+            <input type="submit" />
+        </form>
+    </div>
+</div>

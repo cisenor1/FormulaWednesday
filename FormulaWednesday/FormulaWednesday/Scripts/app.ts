@@ -2,7 +2,7 @@
 /// <reference path="typings/knockout/knockout.d.ts" />
 declare var md5;
 class FormulaWednesdayApp {
-    currentPage = ko.observable("homepage");
+    currentPage = ko.observable("");
     nameObservable: KnockoutObservable<string> = ko.observable("");
     pwObservable: KnockoutObservable<string> = ko.observable("");
     loggedIn: KnockoutObservable<boolean> = ko.observable(false);
@@ -47,41 +47,25 @@ class FormulaWednesdayApp {
 
     initialize() {
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
-        var page = window.localStorage.getItem(this.currentPageKey);
-        var r = window.localStorage.getItem(this.currentRaceKey);
-        var race;
-        if (r !== "undefined") {
-           race = JSON.parse(r);
-        }
         if (this.credentials) {
             this.logInProcedure(this.credentials.name, this.credentials.password).then((user: User) => {
-                this.completeLogIn(user);
-                if (page) {
-                    this.currentPage(page);
-                }
-                if (race && race != "undefined") {
-                    this.selectedRace = race;
-                    this.selectedRace.date = new Date(Date.parse(<any>this.selectedRace.date));
-                    this.selectedRace.cutoff = new Date(Date.parse(<any>this.selectedRace.cutoff));
-                    this.selectedRace.done = ko.observable(this.selectedRace.date < new Date(Date.now()));
-                    window.localStorage.setItem(this.currentRaceKey, JSON.stringify(this.selectedRace));
-                }
+                this.refreshUserInfo(user);
             });
         }
-
         this.currentPage.subscribe((page) => {
             this.loadPage(page);
         });
-        FirebaseUtilities.getRaces().then((races) => {
-            this.races(races);
-        });
+        this.currentPage("homepage");
         ko.applyBindings(this);
     }
 
-    completeLogIn(user: User) {
+    refreshUserInfo(user: User) {
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
+        FirebaseUtilities.getRaces().then((races) => {
+            this.races(races);
+        });
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
     }
@@ -92,7 +76,7 @@ class FormulaWednesdayApp {
         }
         var hashed = md5(this.pwObservable());
         this.logInProcedure(this.nameObservable(), hashed).then((user) => {
-            this.completeLogIn(user);
+            this.refreshUserInfo(user);
         });
     }
 
@@ -116,9 +100,9 @@ class FormulaWednesdayApp {
     }
 
     loadPage(page: string) {
-        if (this.loggedIn()) {
-            window.localStorage.setItem(this.currentPageKey, page);
-        }
+        //if (this.loggedIn()) {
+        //    window.localStorage.setItem(this.currentPageKey, page);
+        //}
 
         var newPage: Page;
 
@@ -176,6 +160,7 @@ class FormulaWednesdayApp {
         }
         window.location.href = window.location.origin + "/admin.html";
     }
+    
 
     launchChallenges() {
         this.currentPage('challenges');
@@ -187,10 +172,12 @@ class FormulaWednesdayApp {
     launchUserPreferences() {
         this.currentPage("preferences");
     }
+
     launchRacePage(race: Race) {
         this.selectedRace = race;
         this.currentPage('challenges#' + race.name);
     }
+
 }
 
 window.onload = function () {

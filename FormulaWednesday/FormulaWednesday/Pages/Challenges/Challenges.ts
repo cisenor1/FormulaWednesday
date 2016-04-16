@@ -79,7 +79,7 @@ class ChallengesPage extends PageBase implements Page {
         }
         this.vm.challenges().forEach((challenge) => {
             var choices = this.vm.drivers().filter((driver) => {
-                return driver.key == targetChoices[challenge.key];
+                return driver.key == targetChoices[challenge.key()];
             });
             challenge.choice(choices[0]);
             //challenge.choice(targetChoices[challenge.key]);
@@ -129,7 +129,7 @@ class ChallengesPage extends PageBase implements Page {
         this.vm.challenges().forEach((c) => {
             if (c.choice()) {
                 if (c.choice().key) {
-                    o[c.key] = c.choice().key;
+                    o[c.key()] = c.choice().key;
                 }
             }
         });

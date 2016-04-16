@@ -36,9 +36,17 @@ var FirebaseUtilities = (function () {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
-                    var chal = values[p];
-                    chal.choice = ko.observable("");
-                    chal.key = p;
+                    var fbChal = values[p];
+                    var chal = {
+                        choice: ko.observable(fbChal.choice),
+                        description: ko.observable(fbChal.description),
+                        key: ko.observable(fbChal.key),
+                        allSeason: ko.observable(fbChal.allSeason),
+                        message: ko.observable(fbChal.message),
+                        value: ko.observable(fbChal.value),
+                        editing: ko.observable(false),
+                        type: ko.observable(fbChal.type)
+                    };
                     c.push(chal);
                 }
                 resolve(c);
@@ -174,6 +182,37 @@ var FirebaseUtilities = (function () {
             });
         });
     };
+    FirebaseUtilities.changePassword = function (user, oldPassword, newPassword) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl);
+            var fbCred = {
+                email: user.email(),
+                oldPassword: oldPassword,
+                newPassword: newPassword
+            };
+            fb.changePassword(fbCred, function (error) {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(true);
+            });
+        });
+    };
+    FirebaseUtilities.changeUsername = function (user, newUsername) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl + "/users/" + user.key() + "/username");
+            fb.set(newUsername, function (error) {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(true);
+            });
+        });
+    };
     FirebaseUtilities.addNewUser = function (user) {
         var _this = this;
         return new Promise(function (resolve, reject) {
@@ -194,3 +233,4 @@ var FirebaseUtilities = (function () {
     FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
     return FirebaseUtilities;
 })();
+//# sourceMappingURL=firebaseUtilities.js.map

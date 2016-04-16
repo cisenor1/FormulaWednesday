@@ -81,7 +81,7 @@ var ChallengesPage = (function (_super) {
         }
         this.vm.challenges().forEach(function (challenge) {
             var choices = _this.vm.drivers().filter(function (driver) {
-                return driver.key == targetChoices[challenge.key];
+                return driver.key == targetChoices[challenge.key()];
             });
             challenge.choice(choices[0]);
             //challenge.choice(targetChoices[challenge.key]);
@@ -128,7 +128,7 @@ var ChallengesPage = (function (_super) {
         this.vm.challenges().forEach(function (c) {
             if (c.choice()) {
                 if (c.choice().key) {
-                    o[c.key] = c.choice().key;
+                    o[c.key()] = c.choice().key;
                 }
             }
         });
@@ -136,3 +136,4 @@ var ChallengesPage = (function (_super) {
     };
     return ChallengesPage;
 })(PageBase);
+//# sourceMappingURL=Challenges.js.map

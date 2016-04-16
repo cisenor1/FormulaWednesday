@@ -1,37 +1,28 @@
 ﻿class HomePage extends PageBase implements Page {
 
-
+    markupUri: string = "Pages/Homepage/Homepage.html";
+    
     constructor(app: FormulaWednesdayApp) {
         super(app);
         this.vmPromise = this.createVM();
     }
-
     createVM(): Promise<any> {
-        if (!this.app.user) {
-            return <any>false;
-        }
         return new Promise<any>((resolve, reject) => {
-            var promises = [];
-            promises.push(FirebaseUtilities.getChallenges());
-            promises.push(FirebaseUtilities.getTeams());
-            promises.push(FirebaseUtilities.getDrivers());
-            Promise.all(promises).then((values) => {
-                this.vm.challenges(<any>values[0]);
-                this.vm.teams(<any>values[1]);
-                this.vm.drivers(<any>values[2]);
-                resolve(this.vm);
+            resolve(this);
+        });
+    }
+
+    getMarkup(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            fetch(this.markupUri).then((value) => {
+                value.text().then((output) => {
+                    resolve(output);
+                });
             });
         });
     }
-    getMarkup(): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            resolve("");
-        });
-    }
 
-    getViewModel(): Promise<any>{
-        return new Promise<any>((resolve, reject) => {
-            resolve({});
-        });
+    getViewModel(): Promise<any> {
+        return this.vmPromise;
     }
 }

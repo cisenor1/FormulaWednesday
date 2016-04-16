@@ -7,35 +7,28 @@ var HomePage = (function (_super) {
     __extends(HomePage, _super);
     function HomePage(app) {
         _super.call(this, app);
+        this.markupUri = "Pages/Homepage/Homepage.html";
         this.vmPromise = this.createVM();
     }
     HomePage.prototype.createVM = function () {
         var _this = this;
-        if (!this.app.user) {
-            return false;
-        }
         return new Promise(function (resolve, reject) {
-            var promises = [];
-            promises.push(FirebaseUtilities.getChallenges());
-            promises.push(FirebaseUtilities.getTeams());
-            promises.push(FirebaseUtilities.getDrivers());
-            Promise.all(promises).then(function (values) {
-                _this.vm.challenges(values[0]);
-                _this.vm.teams(values[1]);
-                _this.vm.drivers(values[2]);
-                resolve(_this.vm);
-            });
+            resolve(_this);
         });
     };
     HomePage.prototype.getMarkup = function () {
+        var _this = this;
         return new Promise(function (resolve, reject) {
-            resolve("");
+            fetch(_this.markupUri).then(function (value) {
+                value.text().then(function (output) {
+                    resolve(output);
+                });
+            });
         });
     };
     HomePage.prototype.getViewModel = function () {
-        return new Promise(function (resolve, reject) {
-            resolve({});
-        });
+        return this.vmPromise;
     };
     return HomePage;
 })(PageBase);
+//# sourceMappingURL=Homepage.js.map

@@ -10,15 +10,13 @@ var ChallengesAdmin = (function (_super) {
         this.markupUri = "Pages/Admin/Challenges.html";
         this.divId = "challenges-admin";
         this.challenges = ko.observableArray([]);
-        this.showAddUserPane = ko.observable(false);
+        this.showAddChallengePane = ko.observable(false);
         this.editing = ko.observable(false);
-        this.newName = ko.observable("");
-        this.newEmail = ko.observable("");
-        this.newId = ko.observable("");
+        this.newChallengeName = ko.observable("");
+        this.newChallengeKey = ko.observable("");
+        this.newPointValue = ko.observable(2);
         this.roles = ["admin", "user"];
         this.role = ko.observable("");
-        this.newPass = ko.observable("");
-        this.newPassConfirm = ko.observable("");
         this.vmPromise = this.createVM();
     }
     ChallengesAdmin.prototype.createVM = function () {
@@ -46,19 +44,6 @@ var ChallengesAdmin = (function (_super) {
     ChallengesAdmin.prototype.getViewModel = function () {
         return this.vmPromise;
     };
-    ChallengesAdmin.prototype.editUser = function (user) {
-        this.cachedUser = {
-            key: ko.observable(user.key()),
-            points: ko.observable(user.points()),
-            role: ko.observable(user.role()),
-            fullname: ko.observable(user.fullname()),
-            username: ko.observable(user.username()),
-            email: ko.observable(user.email()),
-            editing: ko.observable(false)
-        };
-        this.editing(true);
-        user.editing(true);
-    };
     ChallengesAdmin.prototype.saveData = function (item) {
         FirebaseUtilities.saveUser(item).then(function (success) {
         }).catch(function (e) { alert(e); });
@@ -66,54 +51,59 @@ var ChallengesAdmin = (function (_super) {
         this.editing(false);
     };
     ChallengesAdmin.prototype.cancel = function (item) {
-        var c = this.cachedUser;
-        item.key(c.key());
-        item.fullname(c.fullname());
-        item.username(c.username());
-        item.points(c.points());
-        item.role(c.role());
-        item.editing(false);
-        this.editing(false);
+        ////var c = this.cachedUser;
+        //item.key(c.key());
+        //item.fullname(c.fullname());
+        //item.username(c.username());
+        //item.points(c.points());
+        //item.role(c.role());
+        //item.editing(false);
+        //this.editing(false);
     };
-    ChallengesAdmin.prototype.addUser = function () {
-        this.showAddUserPane(true);
+    ChallengesAdmin.prototype.addChallenge = function () {
+        this.showAddChallengePane(true);
     };
-    ChallengesAdmin.prototype.submitCreateUser = function () {
-        var fullName = this.newName();
-        var username = this.newId();
-        if (!FormulaWednesdaysUtilities.validateUsername(username)) {
-            alert("Bad Username");
-            return false;
-        }
-        var pass = this.newPass();
-        var passConfirm = this.newPassConfirm();
-        var email = this.newEmail();
-        var role = this.role();
-        if (pass.localeCompare(passConfirm)) {
-            alert("nope");
-            return;
-        }
-        var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
-        var user = {
-            key: ko.observable(key),
-            username: ko.observable(username),
-            fullname: ko.observable(fullName),
-            points: ko.observable(0),
-            role: ko.observable(role),
-            email: ko.observable(email),
-            editing: ko.observable(false)
-        };
-        var hashedPass = FormulaWednesdaysUtilities.hashPassword(pass);
-        FirebaseUtilities.createUser(user, hashedPass).then(function (v) {
-            // go on to add user to database
-            var uid = v.uid;
-            FirebaseUtilities.addNewUser(user).then(function (s) {
-                debugger;
-            });
-        }).catch(function (e) {
-            // handle the error
-            alert(e);
-        });
+    ChallengesAdmin.prototype.editChallenge = function (item) {
+        debugger;
+    };
+    ChallengesAdmin.prototype.submitCreateChallenge = function () {
+        debugger;
+        //var fullName = this.newName();
+        //var username = this.newId();
+        //if (!FormulaWednesdaysUtilities.validateUsername(username)) {
+        //    alert("Bad Username");
+        //    return false;
+        //}
+        //var pass = this.newPass();
+        //var passConfirm = this.newPassConfirm();
+        //var email = this.newEmail();
+        //var role = this.role();
+        //if (pass.localeCompare(passConfirm)) {
+        //    alert("nope");
+        //    return;
+        //}
+        //var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
+        //var user: User = {
+        //    key: ko.observable(key),
+        //    username: ko.observable(username),
+        //    fullname: ko.observable(fullName),
+        //    points: ko.observable(0),
+        //    role: ko.observable(role),
+        //    email: ko.observable(email),
+        //    editing: ko.observable(false)
+        //}
+        //var hashedPass = FormulaWednesdaysUtilities.hashPassword(pass);
+        //FirebaseUtilities.createUser(user, hashedPass).then((v:any) => {
+        //    // go on to add user to database
+        //    var uid = v.uid;
+        //    FirebaseUtilities.addNewUser(user).then((s) => {
+        //        debugger;
+        //    });
+        //}).catch((e) => {
+        //// handle the error
+        //    alert(e);
+        //});
     };
     return ChallengesAdmin;
 })(PageBase);
+//# sourceMappingURL=Challenges.js.map

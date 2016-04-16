@@ -34,10 +34,9 @@ li.menuraceover {
     vertical-align: middle;
     margin-bottom: 1em;
 }
-
 .input-group-addon:first-child {
     border-right: 0;
-    width: 7em;
+    width: 9em;
     text-align: right;
 }
 
@@ -72,3 +71,22 @@ p.list-group-item-text.fwed-user-username {
     display: inline-block;
     width: 70%;
 }
+
+.homepage h1 {
+    padding-top: 1em;
+}
+
+img.image {
+    width: auto;
+    position: absolute;
+    height: 60em;
+    z-index: -1;
+}
+
+.homepage-message {
+    z-index: 10;
+    width: 45%;
+    margin-top: 3em;
+}
+
+

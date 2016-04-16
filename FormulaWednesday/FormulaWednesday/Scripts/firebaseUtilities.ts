@@ -38,9 +38,17 @@
                 var values = ds.val();
                 var c: Challenge[] = [];
                 for (var p in values) {
-                    var chal: Challenge = values[p];
-                    chal.choice = ko.observable("");
-                    chal.key = p;
+                    var fbChal = values[p];
+                    var chal: Challenge = {
+                       choice: ko.observable(fbChal.choice),
+                       description: ko.observable(fbChal.description),
+                       key: ko.observable(fbChal.key),
+                       allSeason: ko.observable(fbChal.allSeason),
+                       message: ko.observable(fbChal.message),
+                       value: ko.observable(fbChal.value),
+                       editing: ko.observable(false),
+                       type: ko.observable(fbChal.type)
+                    };
                     c.push(chal);
                 }
                 resolve(c);
@@ -179,6 +187,37 @@
                     return;
                 }
                 resolve(userData);
+            });
+        });
+    }
+
+    static changePassword(user: User, oldPassword: string, newPassword:string): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            var fb = new Firebase(this.firebaseUrl);
+            var fbCred: FirebaseChangePasswordCredentials = {
+                email: user.email(),
+                oldPassword: oldPassword,
+                newPassword: newPassword
+            }
+            fb.changePassword(fbCred, (error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(true);
+            });
+        });
+    }
+
+    static changeUsername(user: User, newUsername: string): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            var fb = new Firebase(this.firebaseUrl + "/users/" + user.key() + "/username");
+            fb.set(newUsername, (error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(true);
             });
         });
     }
