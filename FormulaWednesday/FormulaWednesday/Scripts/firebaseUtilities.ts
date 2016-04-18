@@ -49,6 +49,7 @@
                        editing: ko.observable(false),
                        type: ko.observable(fbChal.type)
                     };
+                    chal.key = ko.observable(p);
                     c.push(chal);
                 }
                 resolve(c);

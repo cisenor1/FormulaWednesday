@@ -90,3 +90,21 @@ img.image {
 }
 
 
+li.form-group.list-group-item.raceover {
+    border: 1px #FFAFAF solid;
+    /* border-bottom: 1px solid red; */
+    background: #FFCFCF;
+}
+
+li {
+    list-style: none;
+}
+
+.race-validation .input-group {
+    width: 50em;
+    margin-top: 1em;
+}
+
+.race-validation span#basic-addon1 {
+    width: 16em;
+}

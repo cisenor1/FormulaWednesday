@@ -5,7 +5,9 @@
     cutoff: Date,
     country: string,
     city: string,
-    winner?: Driver,
+    winner?: KnockoutObservable<Driver>,
     results?: any; 
+    validating?: KnockoutObservable<boolean>
     done: KnockoutObservable<boolean>;
+
 }

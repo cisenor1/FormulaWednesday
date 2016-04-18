@@ -2,17 +2,12 @@
 
     markupUri: string = "Pages/Admin/Races.html";
     divId: string = "races-admin";
-    races = ko.observableArray([]);
-    showAddUserPane = ko.observable(false);
+    races: KnockoutObservableArray<Race> = ko.observableArray([]);
+    challenges: KnockoutObservableArray<Challenge> = ko.observableArray([]);
+    showValidateRacePane = ko.observable(false);
     editing = ko.observable(false);
-    cachedUser: User;
-    newName = ko.observable("");
-    newEmail = ko.observable("");
-    newId = ko.observable("");
-    roles = ["admin", "user"];
-    role = ko.observable("");
-    newPass = ko.observable("");
-    newPassConfirm = ko.observable("");
+    drivers = ko.observableArray([]);
+
 
     constructor(app: FormulaWednesdayApp) {
         super(app);
@@ -26,6 +21,17 @@
         return new Promise<any>((resolve, reject) => {
             FirebaseUtilities.getRaces().then((values) => {
                 this.races(values);
+                this.races().forEach((r) => {
+                    r.done = ko.observable(r.cutoff < new Date(Date.now()));
+                    r.date = <any>ko.observable(r.date.toDateString());
+                    r.validating = ko.observable(false);
+                });
+                FirebaseUtilities.getChallenges().then((c) => {
+                    this.challenges(c);
+                });
+                FirebaseUtilities.getDrivers().then((d) => {
+                    this.drivers(d);
+                });
                 resolve(this);
             });
         });
@@ -46,78 +52,18 @@
         return this.vmPromise;
     }
 
-    editUser(user: User) {
-        this.cachedUser = {
-            key: ko.observable(user.key()),
-            points: ko.observable(user.points()),
-            role: ko.observable(user.role()),
-            fullname: ko.observable(user.fullname()),
-            username: ko.observable(user.username()),
-            email: ko.observable(user.email()),
-            editing: ko.observable(false)
-        };
-        this.editing(true);
-        user.editing(true);
+    submitValidateRace(race: Race) {
+        race.validating(false);
     }
 
-    saveData(item: User) {
-        FirebaseUtilities.saveUser(item).then((success) => {
-        }).catch((e: Error) => { alert(e); });
-        item.editing(false);
-        this.editing(false);
+    cancelValidateRace(race: Race) {
     }
 
-    cancel(item: User) {
-        var c = this.cachedUser;
-        item.key(c.key());
-        item.fullname(c.fullname());
-        item.username(c.username());
-        item.points(c.points());
-        item.role(c.role());
-        item.editing(false);
-        this.editing(false);
+    validateRace(race: Race) {
+        race.validating(true);
     }
 
-    addUser() {
-        this.showAddUserPane(true);
-    }
-
-    submitCreateUser() {
-        var fullName = this.newName();
-        var username = this.newId();
-        if (!FormulaWednesdaysUtilities.validateUsername(username)) {
-            alert("Bad Username");
-            return false;
-        }
-        var pass = this.newPass();
-        var passConfirm = this.newPassConfirm();
-        var email = this.newEmail();
-        var role = this.role();
-        if (pass.localeCompare(passConfirm)) {
-            alert("nope");
-            return;
-        }
-        var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
-        var user: User = {
-            key: ko.observable(key),
-            username: ko.observable(username),
-            fullname: ko.observable(fullName),
-            points: ko.observable(0),
-            role: ko.observable(role),
-            email: ko.observable(email),
-            editing: ko.observable(false)
-        }
-        var hashedPass = FormulaWednesdaysUtilities.hashPassword(pass);
-        FirebaseUtilities.createUser(user, hashedPass).then((v:any) => {
-            // go on to add user to database
-            var uid = v.uid;
-            FirebaseUtilities.addNewUser(user).then((s) => {
-                debugger;
-            });
-
-        }).catch((e) => {
-        // handle the error
-            alert(e);
-        });
+    change(race: Race) {
+        debugger;
     }
 }
