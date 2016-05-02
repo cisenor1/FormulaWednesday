@@ -8,12 +8,12 @@ var FirebaseUtilities = (function () {
                 password: credentials.password
             };
             var firebase = new Firebase(FirebaseUtilities.firebaseUrl);
-            firebase.authWithPassword(fbCred).then(function (auth) {
+            return firebase.authWithPassword(fbCred).then(function (auth) {
                 // output user
                 var key = FormulaWednesdaysUtilities.getKeyFromEmail(fbCred.email);
                 var userUrl = FirebaseUtilities.firebaseUrl + "users/" + key;
                 var fb = new Firebase(userUrl);
-                fb.once("value").then(function (ds) {
+                return fb.once("value").then(function (ds) {
                     var fbUser = ds.val();
                     var user = {
                         key: ko.observable(key),
@@ -24,15 +24,15 @@ var FirebaseUtilities = (function () {
                         editing: ko.observable(false),
                         email: ko.observable(fbUser.email)
                     };
-                    resolve(user);
+                    return resolve(user);
                 });
-            });
+            }).catch(reject);
         });
     };
     FirebaseUtilities.getChallenges = function () {
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges");
-            fb.once("value").then(function (ds) {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -50,34 +50,36 @@ var FirebaseUtilities = (function () {
                     chal.key = ko.observable(p);
                     c.push(chal);
                 }
-                resolve(c);
+                return resolve(c);
             }).catch(reject);
         });
     };
-    FirebaseUtilities.getDrivers = function () {
+    FirebaseUtilities.getDrivers = function (getInactive) {
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "drivers");
-            fb.once("value").then(function (ds) {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
                     var driver = values[p];
                     driver.key = p;
-                    c.push(driver);
+                    if (driver.active || getInactive) {
+                        c.push(driver);
+                    }
                 }
                 c.sort(function (aDriver, bDriver) {
                     var aTeam = aDriver.team;
                     var bTeam = bDriver.team;
                     return aTeam.localeCompare(bTeam);
                 });
-                resolve(c);
+                return resolve(c);
             }).catch(reject);
         });
     };
     FirebaseUtilities.getRaces = function () {
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/2016");
-            fb.once("value").then(function (ds) {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -91,22 +93,22 @@ var FirebaseUtilities = (function () {
                 c = c.sort(function (r1, r2) {
                     return r1.date.getTime() - r2.date.getTime();
                 });
-                resolve(c);
+                return resolve(c);
             }).catch(reject);
         });
     };
     FirebaseUtilities.getUserChoices = function (user) {
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + user.key() + "/results/2016");
-            fb.once("value").then(function (ds) {
-                resolve(ds.val());
+            return fb.once("value").then(function (ds) {
+                return resolve(ds.val());
             }).catch(reject);
         });
     };
     FirebaseUtilities.getAllUsers = function () {
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users");
-            fb.on("value", (function (ds) {
+            return fb.on("value", (function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -122,14 +124,14 @@ var FirebaseUtilities = (function () {
                     };
                     c.push(user);
                 }
-                resolve(c);
+                return resolve(c);
             }), function (error) { (reject); });
         });
     };
     FirebaseUtilities.getTeams = function () {
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "teams");
-            fb.once("value").then(function (ds) {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -142,7 +144,7 @@ var FirebaseUtilities = (function () {
                     var bName = bTeam.name;
                     return aName.localeCompare(bName);
                 });
-                resolve(c);
+                return resolve(c);
             }).catch(reject);
         });
     };
@@ -150,20 +152,20 @@ var FirebaseUtilities = (function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(_this.firebaseUrl + "users/" + user.key());
-            fb.set({
+            return fb.set({
                 username: user.username(),
                 fullname: user.fullname(),
                 points: user.points(),
                 role: user.role(),
                 email: user.email()
-            }).then(function () { resolve(true); }).catch(reject);
+            }).then(function () { return resolve(true); }).catch(reject);
         });
     };
     FirebaseUtilities.saveChallengeChoices = function (user, race, challenges) {
         var _this = this;
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(_this.firebaseUrl + "users/" + user.key() + "/results/2016/" + race.name);
-            fb.set(challenges).then(function () { resolve(true); }).catch(reject);
+            return fb.set(challenges).then(function () { return resolve(true); }).catch(reject);
         });
     };
     FirebaseUtilities.createUser = function (user, hashedPassword) {
@@ -174,12 +176,12 @@ var FirebaseUtilities = (function () {
                 email: user.email(),
                 password: hashedPassword
             };
-            fb.createUser(fbCred, function (error, userData) {
+            return fb.createUser(fbCred, function (error, userData) {
                 if (error) {
                     reject(error);
                     return;
                 }
-                resolve(userData);
+                return resolve(userData);
             });
         });
     };
@@ -192,12 +194,12 @@ var FirebaseUtilities = (function () {
                 oldPassword: oldPassword,
                 newPassword: newPassword
             };
-            fb.changePassword(fbCred, function (error) {
+            return fb.changePassword(fbCred, function (error) {
                 if (error) {
                     reject(error);
                     return;
                 }
-                resolve(true);
+                return resolve(true);
             });
         });
     };
@@ -205,12 +207,12 @@ var FirebaseUtilities = (function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(_this.firebaseUrl + "/users/" + user.key() + "/username");
-            fb.set(newUsername, function (error) {
+            return fb.set(newUsername, function (error) {
                 if (error) {
                     reject(error);
                     return;
                 }
-                resolve(true);
+                return resolve(true);
             });
         });
     };
@@ -228,10 +230,85 @@ var FirebaseUtilities = (function () {
                 "role": user.role(),
                 "key": processedEmail
             };
-            fb.set(newUser).then(function () { resolve(true); }).catch(reject);
+            return fb.set(newUser).then(function () { return resolve(true); }).catch(reject);
         });
+    };
+    FirebaseUtilities.getUserByKey = function (key) {
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + key);
+            return fb.once("value").then(function (ds) {
+                var value = ds.val();
+                var userData = {
+                    editing: ko.observable(false),
+                    email: ko.observable(value["email"]),
+                    fullname: ko.observable(value["fullname"]),
+                    points: ko.observable(value["points"]),
+                    key: ko.observable(key),
+                    role: ko.observable(value["role"]),
+                    username: ko.observable(value["username"])
+                };
+                return resolve(userData);
+            });
+        });
+    };
+    FirebaseUtilities.addNewBlogPost = function (post) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var by = post.user.key();
+            var title = post.title;
+            var time = post.timestamp;
+            var message = post.message;
+            message = FirebaseUtilities.escape(message);
+            var fb = new Firebase(_this.firebaseUrl + "blogPosts/" + time + by);
+            var newPost = {
+                "title": title,
+                "user": by,
+                "message": message,
+                "timestamp": time
+            };
+            return fb.set(newPost).then(function () { return resolve(true); }).catch(reject);
+        });
+    };
+    FirebaseUtilities.getAllBlogPosts = function () {
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "blogPosts");
+            return fb.once("value").then(function (ds) {
+                var values = ds.val();
+                var blog = [];
+                var promises = [];
+                for (var p in values) {
+                    var b = values[p];
+                    var key = b["user"];
+                    b.message = FirebaseUtilities.unescape(b.message);
+                    promises.push(key);
+                    blog.push(b);
+                }
+                return Promise.all(blog.map(function (blog, i, a) {
+                    return FirebaseUtilities.getUserByKey(blog.user).then(function (u) {
+                        blog.user = u;
+                    });
+                })).then(function (us) {
+                    blog.sort(function (aB, bB) {
+                        var aTime = +aB.timestamp;
+                        var bTime = +bB.timestamp;
+                        return bTime - aTime;
+                    });
+                    blog.forEach(function (b) {
+                        b.timestamp = new Date(+b.timestamp).toLocaleDateString();
+                    });
+                    return resolve(blog);
+                });
+            }).catch(reject);
+        });
+    };
+    FirebaseUtilities.escape = function (inString) {
+        var enc = encodeURIComponent(inString);
+        var rep = enc.replace(/\./g, "%2E");
+        return rep;
+    };
+    FirebaseUtilities.unescape = function (inString) {
+        return decodeURIComponent(inString);
     };
     FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
     return FirebaseUtilities;
 })();
-//# sourceMappingURL=firebaseUtilities.js.map

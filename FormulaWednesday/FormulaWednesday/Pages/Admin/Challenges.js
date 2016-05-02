@@ -8,7 +8,6 @@ var ChallengesAdmin = (function (_super) {
     function ChallengesAdmin(app) {
         _super.call(this, app);
         this.markupUri = "Pages/Admin/Challenges.html";
-        this.divId = "challenges-admin";
         this.challenges = ko.observableArray([]);
         this.showAddChallengePane = ko.observable(false);
         this.editing = ko.observable(false);
@@ -106,4 +105,3 @@ var ChallengesAdmin = (function (_super) {
     };
     return ChallengesAdmin;
 })(PageBase);
-//# sourceMappingURL=Challenges.js.map

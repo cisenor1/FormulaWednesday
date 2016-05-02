@@ -2,12 +2,19 @@
 <html>
 <head>
     <title></title>
-    <meta charset="utf-8" />    
+    <meta charset="utf-8" />
+    <script src="http://cdn.jsdelivr.net/bluebird/3.3.5/bluebird.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+    <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src='https://cdn.tinymce.com/4/tinymce.min.js'></script>
     <script src="Hashing/md5.js"></script>
     <script src="Models/PageBase.js"></script>
     <script src="Scripts/FormulaWednesdaysUtilities.js"></script>
+    <script src="Scripts/tinymce.min.js"></script>
     <script src="Pages/Admin/Admin.js"></script>
     <script src="Pages/Admin/Users.js"></script>
+    <script src="Pages/Admin/Blog.js"></script>
     <script src="Pages/Challenges/Challenges.js"></script>
     <script src="Pages/Preferences/Preferences.js"></script>
     <script src="Pages/Homepage/Homepage.js"></script>
@@ -16,14 +23,11 @@
     <script src="Pages/Admin/Races.js"></script>
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
-    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
     <script src="Pages/Challenges/Challenges.js"></script>
-    <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
     <script src="Scripts/firebaseUtilities.js"></script>
     <script src="Scripts/app.js"></script>
     <!-- Latest compiled and minified CSS -->
     <link href="Styles/styles.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
 <body>
     <nav class="navbar navbar-default">
@@ -40,6 +44,7 @@
                     Formula Wednesday
                 </a>
             </div>
+
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
@@ -60,14 +65,14 @@
                         </ul>
                     </li>
                 </ul>
-                <form data-bind="visible: !loggedIn()" class="navbar-form navbar-right" role="search">
+                <form data-bind="if: !loggedIn()" class="navbar-form navbar-right" role="search">
                     <div class="form-group">
                         <input type="text" class="form-control" data-bind="value: nameObservable" placeholder="Email">
                         <input type="password" class="form-control" data-bind="value: pwObservable" placeholder="Password">
                     </div>
                     <button type="submit" data-bind="click: doLogIn" class="btn btn-default">Log In</button>
                 </form>
-                <ul class="nav navbar-nav navbar-right" data-bind="visible: loggedIn()">
+                <ul class="nav navbar-nav navbar-right" data-bind="if: loggedIn()">
                     <li class="navbar-right"><a href="#" data-bind="text: logOutMessage, click: doLogOut"></a></li>
                     <li class="dropdown">
                         <a class="glyphicon glyphicon-cog dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"></a>
@@ -80,5 +85,17 @@
         </div><!-- /.container-fluid -->
     </nav>
     <div id="page-content-div"></div>
+    <div data-bind="if: loggedIn()">
+        <div id="side-bar" class="panel panel-default">
+            <div class="panel-heading">Standings</div>
+            <table class="table" data-bind="foreach: sortedUsers">
+                <tr>
+                    <td data-bind="text:  $index() + 1"></td>
+                    <td data-bind="text:username"></td>
+                    <td data-bind="text:points"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </body>
 </html>

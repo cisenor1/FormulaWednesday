@@ -70,6 +70,7 @@
   <ItemGroup>
     <Content Include="admin.html" />
     <Content Include="packages.config" />
+    <Content Include="Pages\Admin\Blog.html" />
     <Content Include="Pages\Admin\Races.html" />
     <Content Include="Pages\Admin\Drivers.html" />
     <Content Include="Pages\Admin\Challenges.html" />
@@ -80,8 +81,11 @@
     <Content Include="Pages\Preferences\Preferences.html" />
     <Content Include="Scripts\fetch.js" />
     <Content Include="Scripts\firebaseUtilities.js" />
+    <Content Include="Scripts\jquery.tinymce.min.js" />
     <Content Include="Scripts\knockout-3.4.0.debug.js" />
     <Content Include="Scripts\knockout-3.4.0.js" />
+    <Content Include="Scripts\tinymce.min.js" />
+    <Content Include="Scripts\widgEditor.js" />
     <Content Include="Styles\styles.css" />
     <Content Include="user.json" />
     <Content Include="bettingOptions.json" />
@@ -102,6 +106,7 @@
     <Content Include="Hashing\md5.js" />
     <Content Include="index.html" />
     <Content Include="Markup\InputForm.html" />
+    <TypeScriptCompile Include="Models\BlogPost.ts" />
     <TypeScriptCompile Include="Models\Challenge.ts" />
     <TypeScriptCompile Include="Models\Credentials.ts" />
     <TypeScriptCompile Include="Models\Driver.ts" />
@@ -110,6 +115,7 @@
     <TypeScriptCompile Include="Models\Race.ts" />
     <TypeScriptCompile Include="Models\Team.ts" />
     <TypeScriptCompile Include="Models\PageBase.ts" />
+    <TypeScriptCompile Include="Pages\Admin\Blog.ts" />
     <TypeScriptCompile Include="Pages\Admin\Drivers.ts" />
     <TypeScriptCompile Include="Pages\Admin\Races.ts" />
     <TypeScriptCompile Include="Pages\Admin\Challenges.ts" />
@@ -134,7 +140,6 @@
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Web.config" />
-    <TypeScriptCompile Include="Models\User.ts" />
     <TypeScriptCompile Include="Scripts\firebaseUtilities.ts" />
     <TypeScriptCompile Include="Scripts\FormulaWednesdaysUtilities.ts" />
     <TypeScriptCompile Include="Scripts\typings\bluebird\bluebird.d.ts" />
@@ -156,6 +161,21 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>None</TypeScriptModuleKind>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>False</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />

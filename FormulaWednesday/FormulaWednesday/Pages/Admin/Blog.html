@@ -1,0 +1,11 @@
+﻿<div class="panel">
+    <form id="new-user-form" data-bind="submit: submitCreateBlogPost">
+        <h3>Add a Blog Post</h3>
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Title:</span>
+            <input class="form-control" type="text" required data-bind="value: newTitle" />
+        </div>
+        <textarea class="tinymce" id="new-blog-content" draggable="false" data-bind="textInput:newContent"></textarea>
+        <input class="fwed-button" type="submit" value="Post" />
+    </form>
+</div>

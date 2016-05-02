@@ -1,7 +1,6 @@
 ﻿class ChallengesAdmin extends PageBase implements Page {
 
     markupUri: string = "Pages/Admin/Challenges.html";
-    divId: string = "challenges-admin";
     challenges = ko.observableArray([]);
     showAddChallengePane = ko.observable(false);
     editing = ko.observable(false);

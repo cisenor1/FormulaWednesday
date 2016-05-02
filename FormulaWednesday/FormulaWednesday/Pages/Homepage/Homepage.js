@@ -8,12 +8,18 @@ var HomePage = (function (_super) {
     function HomePage(app) {
         _super.call(this, app);
         this.markupUri = "Pages/Homepage/Homepage.html";
+        this.blogPosts = ko.observableArray([]);
         this.vmPromise = this.createVM();
     }
     HomePage.prototype.createVM = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            resolve(_this);
+            _this.getBlogPosts().then(function (bs) {
+                _this.blogPosts(bs);
+                resolve(_this);
+            }).catch(function (e) {
+                alert(e);
+            });
         });
     };
     HomePage.prototype.getMarkup = function () {
@@ -29,6 +35,8 @@ var HomePage = (function (_super) {
     HomePage.prototype.getViewModel = function () {
         return this.vmPromise;
     };
+    HomePage.prototype.getBlogPosts = function () {
+        return FirebaseUtilities.getAllBlogPosts();
+    };
     return HomePage;
 })(PageBase);
-//# sourceMappingURL=Homepage.js.map

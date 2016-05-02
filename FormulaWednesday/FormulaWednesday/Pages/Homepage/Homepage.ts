@@ -1,14 +1,20 @@
 ﻿class HomePage extends PageBase implements Page {
 
     markupUri: string = "Pages/Homepage/Homepage.html";
-    
+    blogPosts: KnockoutObservableArray<BlogObject> = ko.observableArray<BlogObject>([]);
+
     constructor(app: FormulaWednesdayApp) {
         super(app);
         this.vmPromise = this.createVM();
     }
     createVM(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            resolve(this);
+            this.getBlogPosts().then((bs) => {
+                this.blogPosts(bs);
+                resolve(this);
+            }).catch((e) => {
+                alert(e);
+            });
         });
     }
 
@@ -24,5 +30,9 @@
 
     getViewModel(): Promise<any> {
         return this.vmPromise;
+    }
+
+    getBlogPosts(): Promise<BlogObject[]> {
+        return FirebaseUtilities.getAllBlogPosts();
     }
 }

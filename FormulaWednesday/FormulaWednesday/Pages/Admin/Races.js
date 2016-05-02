@@ -65,4 +65,3 @@ var RacesAdmin = (function (_super) {
     };
     return RacesAdmin;
 })(PageBase);
-//# sourceMappingURL=Races.js.map

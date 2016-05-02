@@ -7,10 +7,9 @@
 }
 
 #page-content-div {
-    width:80%;
+    width: 54%;
     margin: 0 10%;
 }
-
 li.menuraceover {
     background: rgba(255, 0, 0, 0.19);
 }
@@ -79,17 +78,29 @@ p.list-group-item-text.fwed-user-username {
 img.image {
     width: auto;
     position: absolute;
-    height: 60em;
+    /* height: 60em; */
     z-index: -1;
+    top: 8em;
+    right: 38em;
 }
-
 .homepage-message {
     z-index: 10;
-    width: 45%;
     margin-top: 3em;
 }
-
-
+img.panel-body {
+    border-radius: 3px;
+    width: 100%;
+    padding: 1px;
+}
+textarea {
+    width: 80% !important;
+    display: block;
+    position: relative;
+    resize: none;
+    height: 12em !important;
+    overflow: auto;
+    outline: none;
+}
 li.form-group.list-group-item.raceover {
     border: 1px #FFAFAF solid;
     /* border-bottom: 1px solid red; */
@@ -107,4 +118,27 @@ li {
 
 .race-validation span#basic-addon1 {
     width: 16em;
+}
+
+div#side-bar {
+    /* float: right; */
+    width: 30%;
+    position: absolute;
+    top: 10%;
+    right: 4em;
+}
+
+span.blog-user {
+    float:right;
+}
+
+span.blog-date {
+    font-size: smaller;
+    font-weight: bold;
+    color: grey;
+}
+span.blog-title {
+    font-size: large;
+    /* width: 30%; */
+    display: block;
 }

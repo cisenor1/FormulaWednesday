@@ -13,6 +13,7 @@ class FormulaWednesdayApp {
     logOutText: string = "Log out of ";
     logOutMessage: KnockoutObservable<string> = ko.observable(this.logOutText + this.nameObservable());
     user: User;
+    sortedUsers: KnockoutObservableArray<User> = ko.observableArray([]);
     isAdmin: KnockoutObservable<boolean> = ko.observable(false);
     challenges: KnockoutObservableArray<Challenge> = ko.observableArray([]);
     drivers: KnockoutObservableArray<Driver> = ko.observableArray([]);
@@ -37,6 +38,10 @@ class FormulaWednesdayApp {
         }, {
             binding: "admin-challenges",
             label: "Challenges"
+        },
+        {
+            binding: "admin-blog",
+            label: "Blog"
         }
     ]);
 
@@ -50,6 +55,8 @@ class FormulaWednesdayApp {
         if (this.credentials) {
             this.logInProcedure(this.credentials.name, this.credentials.password).then((user: User) => {
                 this.refreshUserInfo(user);
+            }).catch((e) => {
+                alert(e);
             });
         }
         this.currentPage.subscribe((page) => {
@@ -66,6 +73,7 @@ class FormulaWednesdayApp {
         FirebaseUtilities.getRaces().then((races) => {
             this.races(races);
         });
+        this.buildStandingsTable();
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
     }
@@ -77,6 +85,8 @@ class FormulaWednesdayApp {
         var hashed = md5(this.pwObservable());
         this.logInProcedure(this.nameObservable(), hashed).then((user) => {
             this.refreshUserInfo(user);
+        }).catch((e) => {
+            alert(e);
         });
     }
 
@@ -103,6 +113,7 @@ class FormulaWednesdayApp {
         //if (this.loggedIn()) {
         //    window.localStorage.setItem(this.currentPageKey, page);
         //}
+        
 
         var newPage: Page;
 
@@ -128,6 +139,9 @@ class FormulaWednesdayApp {
                 break;
             case "admin-drivers":
                 newPage = new DriversAdmin(this);
+                break;
+            case "admin-blog":
+                newPage = new BlogAdmin(this);
                 break;
             default:
                 newPage = new HomePage(this);
@@ -160,7 +174,7 @@ class FormulaWednesdayApp {
         }
         window.location.href = window.location.origin + "/admin.html";
     }
-    
+
 
     launchChallenges() {
         this.currentPage('challenges');
@@ -178,9 +192,25 @@ class FormulaWednesdayApp {
         this.currentPage('challenges#' + race.name);
     }
 
+    buildStandingsTable() {
+        FirebaseUtilities.getAllUsers().then((allUsers) => {
+            var sortedUsers = allUsers.sort((a, b) => {
+                return a.points() - b.points();
+            });
+            this.sortedUsers(sortedUsers);
+        });
+    }
+
 }
 
 window.onload = function () {
+    tinymce.init({ selector: '#new-blog-content' });
     var formulawednesdayapp = new FormulaWednesdayApp();
     formulawednesdayapp.initialize();
 }
+// Prevent Bootstrap dialog from blocking focusin
+$(document).on('focusin', function (e) {
+    if ($(e.target).closest(".mce-window").length) {
+        e.stopImmediatePropagation();
+    }
+});

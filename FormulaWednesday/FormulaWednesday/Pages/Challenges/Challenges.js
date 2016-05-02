@@ -136,4 +136,3 @@ var ChallengesPage = (function (_super) {
     };
     return ChallengesPage;
 })(PageBase);
-//# sourceMappingURL=Challenges.js.map

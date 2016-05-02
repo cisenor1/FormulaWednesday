@@ -17,4 +17,3 @@ var FormulaWednesdaysUtilities = (function () {
     };
     return FormulaWednesdaysUtilities;
 })();
-//# sourceMappingURL=FormulaWednesdaysUtilities.js.map

@@ -9,12 +9,12 @@
             };
 
             var firebase = new Firebase(FirebaseUtilities.firebaseUrl);
-            firebase.authWithPassword(fbCred).then((auth) => {
+            return firebase.authWithPassword(fbCred).then((auth) => {
                 // output user
                 var key = FormulaWednesdaysUtilities.getKeyFromEmail(fbCred.email);
                 var userUrl = FirebaseUtilities.firebaseUrl + "users/" + key;
                 var fb = new Firebase(userUrl);
-                fb.once("value").then((ds) => {
+                return fb.once("value").then((ds) => {
                     var fbUser = ds.val();
                     var user: User = {
                         key: ko.observable(key),
@@ -25,55 +25,57 @@
                         editing: ko.observable(false),
                         email: ko.observable(fbUser.email)
                     };
-                    resolve(user);
+                    return resolve(user);
                 });
-            });
+            }).catch(reject);
         });
     }
 
     static getChallenges(): Promise<Challenge[]> {
         return new Promise<Challenge[]>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges");
-            fb.once("value").then((ds) => {
+            return fb.once("value").then((ds) => {
                 var values = ds.val();
                 var c: Challenge[] = [];
                 for (var p in values) {
                     var fbChal = values[p];
                     var chal: Challenge = {
-                       choice: ko.observable(fbChal.choice),
-                       description: ko.observable(fbChal.description),
-                       key: ko.observable(fbChal.key),
-                       allSeason: ko.observable(fbChal.allSeason),
-                       message: ko.observable(fbChal.message),
-                       value: ko.observable(fbChal.value),
-                       editing: ko.observable(false),
-                       type: ko.observable(fbChal.type)
+                        choice: ko.observable(fbChal.choice),
+                        description: ko.observable(fbChal.description),
+                        key: ko.observable(fbChal.key),
+                        allSeason: ko.observable(fbChal.allSeason),
+                        message: ko.observable(fbChal.message),
+                        value: ko.observable(fbChal.value),
+                        editing: ko.observable(false),
+                        type: ko.observable(fbChal.type)
                     };
                     chal.key = ko.observable(p);
                     c.push(chal);
                 }
-                resolve(c);
+                return resolve(c);
             }).catch(reject);
         });
     }
 
-    static getDrivers(): Promise<Driver[]> {
+    static getDrivers(getInactive?:boolean): Promise<Driver[]> {
         return new Promise<Driver[]>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "drivers");
-            fb.once("value").then((ds) => {
+            return fb.once("value").then((ds) => {
                 var values = ds.val();
                 var c: Driver[] = [];
                 for (var p in values) {
                     var driver: Driver = values[p];
                     driver.key = p;
-                    c.push(driver);
+                    if (driver.active || getInactive) {
+                        c.push(driver);
+                    }
                 }
                 c.sort((aDriver: Driver, bDriver: Driver) => {
                     var aTeam = aDriver.team;
                     var bTeam = bDriver.team;
                     return aTeam.localeCompare(bTeam);
                 });
-                resolve(c);
+                return resolve(c);
             }).catch(reject);
         });
     }
@@ -81,7 +83,7 @@
     static getRaces(): Promise<Race[]> {
         return new Promise<Race[]>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/2016");
-            fb.once("value").then((ds) => {
+            return fb.once("value").then((ds) => {
                 var values = ds.val();
                 var c: Race[] = [];
                 for (var p in values) {
@@ -96,7 +98,7 @@
                 c = c.sort((r1, r2) => {
                     return r1.date.getTime() - r2.date.getTime();
                 });
-                resolve(c);
+                return resolve(c);
             }).catch(reject);
         });
     }
@@ -104,8 +106,8 @@
     static getUserChoices(user: User): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + user.key() + "/results/2016");
-            fb.once("value").then((ds) => {
-                resolve(ds.val());
+            return fb.once("value").then((ds) => {
+                return resolve(ds.val());
             }).catch(reject);
         });
     }
@@ -113,7 +115,7 @@
     static getAllUsers(): Promise<User[]> {
         return new Promise<User[]>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users");
-            fb.on("value", ((ds) => {
+            return fb.on("value", ((ds) => {
                 var values = ds.val();
                 var c: User[] = [];
                 for (var p in values) {
@@ -129,7 +131,7 @@
                     }
                     c.push(user);
                 }
-                resolve(c);
+                return resolve(c);
             }), (error) => { (reject) });
         });
     }
@@ -137,7 +139,7 @@
     static getTeams(): Promise<Team[]> {
         return new Promise<Team[]>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "teams");
-            fb.once("value").then((ds) => {
+            return fb.once("value").then((ds) => {
                 var values = ds.val();
                 var c: Team[] = [];
                 for (var p in values) {
@@ -150,7 +152,7 @@
                     var bName = bTeam.name;
                     return aName.localeCompare(bName);
                 });
-                resolve(c);
+                return resolve(c);
             }).catch(reject);
         });
     }
@@ -158,20 +160,20 @@
     static saveUser(user: User): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             var fb = new Firebase(this.firebaseUrl + "users/" + user.key());
-            fb.set({
+            return fb.set({
                 username: user.username(),
                 fullname: user.fullname(),
                 points: user.points(),
                 role: user.role(),
                 email: user.email()
-            }).then(() => { resolve(true) }).catch(reject);
+            }).then(() => { return resolve(true) }).catch(reject);
         });
     }
 
     static saveChallengeChoices(user: User, race: Race, challenges: any): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             var fb = new Firebase(this.firebaseUrl + "users/" + user.key() + "/results/2016/" + race.name);
-            fb.set(challenges).then(() => { resolve(true) }).catch(reject);
+            return fb.set(challenges).then(() => { return resolve(true) }).catch(reject);
         });
     }
 
@@ -182,17 +184,17 @@
                 email: user.email(),
                 password: hashedPassword
             }
-            fb.createUser(fbCred, (error, userData) => {
+            return fb.createUser(fbCred, (error, userData) => {
                 if (error) {
                     reject(error);
                     return;
                 }
-                resolve(userData);
+                return resolve(userData);
             });
         });
     }
 
-    static changePassword(user: User, oldPassword: string, newPassword:string): Promise<boolean> {
+    static changePassword(user: User, oldPassword: string, newPassword: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             var fb = new Firebase(this.firebaseUrl);
             var fbCred: FirebaseChangePasswordCredentials = {
@@ -200,12 +202,12 @@
                 oldPassword: oldPassword,
                 newPassword: newPassword
             }
-            fb.changePassword(fbCred, (error) => {
+            return fb.changePassword(fbCred, (error) => {
                 if (error) {
                     reject(error);
                     return;
                 }
-                resolve(true);
+                return resolve(true);
             });
         });
     }
@@ -213,12 +215,12 @@
     static changeUsername(user: User, newUsername: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             var fb = new Firebase(this.firebaseUrl + "/users/" + user.key() + "/username");
-            fb.set(newUsername, (error) => {
+            return fb.set(newUsername, (error) => {
                 if (error) {
                     reject(error);
                     return;
                 }
-                resolve(true);
+                return resolve(true);
             });
         });
     }
@@ -234,9 +236,88 @@
                 "points": 0,
                 "email": user.email(),
                 "role": user.role(),
-                "key":processedEmail
+                "key": processedEmail
             }
-            fb.set(newUser).then(() => { resolve(true) }).catch(reject);
+            return fb.set(newUser).then(() => { return resolve(true) }).catch(reject);
         });
+    }
+
+    static getUserByKey(key: string): Promise<User> {
+        return new Promise<User>((resolve, reject) => {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + key);
+            return fb.once("value").then((ds) => {
+                var value = ds.val();
+                var userData: User = {
+                    editing: ko.observable(false),
+                    email: ko.observable(value["email"]),
+                    fullname: ko.observable(value["fullname"]),
+                    points: ko.observable(value["points"]),
+                    key: ko.observable(key),
+                    role: ko.observable(value["role"]),
+                    username: ko.observable(value["username"])
+                }
+                return resolve(userData);
+            });
+        });
+    }
+
+    static addNewBlogPost(post: BlogObject): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            var by = post.user.key();
+            var title = post.title;
+            var time = post.timestamp;
+            var message = post.message;
+            message = FirebaseUtilities.escape(message);
+            var fb = new Firebase(this.firebaseUrl + "blogPosts/" + time + by);
+            var newPost = {
+                "title": title,
+                "user": by,
+                "message": message,
+                "timestamp": time
+            }
+            return fb.set(newPost).then(() => { return resolve(true) }).catch(reject);
+        });
+    }
+
+    static getAllBlogPosts(): Promise<BlogObject[]> {
+        return new Promise<BlogObject[]>((resolve, reject) => {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "blogPosts");
+            return fb.once("value").then((ds) => {
+                var values = ds.val();
+                var blog: BlogObject[] = [];
+                var promises: string[] = [];
+                for (var p in values) {
+                    var b: BlogObject = values[p];
+                    var key = b["user"];
+                    b.message = FirebaseUtilities.unescape(b.message);
+                    promises.push(<any>key);
+                    blog.push(b);
+                }
+                return Promise.all(blog.map((blog, i, a) => {
+                    return FirebaseUtilities.getUserByKey(<any>blog.user).then((u) => {
+                        blog.user = u;
+                    });
+                })).then((us) => {
+                    blog.sort((aB: BlogObject, bB: BlogObject) => {
+                        var aTime = +aB.timestamp;
+                        var bTime = +bB.timestamp;
+                        return bTime - aTime;
+                    });
+                    blog.forEach((b) => {
+                        b.timestamp = new Date(+b.timestamp).toLocaleDateString();
+                    });
+                    return resolve(blog);
+                });
+            }).catch(reject);
+        });
+    }
+
+    static escape(inString: string) {
+        var enc = encodeURIComponent(inString);
+        var rep = enc.replace(/\./g, "%2E");
+        return rep;
+    }
+    static unescape(inString: string) {
+        return decodeURIComponent(inString);
     }
 }
