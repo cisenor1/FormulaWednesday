@@ -61,13 +61,13 @@ var FormulaWednesdayApp = (function () {
     };
     FormulaWednesdayApp.prototype.refreshUserInfo = function (user) {
         var _this = this;
+        this.buildStandingsTable();
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
         FirebaseUtilities.getRaces().then(function (races) {
             _this.races(races);
         });
-        this.buildStandingsTable();
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
     };

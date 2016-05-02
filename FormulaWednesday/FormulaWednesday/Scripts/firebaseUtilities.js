@@ -87,6 +87,7 @@ var FirebaseUtilities = (function () {
                 var c = [];
                 for (var p in values) {
                     var race = values[p];
+                    race.scored = ko.observable(!!values[p]["scored"]);
                     race.name = p;
                     race.date = new Date(race.date);
                     race.cutoff = new Date(race.cutoff);

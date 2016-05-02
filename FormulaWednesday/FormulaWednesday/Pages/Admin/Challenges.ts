@@ -66,11 +66,9 @@
     }
 
     editChallenge(item) {
-        debugger;
     }
 
     submitCreateChallenge() {
-        debugger;
         //var fullName = this.newName();
         //var username = this.newId();
         //if (!FormulaWednesdaysUtilities.validateUsername(username)) {

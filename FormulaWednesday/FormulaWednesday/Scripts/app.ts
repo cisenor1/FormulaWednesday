@@ -68,13 +68,13 @@ class FormulaWednesdayApp {
     }
 
     refreshUserInfo(user: User) {
+        this.buildStandingsTable();
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
         FirebaseUtilities.getRaces().then((races) => {
             this.races(races);
         });
-        this.buildStandingsTable();
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
     }

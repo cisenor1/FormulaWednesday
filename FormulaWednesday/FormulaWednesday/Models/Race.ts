@@ -10,7 +10,7 @@
     season: number;
     validating?: KnockoutObservable<boolean>
     done: KnockoutObservable<boolean>;
-
+    scored?: KnockoutObservable<boolean>;
 }
 
 interface Result {

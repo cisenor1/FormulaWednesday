@@ -16,7 +16,7 @@
                 <span data-bind="text:city"></span>, <span data-bind="text: country"></span>
                 <p data-bind="text: date"></p>
             </div>
-            <div class="right" data-bind="if: (done() && !validating())">
+            <div class="right" data-bind="if: (done() && !validating()) && !scored()">
                 <a data-bind="click: function(item){ $parent.validateRace(item) }">Score this race</a>
             </div>
             <div data-bind="if:validating()">

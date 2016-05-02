@@ -91,6 +91,7 @@
                 var c: Race[] = [];
                 for (var p in values) {
                     var race: Race = values[p];
+                    race.scored = ko.observable(!!values[p]["scored"]);
                     race.name = p;
                     race.date = new Date((<any>race.date));
                     race.cutoff = new Date((<any>race.cutoff));

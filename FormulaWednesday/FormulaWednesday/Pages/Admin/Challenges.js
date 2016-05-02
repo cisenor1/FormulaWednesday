@@ -63,10 +63,8 @@ var ChallengesAdmin = (function (_super) {
         this.showAddChallengePane(true);
     };
     ChallengesAdmin.prototype.editChallenge = function (item) {
-        debugger;
     };
     ChallengesAdmin.prototype.submitCreateChallenge = function () {
-        debugger;
         //var fullName = this.newName();
         //var username = this.newId();
         //if (!FormulaWednesdaysUtilities.validateUsername(username)) {
