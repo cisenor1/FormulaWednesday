@@ -6,8 +6,14 @@
     country: string,
     city: string,
     winner?: KnockoutObservable<Driver>,
-    results?: any; 
+    results?: any;
+    season: number;
     validating?: KnockoutObservable<boolean>
     done: KnockoutObservable<boolean>;
 
+}
+
+interface Result {
+    challenge: string;
+    winner: string;
 }

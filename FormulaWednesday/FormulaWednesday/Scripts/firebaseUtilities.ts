@@ -25,6 +25,9 @@
                         editing: ko.observable(false),
                         email: ko.observable(fbUser.email)
                     };
+                    if (fbUser.results) {
+                        user.results = fbUser.results;
+                    }
                     return resolve(user);
                 });
             }).catch(reject);
@@ -125,6 +128,7 @@
                         points: ko.observable(u.points),
                         role: ko.observable(u.role),
                         fullname: ko.observable(u.fullname),
+                        results: u.results || {},
                         username: ko.observable(u.username),
                         editing: ko.observable(false),
                         email: ko.observable(u.email)
@@ -319,5 +323,18 @@
     }
     static unescape(inString: string) {
         return decodeURIComponent(inString);
+    }
+
+    static setRaceResults(race: Race): Promise<Race> {
+        return new Promise<Race>((resolve, reject) => {
+            var fb = new Firebase(this.firebaseUrl + "races/" + race.season + "/" + race.name + "/results");
+            return fb.set(race.results).then(() => { return resolve(race) }).catch(reject);
+        });
+    }
+
+    static setPoints(user: User) {
+        var url = this.firebaseUrl + "users/" + user.key() + "/points";
+        var fb = new Firebase(url);
+        return fb.set(user.points());
     }
 }

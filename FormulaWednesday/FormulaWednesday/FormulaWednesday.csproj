@@ -115,6 +115,7 @@
     <TypeScriptCompile Include="Models\Race.ts" />
     <TypeScriptCompile Include="Models\Team.ts" />
     <TypeScriptCompile Include="Models\PageBase.ts" />
+    <TypeScriptCompile Include="Models\User.ts" />
     <TypeScriptCompile Include="Pages\Admin\Blog.ts" />
     <TypeScriptCompile Include="Pages\Admin\Drivers.ts" />
     <TypeScriptCompile Include="Pages\Admin\Races.ts" />

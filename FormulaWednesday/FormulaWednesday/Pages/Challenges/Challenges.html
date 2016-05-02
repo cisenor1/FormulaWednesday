@@ -28,7 +28,7 @@
             <h2 data-bind="text: message" class="list-group-item-heading"></h2>
             <p data-bind="text: description" class="list-group-item-text"></p>
             <div data-bind="if: choice">
-                <select class="form-control" data-bind="visible: $parent.valid, value: choice().key, options: $parent.drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: $parent.change}"></select>
+                <select class="form-control" data-bind="visible: $parent.valid, value: choice().key, options: $parent.drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: $parents[1].change}"></select>
                 <span class="form-control" data-bind="visible: !$parent.valid(), text:choice().name"></span>
             </div>
             <div data-bind="ifnot: choice">

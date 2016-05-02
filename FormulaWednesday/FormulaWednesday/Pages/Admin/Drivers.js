@@ -27,7 +27,7 @@ var DriversAdmin = (function (_super) {
             return false;
         }
         return new Promise(function (resolve, reject) {
-            FirebaseUtilities.getDrivers().then(function (values) {
+            FirebaseUtilities.getDrivers(true).then(function (values) {
                 _this.drivers(values);
                 resolve(_this);
             });
@@ -45,6 +45,11 @@ var DriversAdmin = (function (_super) {
     };
     DriversAdmin.prototype.getViewModel = function () {
         return this.vmPromise;
+    };
+    DriversAdmin.prototype.setActive = function (active, driver) {
+    };
+    DriversAdmin.prototype.saveDriver = function (driver) {
+        debugger;
     };
     DriversAdmin.prototype.editUser = function (user) {
         this.cachedUser = {

@@ -24,7 +24,7 @@
             return <any>false;
         }
         return new Promise<any>((resolve, reject) => {
-            FirebaseUtilities.getDrivers().then((values) => {
+            FirebaseUtilities.getDrivers(true).then((values) => {
                 this.drivers(values);
                 resolve(this);
             });
@@ -44,6 +44,14 @@
 
     getViewModel(): Promise<any> {
         return this.vmPromise;
+    }
+
+    setActive(active: boolean, driver: Driver) {
+        
+    }
+
+    saveDriver(driver: Driver) {
+        debugger;
     }
 
     editUser(user: User) {

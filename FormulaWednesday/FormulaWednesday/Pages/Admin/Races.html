@@ -25,12 +25,12 @@
                         <li>
                             <div class="input-group">
                                 <span class="input-group-addon" id="basic-addon1" data-bind="text: message"></span>
-                                <select class="form-control" data-bind="options: $parents[1].drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: function(item){$parents[1].change(value)}}"></select>
+                                <select class="form-control" data-bind="options: $parents[1].drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: function($context, e){$parents[1].change($context,$parent, e, $root)}}"></select>
                             </div>
                         </li>
                     </ul>
-                    <button data-bind="click: function(){$parent.submitValidateRace($data)}" class="fwed-button">Validate</button>
-                    <button data-bind="click: function(item){$parent.submitValidateRace(item)}" class="fwed-button">Cancel</button>
+                    <button data-bind="click: function(){$parent.submitValidateRace($data,$parent)}" class="fwed-button">Validate</button>
+                    <button data-bind="click: function(item){$parent.cancelValidate(item)}" class="fwed-button">Cancel</button>
                 </div>
             </div>
         </li>

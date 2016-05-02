@@ -24,6 +24,7 @@ var RacesAdmin = (function (_super) {
         return new Promise(function (resolve, reject) {
             FirebaseUtilities.getRaces().then(function (values) {
                 _this.races(values);
+                _this.currentRace = ko.observable(values[0]);
                 _this.races().forEach(function (r) {
                     r.done = ko.observable(r.cutoff < new Date(Date.now()));
                     r.date = ko.observable(r.date.toDateString());
@@ -52,16 +53,56 @@ var RacesAdmin = (function (_super) {
     RacesAdmin.prototype.getViewModel = function () {
         return this.vmPromise;
     };
-    RacesAdmin.prototype.submitValidateRace = function (race) {
+    RacesAdmin.prototype.submitValidateRace = function (race, vm) {
+        race.validating(false);
+        FirebaseUtilities.setRaceResults(race).then(function (r) {
+            var self = vm;
+            vm.app.sortedUsers().forEach(function (u) {
+                debugger;
+                var results = r.results;
+                var chals = self.challenges();
+                if (!u.results) {
+                    return;
+                }
+                var season = u.results[r.season];
+                if (!season) {
+                    return;
+                }
+                var picks = u.results[r.season][r.name];
+                if (picks) {
+                    for (var p in picks) {
+                        var currentChal = chals.filter(function (c) {
+                            return c.key = p;
+                        })[0];
+                        var win = r.results[p];
+                        var picked = picks[p];
+                        if (win == picked) {
+                            var currPts = u.points();
+                            currPts += currentChal.value();
+                            u.points(currPts);
+                        }
+                    }
+                    FirebaseUtilities.setPoints(u);
+                }
+            });
+        });
+    };
+    RacesAdmin.prototype.cancelValidate = function (race) {
         race.validating(false);
     };
-    RacesAdmin.prototype.cancelValidateRace = function (race) {
-    };
     RacesAdmin.prototype.validateRace = function (race) {
+        this.currentRace(race);
         race.validating(true);
     };
-    RacesAdmin.prototype.change = function (race) {
-        debugger;
+    RacesAdmin.prototype.change = function (challenge, race, e, vm) {
+        var driverKey = e.target.value;
+        var currRace = vm.currentRace();
+        if (!currRace.results) {
+            currRace.results = [];
+        }
+        var key = challenge.key();
+        currRace.results[challenge.key()] = driverKey;
+        vm.currentRace(currRace);
     };
     return RacesAdmin;
 })(PageBase);

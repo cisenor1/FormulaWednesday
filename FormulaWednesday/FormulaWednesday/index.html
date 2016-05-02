@@ -86,15 +86,27 @@
     </nav>
     <div id="page-content-div"></div>
     <div data-bind="if: loggedIn()">
-        <div id="side-bar" class="panel panel-default">
-            <div class="panel-heading">Standings</div>
-            <table class="table" data-bind="foreach: sortedUsers">
-                <tr>
-                    <td data-bind="text:  $index() + 1"></td>
-                    <td data-bind="text:username"></td>
-                    <td data-bind="text:points"></td>
-                </tr>
-            </table>
+        <div id="side-bar">
+            <div class="panel panel-default">
+                <div class="panel-heading">Standings</div>
+                <table class="table" data-bind="foreach: sortedUsers">
+                    <tr>
+                        <td data-bind="text:  $index() + 1 + '.'"></td>
+                        <td data-bind="text:username"></td>
+                        <td data-bind="text:points"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Driver Standings</div>
+                <table class="table" data-bind="foreach:sortedDrivers">
+                    <tr>
+                        <td data-bind="text: $index() + 1 +'.'"></td>
+                        <td data-bind="text: name"></td>
+                        <td data-bind="text: points"></td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </body>

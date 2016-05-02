@@ -2,24 +2,25 @@
 /// <reference path="typings/knockout/knockout.d.ts" />
 var FormulaWednesdayApp = (function () {
     function FormulaWednesdayApp() {
-        this.currentPage = ko.observable("");
-        this.nameObservable = ko.observable("");
-        this.pwObservable = ko.observable("");
-        this.loggedIn = ko.observable(false);
+        this.adminDropdown = "admin-dropdown";
+        this.challenges = ko.observableArray([]);
         this.credentialsKey = "formulawednesday.user";
+        this.currentPage = ko.observable("");
         this.currentPageKey = "formulawednesday.page";
         this.currentRaceKey = "formulawednesday.race";
-        this.logOutText = "Log out of ";
-        this.logOutMessage = ko.observable(this.logOutText + this.nameObservable());
-        this.sortedUsers = ko.observableArray([]);
-        this.isAdmin = ko.observable(false);
-        this.challenges = ko.observableArray([]);
         this.drivers = ko.observableArray([]);
-        this.teams = ko.observableArray([]);
-        this.races = ko.observableArray([]);
+        this.isAdmin = ko.observable(false);
+        this.loggedIn = ko.observable(false);
+        this.nameObservable = ko.observable("");
+        this.logOutMessage = ko.observable(this.logOutText + this.nameObservable());
+        this.logOutText = "Log out of ";
         this.pageContent = "page-content-div";
+        this.pwObservable = ko.observable("");
         this.raceDropdown = "race-dropdown";
-        this.adminDropdown = "admin-dropdown";
+        this.races = ko.observableArray([]);
+        this.sortedUsers = ko.observableArray([]);
+        this.sortedDrivers = ko.observableArray([]);
+        this.teams = ko.observableArray([]);
         this.adminMenu = ko.observableArray([
             {
                 binding: "admin-users",
@@ -175,9 +176,15 @@ var FormulaWednesdayApp = (function () {
         var _this = this;
         FirebaseUtilities.getAllUsers().then(function (allUsers) {
             var sortedUsers = allUsers.sort(function (a, b) {
-                return a.points() - b.points();
+                return b.points() - a.points();
             });
             _this.sortedUsers(sortedUsers);
+        });
+        FirebaseUtilities.getDrivers().then(function (d) {
+            var sortedDrivers = d.sort(function (a, b) {
+                return b.points - a.points;
+            });
+            _this.sortedDrivers(sortedDrivers);
         });
     };
     return FormulaWednesdayApp;

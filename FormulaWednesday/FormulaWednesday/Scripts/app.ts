@@ -2,27 +2,28 @@
 /// <reference path="typings/knockout/knockout.d.ts" />
 declare var md5;
 class FormulaWednesdayApp {
-    currentPage = ko.observable("");
-    nameObservable: KnockoutObservable<string> = ko.observable("");
-    pwObservable: KnockoutObservable<string> = ko.observable("");
-    loggedIn: KnockoutObservable<boolean> = ko.observable(false);
+    adminDropdown: string = "admin-dropdown";
+    challenges: KnockoutObservableArray<Challenge> = ko.observableArray([]);
+    credentials: Credentials;
     credentialsKey: string = "formulawednesday.user";
+    currentPage = ko.observable("");
     currentPageKey: string = "formulawednesday.page";
     currentRaceKey: string = "formulawednesday.race";
-    credentials: Credentials;
-    logOutText: string = "Log out of ";
-    logOutMessage: KnockoutObservable<string> = ko.observable(this.logOutText + this.nameObservable());
-    user: User;
-    sortedUsers: KnockoutObservableArray<User> = ko.observableArray([]);
-    isAdmin: KnockoutObservable<boolean> = ko.observable(false);
-    challenges: KnockoutObservableArray<Challenge> = ko.observableArray([]);
     drivers: KnockoutObservableArray<Driver> = ko.observableArray([]);
-    teams: KnockoutObservableArray<Team> = ko.observableArray([]);
-    races: KnockoutObservableArray<Race> = ko.observableArray([]);
+    isAdmin: KnockoutObservable<boolean> = ko.observable(false);
+    loggedIn: KnockoutObservable<boolean> = ko.observable(false);
+    nameObservable: KnockoutObservable<string> = ko.observable("");
+    logOutMessage: KnockoutObservable<string> = ko.observable(this.logOutText + this.nameObservable());
+    logOutText: string = "Log out of ";
     pageContent: string = "page-content-div";
+    pwObservable: KnockoutObservable<string> = ko.observable("");
     raceDropdown: string = "race-dropdown";
+    races: KnockoutObservableArray<Race> = ko.observableArray([]);
     selectedRace: Race;
-    adminDropdown: string = "admin-dropdown";
+    sortedUsers: KnockoutObservableArray<User> = ko.observableArray([]);
+    sortedDrivers: KnockoutObservableArray<Driver> = ko.observableArray([]);
+    teams: KnockoutObservableArray<Team> = ko.observableArray([]);
+    user: User;
     adminMenu: KnockoutObservableArray<MenuItem> = ko.observableArray([
         {
             binding: "admin-users",
@@ -195,9 +196,15 @@ class FormulaWednesdayApp {
     buildStandingsTable() {
         FirebaseUtilities.getAllUsers().then((allUsers) => {
             var sortedUsers = allUsers.sort((a, b) => {
-                return a.points() - b.points();
+                return b.points() - a.points();
             });
             this.sortedUsers(sortedUsers);
+        });
+        FirebaseUtilities.getDrivers().then((d) => {
+            var sortedDrivers = d.sort((a, b) => {
+                return b.points - a.points;
+            });
+            this.sortedDrivers(sortedDrivers);
         });
     }
 
