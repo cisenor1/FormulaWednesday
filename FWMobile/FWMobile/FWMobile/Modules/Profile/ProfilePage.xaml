@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FWMobile.Modules.Profile.ProfilePage"
+             xmlns:fe="clr-namespace:FreshEssentials;assembly=FreshEssentials">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <fe:InverseBooleanConverter x:Key="InverseConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  <StackLayout>
+    <StackLayout IsVisible="{Binding LoggedIn, Converter={StaticResource InverseConverter}}">
+      <Label Text="You are currently not logged in. Please login to view or edit your profile"></Label>
+      <Button Text="Log In" Command="{Binding LoginCommand}"></Button>
+    </StackLayout>
+    <StackLayout Padding="20, 0, 0, 0" IsVisible="{Binding LoggedIn}">
+      <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+        <Label Text="Display Name: " VerticalOptions="CenterAndExpand"></Label>
+        <Label Text="{Binding User.UserName}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"></Label>
+      </StackLayout>
+      <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+        <Label Text="Full Name: " VerticalOptions="CenterAndExpand"></Label>
+        <Label Text="{Binding User.FullName}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"></Label>
+      </StackLayout>
+      <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+        <Label Text="Email: " VerticalOptions="CenterAndExpand"></Label>
+        <Label Text="{Binding User.Email}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"></Label>
+      </StackLayout>
+      <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+        <Label Text="Points: " VerticalOptions="CenterAndExpand"></Label>
+        <Label Text="{Binding User.Points}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"></Label>
+      </StackLayout>
+      <Button Text="Log Out" Command="{Binding LogoutCommand}"></Button>
+    </StackLayout>
+  </StackLayout>
+</ContentPage>
