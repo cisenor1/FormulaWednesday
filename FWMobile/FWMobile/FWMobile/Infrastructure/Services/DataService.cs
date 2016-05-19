@@ -41,9 +41,9 @@ namespace FWMobile.Infrastructure.Services
             return _races;
         }
 
-        public async Task<IDictionary<Challenge, string>> GetRaceChoices(User user, Race race)
+        public async Task<IDictionary<Challenge, Driver>> GetRaceChoices(User user, Race race)
         {
-            Dictionary<Challenge, string> choices = new Dictionary<Challenge, string>();
+            Dictionary<Challenge, Driver> choices = new Dictionary<Challenge, Driver>();
 
             var challenges = await GetGenericChallenges(user);
             var drivers = await GetDrivers(user);
@@ -56,11 +56,13 @@ namespace FWMobile.Infrastructure.Services
                     var choice = choiceList.FirstOrDefault(x => x.Key == challenge.Key);
                     if (!string.IsNullOrWhiteSpace(choice.Value))
                     {
-                        choices.Add(challenge, choice.Value);
+                        var driver = drivers.FirstOrDefault(x => x.Key == choice.Value);
+                        choices.Add(challenge, driver);
+                        //choices.Add(challenge, choice.Value);
                     }
                     else
                     {
-                        choices.Add(challenge, string.Empty);
+                        choices.Add(challenge, null);
                     }
                 }
             }

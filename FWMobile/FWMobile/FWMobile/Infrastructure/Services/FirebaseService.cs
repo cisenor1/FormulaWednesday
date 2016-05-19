@@ -142,6 +142,7 @@ namespace FWMobile.Infrastructure.Services
                             challenge.Value = challengeToken.Value<int>("value");
                             challenge.Description = challengeToken.Value<string>("description");
                             challenge.Type = challengeToken.Value<string>("type");
+                            challenge.Key = key;
                             challenges.Add(challenge);
                         }
                     }
