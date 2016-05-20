@@ -217,6 +217,23 @@ namespace FWMobile.Infrastructure.Services
 
             return drivers;
         }
+
+        public async Task<bool> SaveUserChoices(string token, string userKey, string raceKey, int year, IDictionary<string, string> picks)
+        {
+            var choiceUrl = _basePath + "users/" + userKey + "/results/" + year.ToString() + "/" + raceKey + ".json?auth=" + token;
+
+            var pickString = JsonConvert.SerializeObject(picks);
+            var content = new StringContent(pickString);
+            bool success = false;
+            using (var client = new HttpClient())
+            using (var response = await client.PutAsync(choiceUrl, content))
+            {
+                success = response.IsSuccessStatusCode;
+                var responseString = response.Content.ReadAsStringAsync();
+            }
+
+            return success;
+        }
     }
 
     class FirebaseLoginInfo

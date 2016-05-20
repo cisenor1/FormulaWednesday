@@ -16,5 +16,7 @@ namespace FWMobile.Infrastructure
         Task<IList<Driver>> GetDrivers(User user);
 
         Task<IDictionary<Challenge, Driver>> GetRaceChoices(User user, Race race);
+
+        Task<bool> SaveUserChoices(User user, Race race, IDictionary<Challenge, Driver> picks);
     }
 }

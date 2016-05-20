@@ -79,6 +79,29 @@ namespace FWMobile.Infrastructure.Services
             return _drivers;
         }
 
+        public async Task<bool> SaveUserChoices(User user, Race race, IDictionary<Challenge, Driver> picks)
+        {
+            IDictionary<string, string> challengeDriverPicks = new Dictionary<string, string>();
+            foreach (var pick in picks)
+            {
+                var challenge = pick.Key;
+                var driver = pick.Value;
+                
+                if (driver != null)
+                {
+                    challengeDriverPicks.Add(challenge.Key, driver.Key);
+                }
+                else
+                {
+                    challengeDriverPicks.Add(challenge.Key, string.Empty);
+                }
+            }
+
+            bool success = await _firebaseService.SaveUserChoices(user.Token, user.Key, race.Key, DateTime.Now.Year, challengeDriverPicks);
+
+            return true;
+        }
+
         public DataService(IFirebaseService firebaseService)
         {
             _firebaseService = firebaseService;

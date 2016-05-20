@@ -50,6 +50,14 @@
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\Home\HomePageModel.cs" />
+    <Compile Include="Modules\MyPicks\PicksPage.xaml.cs">
+      <DependentUpon>PicksPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\MyPicks\PicksPageModel.cs" />
+    <Compile Include="Modules\MyPicks\RaceChoicePage.xaml.cs">
+      <DependentUpon>RaceChoicePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\MyPicks\RaceChoicePageModel.cs" />
     <Compile Include="Modules\Profile\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
@@ -170,6 +178,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Modules\Races\RacePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Modules\MyPicks\RaceChoicePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Modules\MyPicks\PicksPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

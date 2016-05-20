@@ -20,7 +20,7 @@ namespace FWMobile
             masterDetailPage.AddPage<Modules.Home.HomePageModel>("Home");
             masterDetailPage.AddPage<Modules.Profile.ProfilePageModel>("Profile");
             //masterDetailPage.AddPage<ChallengesPageModel>("Challenges");
-            masterDetailPage.AddPage<Modules.Races.RacesPageModel>("Races");
+            masterDetailPage.AddPage<Modules.MyPicks.RaceChoicePageModel>("My Picks");
             MainPage = masterDetailPage;
             //var tabbedPage = new FreshMvvm.FreshTabbedNavigationContainer();
             //tabbedPage.AddTab<HomePageModel>("Home", "");

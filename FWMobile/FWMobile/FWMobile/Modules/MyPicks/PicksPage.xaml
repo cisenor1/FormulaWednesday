@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+             xmlns:fe="clr-namespace:FreshEssentials;assembly=FreshEssentials"
+             x:Class="FWMobile.Modules.MyPicks.PicksPage"
+             Title="{Binding Title}">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <fe:InverseBooleanConverter x:Key="InverseConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  <ContentPage.Content>
+    <StackLayout Padding="20, 20, 20, 20">
+      <StackLayout Padding="0, 0, 0, 20" Orientation="Horizontal">
+        <Button Command="{Binding SaveCommand}" Text="Save" VerticalOptions="CenterAndExpand"></Button>
+        <Label FontAttributes="Italic" Text="{Binding SaveLabel}" VerticalOptions="CenterAndExpand"></Label>
+      </StackLayout>
+      <ListView ItemTapped="ChallengeTapped" ItemsSource="{Binding Choices}" HasUnevenRows="True">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <ViewCell.View>
+                <StackLayout>
+                  <Label Text="{Binding HeaderText}" FontAttributes="Bold" FontSize="Large"></Label>
+                  <Label Text="{Binding Description}" FontSize="Medium" FontAttributes="Italic"></Label>
+                  <controls:ExtendedPicker IsEnabled="{Binding CanChoose}" ItemsSource="{Binding Drivers}" SelectedIndexChanged="IndexChanged" DisplayProperty="PickText" SelectedItem="{Binding SelectedDriver}"/>
+                </StackLayout>
+              </ViewCell.View>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>
+  </ContentPage.Content>
+</ContentPage>
