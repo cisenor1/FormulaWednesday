@@ -34,6 +34,85 @@
         });
     }
 
+    static getChallengeByKey(key): Promise<Challenge> {
+        return new Promise<Challenge>((resolve, reject) => {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges/" + key);
+            return fb.once("value").then((ds) => {
+                var fbChal = ds.val();
+                if (!fbChal) {
+                    return resolve(null);
+                }
+                var chal: Challenge = {
+                    choice: ko.observable(fbChal.choice),
+                    description: ko.observable(fbChal.description),
+                    key: ko.observable(key),
+                    allSeason: ko.observable(fbChal.allSeason),
+                    message: ko.observable(fbChal.message),
+                    value: ko.observable(fbChal.value),
+                    editing: ko.observable(false),
+                    type: ko.observable(fbChal.type),
+                    drivers: ko.observableArray([])
+                };
+                return resolve(chal);
+            });
+        });
+    }
+
+    static getChallengesForRace(race: Race): Promise<Challenge[]> {
+        return new Promise<Challenge[]>((resolve, reject) => {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + race.season + "/" + race.name + "/selectedChallenges");
+            return fb.once("value").then((ds) => {
+                var values = ds.val();
+                var c: Challenge[] = [];
+                var promises = [];
+                for (var p in values) {
+                    if (typeof values[p] === "string") {
+                        promises.push(FirebaseUtilities.getChallengeByKey(values[p]));
+                    } else {
+                        promises.push(FirebaseUtilities.getBestOfTheWorstCandidates(values[p]))
+                    }
+                }
+                if (promises.length) {
+                    Promise.all(promises).then((values) => {
+                        values.forEach((x) => {
+                            if (x.length) {
+                                // it's a driver array
+                                var drivers: Driver[] = x;
+
+                                var chal: Challenge = {
+                                    description: ko.observable("Of the slowest drivers, who will finish highest."),
+                                    allSeason: ko.observable(false),
+                                    choice: ko.observable(null),
+                                    editing: ko.observable(false),
+                                    key: ko.observable("bestofworst"),
+                                    message: ko.observable("Best of the Worst"),
+                                    type: ko.observable("driver"),
+                                    value: ko.observable(5),
+                                    drivers: ko.observableArray(drivers)
+                                };
+                                c.push(chal);
+                            } else {
+                                // it's a challenge
+                                c.push(x);
+                            }
+                            return resolve(c);
+                        });
+                    }).catch((e) => { debugger; });
+                }
+            }).catch(reject);
+        });
+    }
+
+    static getBestOfTheWorstCandidates(names: string[]): Promise<Driver[]> {
+        return new Promise<Driver[]>((resolve, reject) => {
+            Promise.map(names, (name, index, array) => {
+                return FirebaseUtilities.getDriverByName(name);
+            }).then((values) => {
+                return resolve(values);
+            });
+        });
+    }
+
     static getChallenges(): Promise<Challenge[]> {
         return new Promise<Challenge[]>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges");
@@ -50,7 +129,8 @@
                         message: ko.observable(fbChal.message),
                         value: ko.observable(fbChal.value),
                         editing: ko.observable(false),
-                        type: ko.observable(fbChal.type)
+                        type: ko.observable(fbChal.type),
+                        drivers: ko.observableArray([])
                     };
                     chal.key = ko.observable(p);
                     c.push(chal);
@@ -60,7 +140,19 @@
         });
     }
 
-    static getDrivers(getInactive?:boolean): Promise<Driver[]> {
+    static getDriverByName(key: string): Promise<Driver> {
+        return new Promise<Driver>((resolve, reject) => {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "drivers/" + key);
+            return fb.once("value").then((ds) => {
+                var driver = <Driver>ds.val();
+                driver.key = key;
+                return resolve(driver);
+            });
+        });
+
+    }
+
+    static getDrivers(getInactive?: boolean): Promise<Driver[]> {
         return new Promise<Driver[]>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "drivers");
             return fb.once("value").then((ds) => {
@@ -284,7 +376,10 @@
         });
     }
 
-    static getAllBlogPosts(): Promise<BlogObject[]> {
+    static getBlogPosts(count?: number): Promise<BlogObject[]> {
+        if (!count) {
+            count = 5;
+        }
         return new Promise<BlogObject[]>((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "blogPosts");
             return fb.once("value").then((ds) => {
@@ -311,6 +406,9 @@
                     blog.forEach((b) => {
                         b.timestamp = new Date(+b.timestamp).toLocaleDateString();
                     });
+                    if (blog.length >= count) {
+                        blog = blog.splice(0, count);
+                    }
                     return resolve(blog);
                 });
             }).catch(reject);

@@ -1,20 +1,21 @@
 ﻿<div class="homepage">
     <div class="homepage-message">
-        <div id="header-image" class="panel panel-default">
-            <img class="panel-body" src="http://img.bleacherreport.net/img/slides/photos/003/966/117/hi-res-c6006a03fb5bad33b8536180c6a50865_crop_north.jpg?w=630&h=420&q=75" />
-            <div class="panel-footer">
-                <span>Nico Hulkenberg: “I think we should look at the alternate strategy looking at this guys. Think about it."</span>
-                <br /><span>Engineer: “We’re already on it! We’re already on it.”</span>
-            </div>
-        </div>
-
-        <div id="blog" data-bind="foreach: blogPosts">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <span class="blog-title" data-bind="text:title"></span>  <span class="blog-date">D: <span data-bind="text: timestamp"></span></span><span class="blog-user">By: <span data-bind="text:user.username"></span></span>
+        <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <div id="header-image" class="panel panel-default">
+                    <div class="panel-heading blog-title">Message of the Race</div>
+                    <img class="panel-body" data-bind="attr:{'src': imageSource}" />
+                    <div class="panel-footer" data-bind="html:quote"></div>
                 </div>
-                <div class="panel-body" data-bind="html:message">
-
+            </div>
+            <div id="blog" data-bind="foreach: blogPosts">
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="blog-title " data-bind="text:title"></span>  <span class="blog-date">D: <span data-bind="text: timestamp"></span></span><span class="blog-user">By: <span data-bind="text:user.username"></span></span>
+                        </div>
+                        <div class="panel-body" data-bind="html:message"></div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -76,6 +76,7 @@
     <Content Include="Pages\Admin\Challenges.html" />
     <Content Include="Pages\Admin\Users.html" />
     <Content Include="Pages\Admin\Admin.html" />
+    <Content Include="Pages\Standings\Standings.html" />
     <Content Include="Pages\Challenges\Challenges.html" />
     <Content Include="Pages\Homepage\Homepage.html" />
     <Content Include="Pages\Preferences\Preferences.html" />
@@ -122,6 +123,7 @@
     <TypeScriptCompile Include="Pages\Admin\Challenges.ts" />
     <TypeScriptCompile Include="Pages\Admin\Users.ts" />
     <TypeScriptCompile Include="Pages\Admin\Admin.ts" />
+    <TypeScriptCompile Include="Pages\Standings\Standings.ts" />
     <TypeScriptCompile Include="Pages\Challenges\Challenges.ts" />
     <TypeScriptCompile Include="Pages\Homepage\Homepage.ts" />
     <TypeScriptCompile Include="Pages\Preferences\Preferences.ts" />

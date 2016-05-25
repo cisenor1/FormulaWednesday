@@ -7,4 +7,5 @@
     choice?: KnockoutObservable<any>;
     allSeason?: KnockoutObservable<boolean>;
     editing?: KnockoutObservable<boolean>;
+    drivers?: KnockoutObservableArray<Driver>;
 }

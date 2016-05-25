@@ -32,6 +32,83 @@ var FirebaseUtilities = (function () {
             }).catch(reject);
         });
     };
+    FirebaseUtilities.getChallengeByKey = function (key) {
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges/" + key);
+            return fb.once("value").then(function (ds) {
+                var fbChal = ds.val();
+                if (!fbChal) {
+                    return resolve(null);
+                }
+                var chal = {
+                    choice: ko.observable(fbChal.choice),
+                    description: ko.observable(fbChal.description),
+                    key: ko.observable(key),
+                    allSeason: ko.observable(fbChal.allSeason),
+                    message: ko.observable(fbChal.message),
+                    value: ko.observable(fbChal.value),
+                    editing: ko.observable(false),
+                    type: ko.observable(fbChal.type),
+                    drivers: ko.observableArray([])
+                };
+                return resolve(chal);
+            });
+        });
+    };
+    FirebaseUtilities.getChallengesForRace = function (race) {
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + race.season + "/" + race.name + "/selectedChallenges");
+            return fb.once("value").then(function (ds) {
+                var values = ds.val();
+                var c = [];
+                var promises = [];
+                for (var p in values) {
+                    if (typeof values[p] === "string") {
+                        promises.push(FirebaseUtilities.getChallengeByKey(values[p]));
+                    }
+                    else {
+                        promises.push(FirebaseUtilities.getBestOfTheWorstCandidates(values[p]));
+                    }
+                }
+                if (promises.length) {
+                    Promise.all(promises).then(function (values) {
+                        values.forEach(function (x) {
+                            if (x.length) {
+                                // it's a driver array
+                                var drivers = x;
+                                var chal = {
+                                    description: ko.observable("Of the slowest drivers, who will finish highest."),
+                                    allSeason: ko.observable(false),
+                                    choice: ko.observable(null),
+                                    editing: ko.observable(false),
+                                    key: ko.observable("bestofworst"),
+                                    message: ko.observable("Best of the Worst"),
+                                    type: ko.observable("driver"),
+                                    value: ko.observable(5),
+                                    drivers: ko.observableArray(drivers)
+                                };
+                                c.push(chal);
+                            }
+                            else {
+                                // it's a challenge
+                                c.push(x);
+                            }
+                            return resolve(c);
+                        });
+                    }).catch(function (e) { debugger; });
+                }
+            }).catch(reject);
+        });
+    };
+    FirebaseUtilities.getBestOfTheWorstCandidates = function (names) {
+        return new Promise(function (resolve, reject) {
+            Promise.map(names, function (name, index, array) {
+                return FirebaseUtilities.getDriverByName(name);
+            }).then(function (values) {
+                return resolve(values);
+            });
+        });
+    };
     FirebaseUtilities.getChallenges = function () {
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges");
@@ -48,13 +125,24 @@ var FirebaseUtilities = (function () {
                         message: ko.observable(fbChal.message),
                         value: ko.observable(fbChal.value),
                         editing: ko.observable(false),
-                        type: ko.observable(fbChal.type)
+                        type: ko.observable(fbChal.type),
+                        drivers: ko.observableArray([])
                     };
                     chal.key = ko.observable(p);
                     c.push(chal);
                 }
                 return resolve(c);
             }).catch(reject);
+        });
+    };
+    FirebaseUtilities.getDriverByName = function (key) {
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "drivers/" + key);
+            return fb.once("value").then(function (ds) {
+                var driver = ds.val();
+                driver.key = key;
+                return resolve(driver);
+            });
         });
     };
     FirebaseUtilities.getDrivers = function (getInactive) {
@@ -274,7 +362,10 @@ var FirebaseUtilities = (function () {
             return fb.set(newPost).then(function () { return resolve(true); }).catch(reject);
         });
     };
-    FirebaseUtilities.getAllBlogPosts = function () {
+    FirebaseUtilities.getBlogPosts = function (count) {
+        if (!count) {
+            count = 5;
+        }
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "blogPosts");
             return fb.once("value").then(function (ds) {
@@ -301,6 +392,9 @@ var FirebaseUtilities = (function () {
                     blog.forEach(function (b) {
                         b.timestamp = new Date(+b.timestamp).toLocaleDateString();
                     });
+                    if (blog.length >= count) {
+                        blog = blog.splice(0, count);
+                    }
                     return resolve(blog);
                 });
             }).catch(reject);

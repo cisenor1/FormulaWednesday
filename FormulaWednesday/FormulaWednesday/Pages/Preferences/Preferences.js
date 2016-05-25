@@ -72,15 +72,20 @@ var PreferencesPage = (function (_super) {
     PreferencesPage.prototype.changeUsername = function () {
         var _this = this;
         var username = this.username();
-        FirebaseUtilities.changeUsername(this.app.user, username).then(function (b) {
+        return FirebaseUtilities.changeUsername(this.app.user, username).then(function (b) {
             _this.usernameSuccess("Your username has been changed successfully.");
             _this.app.user.username(username);
             _this.app.refreshUserInfo(_this.app.user);
-            return;
+            _this.username("");
         }).catch(function (e) {
             _this.usernameAlert(e.message);
             return;
         });
+    };
+    PreferencesPage.prototype.clearUsernameAlert = function (d, e) {
+        if (e.keyCode !== 13) {
+            this.usernameSuccess("");
+        }
     };
     return PreferencesPage;
 })(PageBase);

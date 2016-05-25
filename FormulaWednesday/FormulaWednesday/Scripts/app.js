@@ -132,6 +132,9 @@ var FormulaWednesdayApp = (function () {
             case "admin-blog":
                 newPage = new BlogAdmin(this);
                 break;
+            case "standings":
+                newPage = new StandingsPage(this);
+                break;
             default:
                 newPage = new HomePage(this);
                 break;
@@ -171,6 +174,9 @@ var FormulaWednesdayApp = (function () {
     FormulaWednesdayApp.prototype.launchRacePage = function (race) {
         this.selectedRace = race;
         this.currentPage('challenges#' + race.name);
+    };
+    FormulaWednesdayApp.prototype.launchStandings = function () {
+        this.currentPage("standings");
     };
     FormulaWednesdayApp.prototype.buildStandingsTable = function () {
         var _this = this;

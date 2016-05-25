@@ -21,7 +21,7 @@
             return <any>false;
         }
         return new Promise<any>((resolve, reject) => {
-            FirebaseUtilities.getChallenges().then((values) => {
+            FirebaseUtilities.getChallengesForRace(this.app.selectedRace).then((values) => {
                 this.challenges(values);
                 resolve(this);
             });

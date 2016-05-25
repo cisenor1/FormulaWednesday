@@ -144,6 +144,9 @@ class FormulaWednesdayApp {
             case "admin-blog":
                 newPage = new BlogAdmin(this);
                 break;
+            case "standings":
+                newPage = new StandingsPage(this);
+                break;
             default:
                 newPage = new HomePage(this);
                 break;
@@ -191,6 +194,10 @@ class FormulaWednesdayApp {
     launchRacePage(race: Race) {
         this.selectedRace = race;
         this.currentPage('challenges#' + race.name);
+    }
+
+    launchStandings() {
+        this.currentPage("standings");
     }
 
     buildStandingsTable() {

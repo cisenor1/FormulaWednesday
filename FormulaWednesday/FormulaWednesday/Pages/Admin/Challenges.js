@@ -24,7 +24,7 @@ var ChallengesAdmin = (function (_super) {
             return false;
         }
         return new Promise(function (resolve, reject) {
-            FirebaseUtilities.getChallenges().then(function (values) {
+            FirebaseUtilities.getChallengesForRace(_this.app.selectedRace).then(function (values) {
                 _this.challenges(values);
                 resolve(_this);
             });

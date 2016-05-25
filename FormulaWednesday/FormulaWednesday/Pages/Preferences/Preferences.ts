@@ -70,14 +70,20 @@ class PreferencesPage extends PageBase implements Page {
 
     changeUsername() {
         var username = this.username();
-        FirebaseUtilities.changeUsername(this.app.user, username).then((b) => {
+        return FirebaseUtilities.changeUsername(this.app.user, username).then((b) => {
             this.usernameSuccess("Your username has been changed successfully.");
             this.app.user.username(username);
             this.app.refreshUserInfo(this.app.user);
-            return;
+            this.username("");
         }).catch((e) => {
             this.usernameAlert(e.message);
             return;
         });
+    }
+
+    clearUsernameAlert(d, e: KeyboardEvent) {
+        if (e.keyCode !== 13) {
+            this.usernameSuccess("");
+        }
     }
 }

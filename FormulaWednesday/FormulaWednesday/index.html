@@ -8,10 +8,12 @@
     <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src='https://cdn.tinymce.com/4/tinymce.min.js'></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="Hashing/md5.js"></script>
     <script src="Models/PageBase.js"></script>
     <script src="Scripts/FormulaWednesdaysUtilities.js"></script>
     <script src="Scripts/tinymce.min.js"></script>
+    <script src="Pages/Standings/Standings.js"></script>
     <script src="Pages/Admin/Admin.js"></script>
     <script src="Pages/Admin/Users.js"></script>
     <script src="Pages/Admin/Blog.js"></script>
@@ -48,7 +50,7 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li role="presentation" class="dropdown" data-bind="visible: isAdmin()">
+                    <li role="presentation" class="dropdown" data-bind="if: isAdmin()">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <span>Admin </span><span class="caret"></span>
                         </a>
@@ -56,7 +58,7 @@
                             <li><a data-bind="click: function(item){$parent.launchAdminPage(item)}, text: label"></a></li>
                         </ul>
                     </li>
-                    <li role="presentation" class="dropdown" data-bind="visible: loggedIn()">
+                    <li role="presentation" class="dropdown" data-bind="if: loggedIn()">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                             <span>Races </span><span class="caret"></span>
                         </a>
@@ -64,14 +66,21 @@
                             <li data-bind="css: { menuraceover: done() }"><a data-bind="text:title, click: function(item){$parent.launchRacePage(item)}"></a></li>
                         </ul>
                     </li>
+                    <li role="presentation" class="dropdown visible-sm visible-xs" data-bind="if: loggedIn()">
+                        <a href="#" role="button" aria-haspopup="true" aria-expanded="false" data-bind="click: launchStandings">Standings</a>
+                    </li>
                 </ul>
-                <form data-bind="if: !loggedIn()" class="navbar-form navbar-right" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" data-bind="value: nameObservable" placeholder="Email">
-                        <input type="password" class="form-control" data-bind="value: pwObservable" placeholder="Password">
-                    </div>
-                    <button type="submit" data-bind="click: doLogIn" class="btn btn-default">Log In</button>
-                </form>
+                <ul data-bind="if: !loggedIn()">
+                    <li>
+                        <form class="navbar-form navbar-right" role="search">
+                            <div class="form-group">
+                                <input type="text" class="form-control" data-bind="value: nameObservable" placeholder="Email">
+                                <input type="password" class="form-control" data-bind="value: pwObservable" placeholder="Password">
+                            </div>
+                            <button type="submit" data-bind="click: doLogIn" class="btn btn-default">Log In</button>
+                        </form>
+                    </li>
+                </ul>
                 <ul class="nav navbar-nav navbar-right" data-bind="if: loggedIn()">
                     <li class="navbar-right"><a href="#" data-bind="text: logOutMessage, click: doLogOut"></a></li>
                     <li class="dropdown">
@@ -84,28 +93,33 @@
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
-    <div id="page-content-div"></div>
-    <div data-bind="if: loggedIn()">
-        <div id="side-bar">
-            <div class="panel panel-default">
-                <div class="panel-heading">Standings</div>
-                <table class="table" data-bind="foreach: sortedUsers">
-                    <tr>
-                        <td data-bind="text:  $index() + 1 + '.'"></td>
-                        <td data-bind="text:username"></td>
-                        <td data-bind="text:points"></td>
-                    </tr>
-                </table>
+    <div id="page-content-div" class="container"></div>
+    <div class="container hidden-sm hidden-xs" data-bind="if: loggedIn()">
+        <!--score sheet-->
+        <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <div class="panel panel-default ">
+                    <div class="panel-heading">Standings</div>
+                    <table class="table" data-bind="foreach: sortedUsers">
+                        <tr>
+                            <td data-bind="text:  $index() + 1 + '.'"></td>
+                            <td data-bind="text:username"></td>
+                            <td data-bind="text:points"></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">Driver Standings</div>
-                <table class="table" data-bind="foreach:sortedDrivers">
-                    <tr>
-                        <td data-bind="text: $index() + 1 +'.'"></td>
-                        <td data-bind="text: name"></td>
-                        <td data-bind="text: points"></td>
-                    </tr>
-                </table>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <div class="panel panel-default ">
+                    <div class="panel-heading">Driver Standings</div>
+                    <table class="table" data-bind="foreach:sortedDrivers">
+                        <tr>
+                            <td data-bind="text: $index() + 1 +'.'"></td>
+                            <td data-bind="text: name"></td>
+                            <td data-bind="text: points"></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

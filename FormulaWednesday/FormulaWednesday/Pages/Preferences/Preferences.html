@@ -1,4 +1,4 @@
-﻿<div>
+﻿<div class="container-fluid">
     <h3 class="fwed-user-fullname" data-bind="text: fullname"></h3>
     <div class="panel">
         <form data-bind="submit: changePassword">
@@ -25,9 +25,10 @@
             <h3>Change Username</h3>
             <div class="input-group">
                 <span class="input-group-addon" id="basic-addon1">Username:</span>
-                <input class="form-control" type="text" required data-bind="text: username, value: username" />
+                <input class="form-control" type="text" required data-bind="text: username, value: username, event: {'keyup': clearUsernameAlert }" />
             </div>
             <div class="alert alert-danger" data-bind="visible: usernameAlert(), text: usernameAlert"></div>
+            <div class="alert alert-success" data-bind="visible: usernameSuccess(), text: usernameSuccess"></div>
             <input type="submit" />
         </form>
     </div>
