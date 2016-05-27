@@ -20,5 +20,7 @@ namespace FWMobile.Infrastructure
         Task<IDictionary<string, string>> GetUserChoices(string token, string userKey, string raceKey, int year);
 
         Task<bool> SaveUserChoices(string token, string userKey, string raceKey, int year, IDictionary<string, string> picks);
+
+        Task<IList<BlogPost>> GetBlogPosts();
     }
 }

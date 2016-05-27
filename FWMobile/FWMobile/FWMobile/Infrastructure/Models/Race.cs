@@ -16,7 +16,6 @@ namespace FWMobile.Infrastructure.Models
         public DateTime Cutoff { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
-        public bool Done { get; set; }
         public Driver Winner { get; set; }
         [JsonIgnore]
         public string Key { get; set; }

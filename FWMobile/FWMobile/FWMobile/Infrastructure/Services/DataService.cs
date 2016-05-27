@@ -102,6 +102,11 @@ namespace FWMobile.Infrastructure.Services
             return true;
         }
 
+        public async Task<IList<BlogPost>> GetBlogPosts()
+        {
+            return await _firebaseService.GetBlogPosts();
+        }
+
         public DataService(IFirebaseService firebaseService)
         {
             _firebaseService = firebaseService;

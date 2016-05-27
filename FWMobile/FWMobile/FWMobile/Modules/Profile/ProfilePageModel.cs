@@ -28,11 +28,23 @@ namespace FWMobile.Modules.Profile
             _userDialogs = userDialogs;
         }
 
-        public override void Init(object initData)
+        public async override void Init(object initData)
         {
             base.Init(initData);
             LoginCommand = new Command(LoginUser);
             LogoutCommand = new Command(Logout);
+
+            User = await _userManager.GetUser();
+
+            if (_userManager.IsAnonymous(User))
+            {
+                LoggedIn = false;
+            }
+            else
+            {
+                LoggedIn = true;
+            }
+
         }
 
         private async void LoginUser()
@@ -52,6 +64,7 @@ namespace FWMobile.Modules.Profile
                     var user = await _userManager.LoginUser(r.LoginText, r.Password);
                     if (!_userManager.IsAnonymous(user))
                     {
+                        User = user;
                         LoggedIn = true;
                     }
                 }
@@ -69,29 +82,7 @@ namespace FWMobile.Modules.Profile
                 }
             }
         }
-
-        protected async override void ViewIsAppearing(object sender, EventArgs e)
-        {
-            base.ViewIsAppearing(sender, e);
-
-            if (User == null)
-            {
-                _userDialogs.ShowLoading("Loading user info", MaskType.Gradient);
-                var user = await _userManager.GetUser();
-                _userDialogs.HideLoading();
-                User = user;
-                // We don't have a saved user, so we'll need to show the login form.
-                if (_userManager.IsAnonymous(user))
-                {
-                    LoggedIn = false;
-                }
-                else
-                {
-                    LoggedIn = true;
-                }
-            }
-        }
-
+        
         public async void Logout()
         {
             LoggedIn = false;

@@ -5,6 +5,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,8 +14,8 @@ namespace FWMobile.Infrastructure.Services
 {
     class FirebaseService : IFirebaseService
     {
-        private string _authBaseUrl = "https://auth.firebase.com/v2/formulawednesday/auth/password";
-        private string _basePath = "https://formulawednesday.firebaseio.com/";
+        private string _authBaseUrl = "https://auth.firebase.com/v2/project-8891868983959640294/auth/password";
+        private string _basePath = "https://project-8891868983959640294.firebaseio.com/";
 
         private JsonSerializerSettings _jsonSettings = new JsonSerializerSettings()
         {
@@ -31,7 +32,7 @@ namespace FWMobile.Infrastructure.Services
             }
             var userKey = GetKeyFromEmail(email);
             var userUrl = _basePath + "users/" + userKey + ".json?auth=" + loginInfo.Token;
-
+            
             using (var client = new HttpClient())
             {
                 var userResponse = await client.GetAsync(userUrl);
@@ -109,7 +110,6 @@ namespace FWMobile.Infrastructure.Services
                                 race.Cutoff = DateTime.Parse(cutoffString);
                             }
                             race.Title = raceToken.Value<string>("title");
-                            race.Done = raceToken.Value<bool>("done");
                             race.Key = key;
                             races.Add(race);
                         }
@@ -233,6 +233,44 @@ namespace FWMobile.Infrastructure.Services
             }
 
             return success;
+        }
+
+        public async Task<IList<BlogPost>> GetBlogPosts()
+        {
+            var blogUrl = _basePath + "blogPosts.json";
+
+            IList<BlogPost> posts = new List<BlogPost>();
+            using (var client = new HttpClient())
+            using (var response = await client.GetAsync(blogUrl))
+            {
+                var responseString = await response.Content.ReadAsStringAsync();
+                var postsToken = JsonConvert.DeserializeObject<JToken>(responseString);
+                foreach (JProperty prop in postsToken)
+                {
+                    var key = prop.Name;
+                    var blogPost = new BlogPost();
+                    JToken postToken = postsToken.Value<JToken>(key);
+                    blogPost.Key = key;
+                    string message = postToken.Value<string>("message");
+                    message = WebUtility.UrlDecode(message);
+                    message = message.Replace("<b>", "");
+                    message = message.Replace("</b>", "");
+                    var split = message.Split(new string[2] { "<br/>", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    message = string.Join(Environment.NewLine, split);
+                    blogPost.Message = message;
+                    blogPost.Title = postToken.Value<string>("title");
+                    string tss = postToken.Value<string>("timestamp");
+                    long ts;
+                    if (long.TryParse(tss, out ts))
+                    {
+                        blogPost.Timestamp = Utilities.DateUtilities.UnixTimeStampToDateTime(ts);
+                    }
+                    blogPost.User = postToken.Value<string>("user");
+                    posts.Add(blogPost);
+                }
+
+            }
+            return posts;
         }
     }
 

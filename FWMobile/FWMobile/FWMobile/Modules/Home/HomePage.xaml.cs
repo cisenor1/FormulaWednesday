@@ -14,5 +14,11 @@ namespace FWMobile.Modules.Home
         {
             InitializeComponent();
         }
+
+        public void Tapped_Handler(object sender, ItemTappedEventArgs e)
+        {
+            var lv = sender as ListView;
+            lv.SelectedItem = null;
+        }
     }
 }

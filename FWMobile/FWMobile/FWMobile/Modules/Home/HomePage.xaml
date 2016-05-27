@@ -3,5 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FWMobile.Modules.Home.HomePage"
              Title="Home">
-  <Label Margin="40, 0, 0, 40" Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
+  <ContentPage.Content>
+    <StackLayout>
+      <Label Margin="10, 20, 0, 10" Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
+      <ListView ItemTapped="Tapped_Handler" ItemsSource="{Binding Posts}" HasUnevenRows="True">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <ViewCell.View>
+                <StackLayout Padding="20, 20, 20, 20">
+                  <StackLayout Orientation="Horizontal">
+                    <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="Medium" VerticalOptions="EndAndExpand"></Label>
+                    <Label Text="{Binding UserInfo}" FontSize="Small" VerticalOptions="EndAndExpand"></Label>
+                  </StackLayout>
+                  <Label Text="{Binding Message}" FontSize="Medium"></Label>
+                </StackLayout>
+              </ViewCell.View>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>
+  </ContentPage.Content>
 </ContentPage>

@@ -49,13 +49,18 @@ namespace FWMobile.Modules.MyPicks
                 _user = await _userManager.GetUser();
                 var raceChoices = await _dataService.GetRaceChoices(_user, Race);
                 var drivers = await _dataService.GetDrivers(_user);
-
+                List<Driver> sortedDrivers = drivers.ToList();
+                sortedDrivers
+                    .Sort(delegate (Driver x, Driver y)
+                    {
+                        return x.Name.CompareTo(y.Name);
+                    });
                 foreach (var raceChoice in raceChoices)
                 {
                     var choice = new ChallengeChoice(raceChoice.Key);
                     choice.CanChoose = CanSavePicks();
                     choice.Drivers = new ObservableCollection<DriverChoice>();
-                    foreach (var driver in drivers)
+                    foreach (var driver in sortedDrivers)
                     {
                         var dc = new DriverChoice(driver);
                         choice.Drivers.Add(dc);
