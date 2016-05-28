@@ -12,3 +12,4 @@ FormulaWednesday/FormulaWednesday/obj/
 *.suo
 FormulaWednesday/FormulaWednesday/FormulaWednesday.csproj.user
 *.suo
+Server/node_modules/

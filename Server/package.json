@@ -1,0 +1,21 @@
+{
+  "name": "fwserver",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^0.8.6",
+    "bluebird": "^3.4.0",
+    "boom": "^3.2.1",
+    "glob": "^7.0.3",
+    "hapi": "^13.4.1",
+    "hapi-auth-jwt": "^4.0.0",
+    "joi": "^8.1.1",
+    "sqlite3": "^3.1.4"
+  }
+}
