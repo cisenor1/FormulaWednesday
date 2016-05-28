@@ -1,6 +1,6 @@
 'use strict';
 
-var db = require('../data/sqliteUtilities');
+const db = require('../utilities/sqliteUtilities');
 
 module.exports = [
     {

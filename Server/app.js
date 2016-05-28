@@ -1,3 +1,9 @@
+// A lot of the code for this came from https://auth0.com/blog/2016/03/07/hapijs-authentication-secure-your-api-with-json-web-tokens/
+// Specifically mostly the code around the security bits.
+
+// To access secured routes, an Authorization header must be set. 
+// ex: Authorization: Bearer <TOKEN>
+
 'use strict';
 
 const Hapi = require('hapi');

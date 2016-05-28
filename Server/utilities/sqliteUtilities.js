@@ -1,16 +1,21 @@
 'use strict';
 
-var Promise = require('bluebird');
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('../Data/formulawednesday.sqlite');
+const Promise = require('bluebird');
+const sqlite3 = require('sqlite3').verbose();
+const formatString = require('format-string');
+const db = new sqlite3.Database('../Data/formulawednesday.sqlite');
 
 const driverSelect = "SELECT drivers.key, drivers.active, drivers.name, drivers.points, drivers.teamkey as teamKey, teams.name as teamName FROM drivers inner join teams on drivers.teamKey == teams.key";
 const raceSelect = "select r.*, s.cutoff, s.racedate as raceDate from races as r inner join seasons as s on r.key == s.racekey";
 const challengeSelect = "select c.* from challenges as c inner join activechallenges as ac on c.key == ac.challengekey";
+const userSelect = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role, users.pass from users";
+const userSelectNoPass = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role from users";
+
+const userInsert = "INSERT INTO users (key, email, pass, displayname, firstname, lastname, role)";
 
 function getDrivers(key) {
     return new Promise(function (resolve, reject) {
-        var whereStatement = "";
+        let whereStatement = "";
         if (key) {
             whereStatement = "where key = '" + key + "'";
         }
@@ -26,7 +31,7 @@ function getDrivers(key) {
 
 function getRaces(season, key) {
     return new Promise(function (resolve, reject) {
-        var whereStatement = "";
+        let whereStatement = "";
         if (key) {
             whereStatement = "where key = '" + key + "'";
         }
@@ -40,7 +45,56 @@ function getRaces(season, key) {
     });
 };
 
+function getUsers(email, withPassword) {
+    return new Promise(function (resolve, reject) {
+        let selectStatement;
+        if (withPassword) {
+            selectStatement = userSelect;
+        }
+        else {
+            selectStatement = userSelectNoPass;
+        }
+        if (email) {
+            selectStatement = selectStatement + " where users.email = '" + email + "'";
+        }
+        db.all(selectStatement, function (err, rows) {
+            if (err) {
+                console.log("rejecting");
+                reject(err);
+                return;
+            }
+            resolve(rows);
+        });
+    });
+}
 
+function saveUser(user) {
+    return new Promise(function (resolve, reject) {
+        if (!user) {
+            reject(new Error("must have a user to save"));
+            return;
+        }
+        
+        let valuesStatement = "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);";
+        let valuesOject = {
+            1: user.key,
+            2: user.email,
+            3: user.password,
+            4: user.displayName ? user.displayName : "",
+            5: user.firstName ? user.firstName : "",
+            6: user.lastName ? user.lastName : "",
+            7: user.role
+        };
+        var insertStatement = userInsert + " " + valuesStatement;
+        db.run(insertStatement, valuesOject, function(err) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(true);
+        });
+    });
+}
 
 function getChallenges(season, raceKey, challengeKey) {
     return new Promise(function (resolve, reject) {
@@ -48,13 +102,13 @@ function getChallenges(season, raceKey, challengeKey) {
             reject(new Error("Need a season and a race key"));
             return;
         }
-        var driverPromise = getDrivers();
-        var challengePromise = _getChallengesInternal(season, raceKey);
-        var challengeChoiceMapsPromise = _getChallengeChoicesInternal(season, raceKey);
+        let driverPromise = getDrivers();
+        let challengePromise = _getChallengesInternal(season, raceKey);
+        let challengeChoiceMapsPromise = _getChallengeChoicesInternal(season, raceKey);
         Promise.all([driverPromise, challengePromise, challengeChoiceMapsPromise]).then((results) => {
-            var challenges = results[1];
-            var drivers = results[0];
-            var challengeChoiceMaps = results[2];
+            let challenges = results[1];
+            let drivers = results[0];
+            let challengeChoiceMaps = results[2];
             challenges.forEach(challenge => {
                 var challengeChoiceMap = challengeChoiceMaps.filter(map => { return map.challengeKey === challenge.key; })[0];
                 if (!challengeChoiceMap) {
@@ -76,7 +130,7 @@ function getChallenges(season, raceKey, challengeKey) {
 
 function _getChallengesInternal(season, raceKey) {
     return new Promise(function (resolve, reject) {
-        var where = "where ac.season = " + season + " and ac.racekey = '" + raceKey + "'";
+        let where = "where ac.season = " + season + " and ac.racekey = '" + raceKey + "'";
         db.all(challengeSelect + " " + where, function (err, rows) {
             resolve(rows);
         });
@@ -85,18 +139,18 @@ function _getChallengesInternal(season, raceKey) {
 
 function _getChallengeChoicesInternal(season, raceKey) {
     return new Promise(function (resolve, reject) {
-        var statement = "select challengekey as challengeKey, season, racekey as raceKey, driverkey as driverKey from challengechoices where challengechoices.challengeKey in " +
+        let statement = "select challengekey as challengeKey, season, racekey as raceKey, driverkey as driverKey from challengechoices where challengechoices.challengeKey in " +
             "(select c.key from challenges as c inner join activechallenges as ac on c.key == ac.challengekey where ac.season = " +
             season + " and ac.racekey = '" + raceKey + "')";
-        var challengeChoiceMaps = [];
+        let challengeChoiceMaps = [];
         db.all(statement, function (err, rows) {
             rows.forEach(row => {
-                var challengeChoiceMap = challengeChoiceMaps.filter(function (value) { return value.challengeKey === row.challengeKey; })[0];
+                let challengeChoiceMap = challengeChoiceMaps.filter(function (value) { return value.challengeKey === row.challengeKey; })[0];
                 if (challengeChoiceMap) {
                     challengeChoiceMap.drivers.push(row.driverKey);
                 }
                 else {
-                    var challengeChoiceMap = {
+                    let challengeChoiceMap = {
                         challengeKey: row.challengeKey,
                         drivers: []
                     };
@@ -112,5 +166,7 @@ function _getChallengeChoicesInternal(season, raceKey) {
 module.exports = {
     getDrivers: getDrivers,
     getRaces: getRaces,
-    getChallenges: getChallenges
+    getChallenges: getChallenges,
+    getUsers: getUsers,
+    saveUser: saveUser
 }

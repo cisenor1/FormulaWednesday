@@ -9,9 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "base64-url": "^1.2.2",
     "bcrypt": "^0.8.6",
     "bluebird": "^3.4.0",
     "boom": "^3.2.1",
+    "format-string": "^1.0.0",
     "glob": "^7.0.3",
     "hapi": "^13.4.1",
     "hapi-auth-jwt": "^4.0.0",
