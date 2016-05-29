@@ -208,9 +208,9 @@ namespace FWMobile.Infrastructure.Services
                     var driver = new Driver();
                     driver.Key = key;
                     driver.Name = driverToken.Value<string>("name");
-                    driver.Team = driverToken.Value<string>("team");
+                    driver.TeamName = driverToken.Value<string>("team");
                     driver.Points = driverToken.Value<int>("points");
-                    driver.Active = driverToken.Value<bool>("active");
+                    driver.Active = driverToken.Value<int>("active");
                     drivers.Add(driver);
                 }
             }

@@ -81,7 +81,6 @@ namespace FWMobile.Modules.Races
             this.Key = challenge.Key;
             this.Value = challenge.Value;
             this.Type = challenge.Type;
-            this.AllSeason = challenge.AllSeason;
             this.Description = challenge.Description;
         }
     }

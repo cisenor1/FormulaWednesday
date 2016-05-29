@@ -160,9 +160,9 @@ namespace FWMobile.Modules.MyPicks
         public DriverChoice(Driver driver)
         {
             Driver = driver;
-            if (!string.IsNullOrWhiteSpace(driver.Team))
+            if (!string.IsNullOrWhiteSpace(driver.TeamName))
             {
-                PickText = String.Format("{0} ({1})", driver.Name, driver.Team);
+                PickText = String.Format("{0} ({1})", driver.Name, driver.TeamName);
             }
             else
             {

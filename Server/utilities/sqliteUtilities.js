@@ -9,6 +9,7 @@ const driverSelect = "SELECT drivers.key, drivers.active, drivers.name, drivers.
 const raceSelect = "select r.*, s.cutoff, s.racedate as raceDate from races as r inner join seasons as s on r.key == s.racekey";
 const challengeSelect = "select c.* from challenges as c inner join activechallenges as ac on c.key == ac.challengekey";
 const userSelect = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role, users.pass from users";
+const basicUserSelect = "select users.displayname as displayName, users.firstname as firstName, users.key from users";
 const userSelectNoPass = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role from users";
 
 const userInsert = "INSERT INTO users (key, email, pass, displayname, firstname, lastname, role)";
@@ -60,6 +61,19 @@ function getUsers(email, withPassword) {
         db.all(selectStatement, function (err, rows) {
             if (err) {
                 console.log("rejecting");
+                reject(err);
+                return;
+            }
+            resolve(rows);
+        });
+    });
+}
+
+function getBasicUsers() {
+    return new Promise(function(resolve, reject) {
+        let selectStatement = basicUserSelect;
+        db.all(selectStatement, function(err, rows) {
+            if (err) {
                 reject(err);
                 return;
             }
@@ -168,5 +182,6 @@ module.exports = {
     getRaces: getRaces,
     getChallenges: getChallenges,
     getUsers: getUsers,
+    getBasicUsers: getBasicUsers,
     saveUser: saveUser
 }

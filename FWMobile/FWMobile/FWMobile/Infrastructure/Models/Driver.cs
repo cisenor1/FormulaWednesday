@@ -12,8 +12,9 @@ namespace FWMobile.Infrastructure.Models
     {
         public string Name { get; set; }
         public string Key { get; set; }
-        public string Team { get; set; }
+        public string TeamName { get; set; }
+        public string TeamKey { get; set; }
         public int Points { get; set; }
-        public bool Active { get; set; }
+        public int Active { get; set; }
     }
 }

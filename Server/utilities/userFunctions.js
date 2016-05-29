@@ -29,7 +29,7 @@ function verifyCredentials(req, res) {
 
     // Find an entry from the database that
     // matches either the email or username
-    db.getUsers(req.payload.email).then(users => {
+    db.getUsers(req.payload.email, true).then(users => {
         if (users && users.length > 0) {
             var user = users[0];
             console.log(user);

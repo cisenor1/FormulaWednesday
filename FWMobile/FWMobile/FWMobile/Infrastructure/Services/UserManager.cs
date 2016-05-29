@@ -80,7 +80,7 @@ namespace FWMobile.Infrastructure.Services
             _service = service;
             _user = new User()
             {
-                UserName = "anonymous",
+                DisplayName = "anonymous",
                 Email = "example@example.com"
             };
 
@@ -121,9 +121,9 @@ namespace FWMobile.Infrastructure.Services
         {
             _user.Token = user.Token;
             _user.Points = user.Points;
-            _user.FullName = user.FullName;
+            _user.FirstName = user.FirstName;
             _user.ProfileImageURL = user.ProfileImageURL;
-            _user.UserName = user.UserName;
+            _user.DisplayName = user.DisplayName;
             _user.Email = user.Email;
             _user.Key = user.Key;
         }
@@ -131,13 +131,13 @@ namespace FWMobile.Infrastructure.Services
         private void MakeCachedUserAnon()
         {
             _user.Key = "";
-            _user.FullName = "Anonymous User";
+            _user.FirstName = "Anonymous User";
             _user.Role = "";
             _user.Points = -1;
             _user.ProfileImageURL = "";
             _user.Token = "";
             _user.Email = "example@example.com";
-            _user.UserName = "anonymous";
+            _user.DisplayName = "anonymous";
         }
 
         private Credential GetSavedCredential()

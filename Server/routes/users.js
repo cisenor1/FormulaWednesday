@@ -85,7 +85,7 @@ module.exports = [
     },
     {
         method: 'GET',
-        path: '/users',
+        path: '/users/fullinfo',
         config: {
             handler: (req, res) => {
                 db.getUsers(null, false).then(users => {
@@ -97,6 +97,17 @@ module.exports = [
             auth: {
                 strategy: 'jwt',
                 scope: ['admin']
+            }
+        }
+    },
+    {
+        method: 'GET',
+        path: '/users/basicinfo',
+        config: {
+            handler: (req, res) => {
+                db.getBasicUsers(null, false).then(users => {
+                    res(users);
+                });
             }
         }
     }

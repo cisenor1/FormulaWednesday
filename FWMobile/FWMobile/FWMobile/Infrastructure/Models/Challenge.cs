@@ -15,7 +15,6 @@ namespace FWMobile.Infrastructure.Models
         public int Value { get; set; }
         public string Description { get; set; }
         public string Type { get; set; }
-        public string Choice { get; set; }
-        public bool AllSeason { get; set; }
+        public IList<Driver> DriverChoices { get; set; }
     }
 }
