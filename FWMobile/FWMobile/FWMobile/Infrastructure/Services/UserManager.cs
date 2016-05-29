@@ -12,7 +12,7 @@ namespace FWMobile.Infrastructure.Services
 {
     public class UserManager : IUserManager
     {
-        private IFirebaseService _service;
+        private IRestService _service;
         private User _user;
 
         private Semaphore _retrievingUserSemaphore = new Semaphore(1, 1);
@@ -75,7 +75,7 @@ namespace FWMobile.Infrastructure.Services
             return false;
         }
 
-        public UserManager(IFirebaseService service)
+        public UserManager(IRestService service)
         {
             _service = service;
             _user = new User()

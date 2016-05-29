@@ -9,7 +9,7 @@ namespace FWMobile.Infrastructure.Services
 {
     public class DataService : IDataService
     {
-        private IFirebaseService _firebaseService;
+        private IRestService _restService;
 
         private IList<Challenge> _challenges { get; set; }
         private IList<Race> _races { get; set; }
@@ -21,7 +21,7 @@ namespace FWMobile.Infrastructure.Services
             {
                 if (!string.IsNullOrWhiteSpace(user.Token))
                 {
-                    _challenges = await _firebaseService.GetChallenges(user.Token);
+                    _challenges = await _restService.GetChallenges(user.Token, null);
                 }
             }
 
@@ -34,7 +34,7 @@ namespace FWMobile.Infrastructure.Services
             {
                 if (!string.IsNullOrWhiteSpace(user.Token))
                 {
-                    _races = await _firebaseService.GetRaces(user.Token, DateTime.Now.Year);
+                    _races = await _restService.GetRaces(user.Token, DateTime.Now.Year);
                 }
             }
 
@@ -50,7 +50,7 @@ namespace FWMobile.Infrastructure.Services
 
             if (!string.IsNullOrWhiteSpace(user.Token))
             {
-                var choiceList = await _firebaseService.GetUserChoices(user.Token, user.Key, race.Key, DateTime.Now.Year);
+                var choiceList = await _restService.GetUserChoices(user.Token, user.Key, race.Key, DateTime.Now.Year);
                 foreach (var challenge in challenges)
                 {
                     var choice = choiceList.FirstOrDefault(x => x.Key == challenge.Key);
@@ -74,7 +74,7 @@ namespace FWMobile.Infrastructure.Services
         {
             if (_drivers == null)
             {
-                _drivers = await _firebaseService.GetDrivers(user.Token);
+                _drivers = await _restService.GetDrivers(user.Token);
             }
             return _drivers;
         }
@@ -97,19 +97,19 @@ namespace FWMobile.Infrastructure.Services
                 }
             }
 
-            bool success = await _firebaseService.SaveUserChoices(user.Token, user.Key, race.Key, DateTime.Now.Year, challengeDriverPicks);
+            bool success = await _restService.SaveUserChoices(user.Token, user.Key, race.Key, DateTime.Now.Year, challengeDriverPicks);
 
             return true;
         }
 
         public async Task<IList<BlogPost>> GetBlogPosts()
         {
-            return await _firebaseService.GetBlogPosts();
+            return await _restService.GetBlogPosts();
         }
 
-        public DataService(IFirebaseService firebaseService)
+        public DataService(IRestService restService)
         {
-            _firebaseService = firebaseService;
+            _restService = restService;
         }
     }
 }

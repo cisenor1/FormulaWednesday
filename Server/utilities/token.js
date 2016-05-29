@@ -9,7 +9,10 @@ function createToken(user) {
   // has admin set to true, and if so, set
   // scopes to admin
   if (user.role === "admin") {
-    scopes = 'admin';
+    scopes = ['admin', 'user'];
+  }
+  else {
+      scopes = ['user'];
   }
   // Sign the JWT
   return jwt.sign({ key: user.key, email: user.email, scope: scopes }, secret, { algorithm: 'HS256', expiresIn: "1h" } );

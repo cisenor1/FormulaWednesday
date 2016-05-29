@@ -11,7 +11,7 @@ namespace FWMobile.Infrastructure
     {
         Task<User> GetUserInfo(string email, string password);
 
-        Task<IList<Challenge>> GetChallenges(string token);
+        Task<IList<Challenge>> GetChallenges(string token, string raceKey);
 
         Task<IList<Race>> GetRaces(string token, int year);
 

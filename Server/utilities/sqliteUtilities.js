@@ -7,7 +7,7 @@ const db = new sqlite3.Database('../Data/formulawednesday.sqlite');
 
 const driverSelect = "SELECT drivers.key, drivers.active, drivers.name, drivers.points, drivers.teamkey as teamKey, teams.name as teamName FROM drivers inner join teams on drivers.teamKey == teams.key";
 const raceSelect = "select r.*, s.cutoff, s.racedate as raceDate from races as r inner join seasons as s on r.key == s.racekey";
-const challengeSelect = "select c.* from challenges as c inner join activechallenges as ac on c.key == ac.challengekey";
+const challengeSelect = "select c.*, ac.racekey as raceKey from challenges as c inner join activechallenges as ac on c.key == ac.challengekey";
 const userSelect = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role, users.pass from users";
 const basicUserSelect = "select users.displayname as displayName, users.firstname as firstName, users.key from users";
 const userSelectNoPass = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role from users";
@@ -112,7 +112,7 @@ function saveUser(user) {
 
 function getChallenges(season, raceKey, challengeKey) {
     return new Promise(function (resolve, reject) {
-        if (!season || !raceKey) {
+        if (!season) {
             reject(new Error("Need a season and a race key"));
             return;
         }
@@ -144,7 +144,11 @@ function getChallenges(season, raceKey, challengeKey) {
 
 function _getChallengesInternal(season, raceKey) {
     return new Promise(function (resolve, reject) {
-        let where = "where ac.season = " + season + " and ac.racekey = '" + raceKey + "'";
+        
+        let where = "where ac.season = " + season;
+        if (raceKey) {
+            where = where + " and ac.racekey = '" + raceKey + "'";
+        }
         db.all(challengeSelect + " " + where, function (err, rows) {
             resolve(rows);
         });

@@ -15,6 +15,7 @@ namespace FWMobile.Infrastructure.Models
         public int Value { get; set; }
         public string Description { get; set; }
         public string Type { get; set; }
+        public string RaceKey { get; set; }
         public IList<Driver> DriverChoices { get; set; }
     }
 }

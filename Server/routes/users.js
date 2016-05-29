@@ -108,6 +108,10 @@ module.exports = [
                 db.getBasicUsers(null, false).then(users => {
                     res(users);
                 });
+            },
+            auth: {
+                strategy: 'jwt',
+                scope: ['user']
             }
         }
     }

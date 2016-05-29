@@ -4,19 +4,50 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FWMobile.Infrastructure.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace FWMobile.Infrastructure.Services
 {
     public class RestService : IRestService
     {
+        private string _baseUrl = "http://192.168.0.15:3000/";
+        private JsonSerializerSettings _jsonSettings = new JsonSerializerSettings()
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
+        
         public Task<IList<BlogPost>> GetBlogPosts()
         {
-            throw new NotImplementedException();
+            var blogPost = new BlogPost()
+            {
+                Message =  "Test",
+                Title = "Test",
+                User = "Derrick"
+            };
+            IList<BlogPost> blogs = new List<BlogPost>();
+            blogs.Add(blogPost);
+            return Task.FromResult(blogs);
         }
 
-        public Task<IList<Challenge>> GetChallenges(string token)
+        public async Task<IList<Challenge>> GetChallenges(string token, string raceKey)
         {
-            throw new NotImplementedException();
+            string challengesUrl = _baseUrl + "/challenges/" + DateTime.Now.Year + "/" + raceKey;
+            AuthenticationHeaderValue authHeaders = new AuthenticationHeaderValue("Bearer", token);
+            IList<Challenge> challenges = null;
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = authHeaders;
+                var response = await client.GetAsync(challengesUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    challenges = JsonConvert.DeserializeObject<IList<Challenge>>(responseString);
+                }
+            }
+            return challenges;
         }
 
         public Task<IList<Driver>> GetDrivers(string token)
