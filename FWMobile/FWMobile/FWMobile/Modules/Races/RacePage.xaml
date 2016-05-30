@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+             x:Class="FWMobile.Modules.Races.RacePage">
+  <ContentPage.Content>
+    <ListView ItemsSource="{Binding Choices}" HasUnevenRows="True">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <StackLayout>
+                <Label Text="{Binding Message}" FontAttributes="Bold" FontSize="Large"></Label>
+                <Label Text="{Binding Description}" FontSize="Medium" FontAttributes="Italic"></Label>
+                <controls:ExtendedPicker ItemsSource="{Binding Drivers}" DisplayProperty="Name" SelectedItem="{Binding SelectedDriver}"/>
+              </StackLayout>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </ContentPage.Content>
+</ContentPage>

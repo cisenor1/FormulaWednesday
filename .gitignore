@@ -1,0 +1,15 @@
+FWMobile/packages/
+FWMobile/FWMobile/FWMobile/bin/
+FWMobile/FWMobile/FWMobile/obj/
+FWMobile/FWMobile/FWMobile.Droid/bin/
+FWMobile/FWMobile/FWMobile.Droid/obj/
+FWMobile/.vs/
+*.user
+FWMobile/FWMobile/FWMobile.iOS/obj/
+FWMobile/FWMobile/FWMobile.iOS/bin/
+FormulaWednesday/.vs/
+FormulaWednesday/FormulaWednesday/obj/
+*.suo
+FormulaWednesday/FormulaWednesday/FormulaWednesday.csproj.user
+*.suo
+Server/node_modules/
