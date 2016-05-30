@@ -17,11 +17,11 @@
     <StackLayout Padding="20, 0, 0, 0" IsVisible="{Binding LoggedIn}">
       <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
         <Label Text="Display Name: " VerticalOptions="CenterAndExpand"></Label>
-        <Label Text="{Binding User.UserName}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"></Label>
+        <Label Text="{Binding User.DisplayName}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"></Label>
       </StackLayout>
       <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
         <Label Text="Full Name: " VerticalOptions="CenterAndExpand"></Label>
-        <Label Text="{Binding User.FullName}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"></Label>
+        <Label Text="{Binding User.FirstName}" FontAttributes="Bold" VerticalOptions="CenterAndExpand"></Label>
       </StackLayout>
       <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
         <Label Text="Email: " VerticalOptions="CenterAndExpand"></Label>

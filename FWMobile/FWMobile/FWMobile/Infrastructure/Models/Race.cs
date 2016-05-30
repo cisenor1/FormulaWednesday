@@ -17,7 +17,6 @@ namespace FWMobile.Infrastructure.Models
         public string Country { get; set; }
         public string City { get; set; }
         public Driver Winner { get; set; }
-        [JsonIgnore]
         public string Key { get; set; }
     }
 }

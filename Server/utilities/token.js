@@ -1,6 +1,7 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
+const Promise = require('bluebird');
 const secret = require('../config');
 
 function createToken(user) {
@@ -18,4 +19,22 @@ function createToken(user) {
   return jwt.sign({ key: user.key, email: user.email, scope: scopes }, secret, { algorithm: 'HS256', expiresIn: "1h" } );
 }
 
-module.exports = createToken;
+function checkAndDecodeToken(token) {
+    return new Promise(function(resolve, reject) {
+        jwt.verify(token, secret, { algorithms: ['HS256'] }, function (err, payload) {
+            // if token alg != RS256,  err == invalid signature
+            if (err) {
+                reject(err);
+                return;
+            }
+            else {
+                resolve(payload);
+            }
+        });
+    });
+}
+
+module.exports = {
+    createToken: createToken,
+    checkAndDecodeToken: checkAndDecodeToken
+};

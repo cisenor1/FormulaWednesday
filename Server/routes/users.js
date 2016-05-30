@@ -8,7 +8,8 @@ const createUserSchema = require('../utilities/createUser');
 const verifyUniqueUser = require('../utilities/userFunctions').verifyUniqueUser;
 const verifyCredentials = require('../utilities/userFunctions').verifyCredentials;
 const authenticateUserSchema = require('../utilities/authenticateUserSchema');
-const createToken = require('../utilities/token');
+const createToken = require('../utilities/token').createToken;
+const checkAndDecodeToken = require('../utilities/token').checkAndDecodeToken;
 const db = require('../utilities/sqliteUtilities');
 
 function hashPassword(password, cb) {
@@ -47,7 +48,10 @@ module.exports = [
                     console.log(hash);
                     db.saveUser(user).then(success => {
                         if (success) {
-                            res({ id_token: createToken(user) }).code(201);
+                            res({ 
+                                id_token: createToken(user),
+                                key: user.key
+                             }).code(201);
                         }
                         else {
                             throw Boom.badRequest(new Error("unable to save user"));
@@ -74,9 +78,13 @@ module.exports = [
                 method: verifyCredentials, assign: 'user' 
             }],
             handler: (req, res) => {
+                console.log("authenticate");
                 // If the user's password is correct, we can issue a token.
                 // If it was incorrect, the error will bubble up from the pre method
-                res({ id_token: createToken(req.pre.user) }).code(201);
+                res({ 
+                    id_token: createToken(req.pre.user),
+                    key: req.pre.user.key
+                 }).code(201);
             },
             validate: {
                 payload: authenticateUserSchema
@@ -107,6 +115,34 @@ module.exports = [
             handler: (req, res) => {
                 db.getBasicUsers(null, false).then(users => {
                     res(users);
+                });
+            },
+            auth: {
+                strategy: 'jwt',
+                scope: ['user']
+            }
+        }
+    },
+    {
+        method: 'GET',
+        path: '/users/{key}',
+        config: {
+            handler: (req, res) => {
+                let credentials = req.auth.credentials;
+                if (req.params.key !== credentials.key)
+                {
+                    throw Boom.badRequest(new Error("cannot request info for different user"));
+                }
+                db.getUsers(credentials.email, false).then(users => {
+                    if (!users) {
+                        throw Boom.badRequest(new Error("user information could not be found"));
+                    }
+                    var user = users[0];
+                    if (!user)
+                    {
+                        throw Boom.badRequest(new Error("user information could not be found"));
+                    }
+                    res(user);
                 });
             },
             auth: {

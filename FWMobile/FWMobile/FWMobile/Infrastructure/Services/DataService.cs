@@ -44,27 +44,11 @@ namespace FWMobile.Infrastructure.Services
         public async Task<IDictionary<Challenge, Driver>> GetRaceChoices(User user, Race race)
         {
             Dictionary<Challenge, Driver> choices = new Dictionary<Challenge, Driver>();
-
-            var challenges = await GetGenericChallenges(user);
-            var drivers = await GetDrivers(user);
-
+            
             if (!string.IsNullOrWhiteSpace(user.Token))
             {
-                var choiceList = await _restService.GetUserChoices(user.Token, user.Key, race.Key, DateTime.Now.Year);
-                foreach (var challenge in challenges)
-                {
-                    var choice = choiceList.FirstOrDefault(x => x.Key == challenge.Key);
-                    if (!string.IsNullOrWhiteSpace(choice.Value))
-                    {
-                        var driver = drivers.FirstOrDefault(x => x.Key == choice.Value);
-                        choices.Add(challenge, driver);
-                        //choices.Add(challenge, choice.Value);
-                    }
-                    else
-                    {
-                        choices.Add(challenge, null);
-                    }
-                }
+                var challenges = await _restService.GetChallenges(user.Token, race.Key);
+                var userChoices = await _restService.GetUserChoices(user.Token, user.Key, race.Key, DateTime.Now.Year);
             }
 
             return choices;

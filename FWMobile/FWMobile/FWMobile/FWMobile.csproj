@@ -38,6 +38,7 @@
     <Compile Include="App.cs" />
     <Compile Include="Infrastructure\IDataService.cs" />
     <Compile Include="Infrastructure\IFirebaseService.cs" />
+    <Compile Include="Infrastructure\IRestService.cs" />
     <Compile Include="Infrastructure\Models\BlogPost.cs" />
     <Compile Include="Infrastructure\Models\Challenge.cs" />
     <Compile Include="Infrastructure\Models\Driver.cs" />
@@ -46,6 +47,7 @@
     <Compile Include="Infrastructure\IUserManager.cs" />
     <Compile Include="Infrastructure\Services\DataService.cs" />
     <Compile Include="Infrastructure\Services\FirebaseService.cs" />
+    <Compile Include="Infrastructure\Services\RestService.cs" />
     <Compile Include="Infrastructure\Services\UserManager.cs" />
     <Compile Include="Modules\Home\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>

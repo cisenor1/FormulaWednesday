@@ -45,12 +45,11 @@ namespace FWMobile.Infrastructure.Services
 
         public async Task<User> LoginUser(string email, string password)
         {
-            var md5Password = EasyEncryption.MD5.ComputeMD5Hash(password);
-            var user = await _service.GetUserInfo(email, md5Password);
+            var user = await _service.GetUserInfo(email, password);
             if (user != null)
             {
                 FillCachedUser(user);
-                SaveCredentials(user, md5Password);
+                SaveCredentials(user, password);
             }
             else
             {

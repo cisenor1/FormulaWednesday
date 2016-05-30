@@ -32,7 +32,6 @@ function verifyCredentials(req, res) {
     db.getUsers(req.payload.email, true).then(users => {
         if (users && users.length > 0) {
             var user = users[0];
-            console.log(user);
             if (user) {
                 bcrypt.compare(password, user.pass, (err, isValid) => {
                     if (isValid) {

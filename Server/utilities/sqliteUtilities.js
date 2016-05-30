@@ -8,19 +8,19 @@ const db = new sqlite3.Database('../Data/formulawednesday.sqlite');
 const driverSelect = "SELECT drivers.key, drivers.active, drivers.name, drivers.points, drivers.teamkey as teamKey, teams.name as teamName FROM drivers inner join teams on drivers.teamKey == teams.key";
 const raceSelect = "select r.*, s.cutoff, s.racedate as raceDate from races as r inner join seasons as s on r.key == s.racekey";
 const challengeSelect = "select c.*, ac.racekey as raceKey from challenges as c inner join activechallenges as ac on c.key == ac.challengekey";
-const userSelect = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role, users.pass from users";
-const basicUserSelect = "select users.displayname as displayName, users.firstname as firstName, users.key from users";
-const userSelectNoPass = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role from users";
-
+const userSelect = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role, users.pass, users.points from users";
+const basicUserSelect = "select users.displayname as displayName, users.firstname as firstName, users.key, users.points from users";
+const userSelectNoPass = "select users.displayname as displayName, users.email, users.firstname as firstName, users.key, users.lastname as lastName, users.role, users.points from users";
+const userChoiceSelect = "select userchoices.challengeKey as key, userchoices.choice as value from userchoices";
 const userInsert = "INSERT INTO users (key, email, pass, displayname, firstname, lastname, role)";
 
 function getDrivers(key) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         let whereStatement = "";
         if (key) {
             whereStatement = "where key = '" + key + "'";
         }
-        db.all(driverSelect + " " + whereStatement, function (err, rows) {
+        db.all(driverSelect + " " + whereStatement, (err, rows) => {
             if (err) {
                 reject(err);
                 return;
@@ -31,12 +31,12 @@ function getDrivers(key) {
 };
 
 function getRaces(season, key) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         let whereStatement = "";
         if (key) {
             whereStatement = "where key = '" + key + "'";
         }
-        db.all(raceSelect + " " + whereStatement, function (err, rows) {
+        db.all(raceSelect + " " + whereStatement, (err, rows) => {
             if (err) {
                 reject(err);
                 return;
@@ -47,7 +47,7 @@ function getRaces(season, key) {
 };
 
 function getUsers(email, withPassword) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         let selectStatement;
         if (withPassword) {
             selectStatement = userSelect;
@@ -58,7 +58,7 @@ function getUsers(email, withPassword) {
         if (email) {
             selectStatement = selectStatement + " where users.email = '" + email + "'";
         }
-        db.all(selectStatement, function (err, rows) {
+        db.all(selectStatement, (err, rows) => {
             if (err) {
                 console.log("rejecting");
                 reject(err);
@@ -70,9 +70,9 @@ function getUsers(email, withPassword) {
 }
 
 function getBasicUsers() {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         let selectStatement = basicUserSelect;
-        db.all(selectStatement, function(err, rows) {
+        db.all(selectStatement, (err, rows) => {
             if (err) {
                 reject(err);
                 return;
@@ -83,14 +83,14 @@ function getBasicUsers() {
 }
 
 function saveUser(user) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         if (!user) {
             reject(new Error("must have a user to save"));
             return;
         }
         
         let valuesStatement = "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);";
-        let valuesOject = {
+        let valuesObject = {
             1: user.key,
             2: user.email,
             3: user.password,
@@ -100,7 +100,7 @@ function saveUser(user) {
             7: user.role
         };
         var insertStatement = userInsert + " " + valuesStatement;
-        db.run(insertStatement, valuesOject, function(err) {
+        db.run(insertStatement, valuesObject, (err) => {
             if (err) {
                 reject(err);
                 return;
@@ -111,7 +111,7 @@ function saveUser(user) {
 }
 
 function getChallenges(season, raceKey, challengeKey) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         if (!season) {
             reject(new Error("Need a season and a race key"));
             return;
@@ -142,9 +142,30 @@ function getChallenges(season, raceKey, challengeKey) {
     });
 };
 
+function getUserPicks(userKey, season, raceKey, challengeKey) {
+    return new Promise((resolve, reject) => {
+        let statement = userChoiceSelect + " where userkey = ?1 and season = ?2 and racekey = ?3";
+        let valuesObject = {
+            1: userKey,
+            2: season,
+            3: raceKey
+        };
+        if (challengeKey) {
+            statement = statement + " and challengekey = ?4";
+            valuesObject[4] = challengeKey;
+        }
+        db.all(statement, valuesObject, (err, rows) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve(rows);
+        });
+    });
+}
+
 function _getChallengesInternal(season, raceKey) {
-    return new Promise(function (resolve, reject) {
-        
+    return new Promise((resolve, reject) => {
         let where = "where ac.season = " + season;
         if (raceKey) {
             where = where + " and ac.racekey = '" + raceKey + "'";
@@ -156,14 +177,14 @@ function _getChallengesInternal(season, raceKey) {
 };
 
 function _getChallengeChoicesInternal(season, raceKey) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         let statement = "select challengekey as challengeKey, season, racekey as raceKey, driverkey as driverKey from challengechoices where challengechoices.challengeKey in " +
             "(select c.key from challenges as c inner join activechallenges as ac on c.key == ac.challengekey where ac.season = " +
             season + " and ac.racekey = '" + raceKey + "')";
         let challengeChoiceMaps = [];
-        db.all(statement, function (err, rows) {
+        db.all(statement, (err, rows) => {
             rows.forEach(row => {
-                let challengeChoiceMap = challengeChoiceMaps.filter(function (value) { return value.challengeKey === row.challengeKey; })[0];
+                let challengeChoiceMap = challengeChoiceMaps.filter(value => { return value.challengeKey === row.challengeKey; })[0];
                 if (challengeChoiceMap) {
                     challengeChoiceMap.drivers.push(row.driverKey);
                 }
@@ -187,5 +208,6 @@ module.exports = {
     getChallenges: getChallenges,
     getUsers: getUsers,
     getBasicUsers: getBasicUsers,
-    saveUser: saveUser
+    saveUser: saveUser,
+    getUserPicks: getUserPicks
 }
