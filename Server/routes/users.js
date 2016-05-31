@@ -32,7 +32,6 @@ module.exports = [
             { method: verifyUniqueUser, assign: 'user' }
             ],
             handler: (req, res) => {
-                console.log("in user handler!");
                 let user = new User();
                 user.email = req.payload.email;
                 user.displayName = req.payload.displayName;
@@ -45,7 +44,6 @@ module.exports = [
                         throw Boom.badRequest(err);
                     }
                     user.password = hash;
-                    console.log(hash);
                     db.saveUser(user).then(success => {
                         if (success) {
                             res({ 
@@ -78,13 +76,12 @@ module.exports = [
                 method: verifyCredentials, assign: 'user' 
             }],
             handler: (req, res) => {
-                console.log("authenticate");
                 // If the user's password is correct, we can issue a token.
                 // If it was incorrect, the error will bubble up from the pre method
                 res({ 
                     id_token: createToken(req.pre.user),
                     key: req.pre.user.key
-                 }).code(201);
+                 }).code(200);
             },
             validate: {
                 payload: authenticateUserSchema

@@ -14,6 +14,8 @@ const userSelectNoPass = "select users.displayname as displayName, users.email, 
 const userChoiceSelect = "select userchoices.challengeKey as key, userchoices.choice as value from userchoices";
 const userInsert = "INSERT INTO users (key, email, pass, displayname, firstname, lastname, role)";
 
+const userChoicesInsert = "INSERT OR REPLACE INTO userchoices (userkey, season, racekey, challengekey, choice)";
+
 function getDrivers(key) {
     return new Promise((resolve, reject) => {
         let whereStatement = "";
@@ -60,7 +62,6 @@ function getUsers(email, withPassword) {
         }
         db.all(selectStatement, (err, rows) => {
             if (err) {
-                console.log("rejecting");
                 reject(err);
                 return;
             }
@@ -88,7 +89,7 @@ function saveUser(user) {
             reject(new Error("must have a user to save"));
             return;
         }
-        
+
         let valuesStatement = "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);";
         let valuesObject = {
             1: user.key,
@@ -130,7 +131,7 @@ function getChallenges(season, raceKey, challengeKey) {
                 }
                 else {
                     challenge.driverChoices = drivers.filter(driver => {
-                        return challengeChoiceMap.drivers.some(dk => { dk === driver.key; })
+                        return challengeChoiceMap.drivers.some(dk => { return dk === driver.key; })
                     });
                 }
             });
@@ -164,6 +165,37 @@ function getUserPicks(userKey, season, raceKey, challengeKey) {
     });
 }
 
+function saveUserPicks(userPicks) {
+    return new Promise((resolve, reject) => {
+        try {
+            let insertStatement = userChoicesInsert + " VALUES (?1, ?2, ?3, ?4, ?5);";
+            db.serialize(() => {
+                db.exec("BEGIN;");
+                
+                for (let i = 0; i < userPicks.length; i++) {
+                    let userPick = userPicks[i];
+                    let valuesObject = {
+                        1: userPick.userKey,
+                        2: userPick.season,
+                        3: userPick.raceKey,
+                        4: userPick.challengeKey,
+                        5: userPick.choice  
+                    };
+                    db.run(insertStatement, valuesObject);
+                }
+                
+                db.exec("COMMIT;");
+                resolve(true);
+            });
+        }
+        catch (exception) {
+            console.log(exception);
+            db.exec("ROLLBACK;");
+            reject(exception);
+        }
+    });
+}
+
 function _getChallengesInternal(season, raceKey) {
     return new Promise((resolve, reject) => {
         let where = "where ac.season = " + season;
@@ -178,9 +210,10 @@ function _getChallengesInternal(season, raceKey) {
 
 function _getChallengeChoicesInternal(season, raceKey) {
     return new Promise((resolve, reject) => {
-        let statement = "select challengekey as challengeKey, season, racekey as raceKey, driverkey as driverKey from challengechoices where challengechoices.challengeKey in " +
-            "(select c.key from challenges as c inner join activechallenges as ac on c.key == ac.challengekey where ac.season = " +
-            season + " and ac.racekey = '" + raceKey + "')";
+        let statement = "select distinct challengechoices.challengekey as challengeKey, " + 
+        "challengechoices.season, challengechoices.racekey as raceKey, challengechoices.driverkey as driverKey " +
+        "from challengechoices inner join activechallenges as ac on challengechoices.challengeKey == ac.challengekey where " +
+        "challengechoices.season == " + season + " and challengechoices.raceKey == '" + raceKey + "'";
         let challengeChoiceMaps = [];
         db.all(statement, (err, rows) => {
             rows.forEach(row => {
@@ -209,5 +242,6 @@ module.exports = {
     getUsers: getUsers,
     getBasicUsers: getBasicUsers,
     saveUser: saveUser,
-    getUserPicks: getUserPicks
+    getUserPicks: getUserPicks,
+    saveUserPicks: saveUserPicks
 }

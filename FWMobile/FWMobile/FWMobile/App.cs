@@ -32,7 +32,6 @@ namespace FWMobile
         private void SetupIOC()
         {
             FreshMvvm.FreshIOC.Container.Register(UserDialogs.Instance);
-            FreshMvvm.FreshIOC.Container.Register<IFirebaseService, FirebaseService>();
             FreshMvvm.FreshIOC.Container.Register<IRestService, RestService>();
             FreshMvvm.FreshIOC.Container.Register<IDataService, DataService>();
             FreshMvvm.FreshIOC.Container.Register<IUserManager, UserManager>();

@@ -60,7 +60,7 @@ namespace FWMobile.Modules.MyPicks
             else if (Races.Count == 0)
             {
                 var races = await _dataService.GetRaces(user);
-                var orderedRaces = races.OrderBy(x => x.Date);
+                var orderedRaces = races.OrderBy(x => x.RaceDate);
                 foreach (var race in orderedRaces)
                 {
                     Races.Add(race);

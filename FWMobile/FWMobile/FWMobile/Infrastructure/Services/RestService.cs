@@ -17,7 +17,8 @@ namespace FWMobile.Infrastructure.Services
         private string _baseUrl = "http://192.168.0.15:3000";
         private JsonSerializerSettings _jsonSettings = new JsonSerializerSettings()
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Formatting = Formatting.None
         };
 
         public Task<IList<BlogPost>> GetBlogPosts()
@@ -51,9 +52,25 @@ namespace FWMobile.Infrastructure.Services
             return challenges;
         }
 
-        public Task<IList<Driver>> GetDrivers(string token)
+        public async Task<IList<Driver>> GetDrivers(string token)
         {
-            throw new NotImplementedException();
+            AuthenticationHeaderValue authHeaders = new AuthenticationHeaderValue("Bearer", token);
+            var driverUrl = _baseUrl + "/drivers";
+
+            IList<Driver> drivers = null;
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = authHeaders;
+                var response = await client.GetAsync(driverUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    drivers = JsonConvert.DeserializeObject<IList<Driver>>(responseString, _jsonSettings);
+                }
+            }
+
+            return drivers;
         }
 
         public async Task<IList<Race>> GetRaces(string token, int year)
@@ -144,9 +161,23 @@ namespace FWMobile.Infrastructure.Services
             return user;
         }
 
-        public Task<bool> SaveUserChoices(string token, string userKey, string raceKey, int year, IDictionary<string, string> picks)
+        public async Task<bool> SaveUserChoices(string token, string userKey, string raceKey, int year, IDictionary<string, string> picks)
         {
-            throw new NotImplementedException();
+            var savePicksUrl = _baseUrl + "/challenges/" + year.ToString() + "/" + raceKey + "/" + userKey + "/picks";
+            var pickList = picks.ToList();
+            
+            var picksJson = JsonConvert.SerializeObject(pickList, _jsonSettings);
+            var content = new StringContent(picksJson, Encoding.UTF8, "application/json");
+            bool success = false;
+            AuthenticationHeaderValue authHeaders = new AuthenticationHeaderValue("Bearer", token);
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = authHeaders;
+                var response = await client.PostAsync(savePicksUrl, content);
+                success = response.IsSuccessStatusCode;
+            }
+
+            return success;
         }
     }
 }

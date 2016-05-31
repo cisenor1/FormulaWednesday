@@ -12,7 +12,7 @@ namespace FWMobile.Infrastructure.Models
     public class Race
     {
         public string Title { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime RaceDate { get; set; }
         public DateTime Cutoff { get; set; }
         public string Country { get; set; }
         public string City { get; set; }

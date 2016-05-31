@@ -49,6 +49,19 @@ namespace FWMobile.Infrastructure.Services
             {
                 var challenges = await _restService.GetChallenges(user.Token, race.Key);
                 var userChoices = await _restService.GetUserChoices(user.Token, user.Key, race.Key, DateTime.Now.Year);
+                foreach (var challenge in challenges)
+                {
+                    if (userChoices.ContainsKey(challenge.Key))
+                    {
+                        var driverKey = userChoices[challenge.Key];
+                        var userPick = challenge.DriverChoices.FirstOrDefault(x => x.Key == driverKey);
+                        choices.Add(challenge, userPick);
+                    }
+                    else
+                    {
+                        choices.Add(challenge, null);
+                    }
+                }
             }
 
             return choices;

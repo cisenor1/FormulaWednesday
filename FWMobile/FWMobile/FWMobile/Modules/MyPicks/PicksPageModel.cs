@@ -48,15 +48,15 @@ namespace FWMobile.Modules.MyPicks
                 Title = Race.Title + " Picks";
                 _user = await _userManager.GetUser();
                 var raceChoices = await _dataService.GetRaceChoices(_user, Race);
-                var drivers = await _dataService.GetDrivers(_user);
-                List<Driver> sortedDrivers = drivers.ToList();
-                sortedDrivers
-                    .Sort(delegate (Driver x, Driver y)
-                    {
-                        return x.Name.CompareTo(y.Name);
-                    });
+
                 foreach (var raceChoice in raceChoices)
                 {
+                    List<Driver> sortedDrivers = raceChoice.Key.DriverChoices.ToList();
+                    sortedDrivers
+                        .Sort(delegate (Driver x, Driver y)
+                        {
+                            return x.Name.CompareTo(y.Name);
+                        });
                     var choice = new ChallengeChoice(raceChoice.Key);
                     choice.CanChoose = CanSavePicks();
                     choice.Drivers = new ObservableCollection<DriverChoice>();
@@ -130,7 +130,7 @@ namespace FWMobile.Modules.MyPicks
 
         public bool CanSavePicks()
         {
-            return (DateTime.Now - Race.Date).Days < 0;
+            return (DateTime.Now - Race.RaceDate).Days < 0;
         }
     }
 
