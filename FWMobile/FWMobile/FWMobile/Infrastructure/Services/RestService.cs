@@ -21,17 +21,20 @@ namespace FWMobile.Infrastructure.Services
             Formatting = Formatting.None
         };
 
-        public Task<IList<BlogPost>> GetBlogPosts()
+        public async Task<IList<BlogPost>> GetBlogPosts()
         {
-            var blogPost = new BlogPost()
+            IList<BlogPost> blogs;
+
+            string blogsUrl = _baseUrl + "/blogs";
+
+            using (var client = new HttpClient())
+            using (var response = await client.GetAsync(blogsUrl))
             {
-                Message = "Test",
-                Title = "Test",
-                User = "Derrick"
-            };
-            IList<BlogPost> blogs = new List<BlogPost>();
-            blogs.Add(blogPost);
-            return Task.FromResult(blogs);
+                var responseString = await response.Content.ReadAsStringAsync();
+                blogs = JsonConvert.DeserializeObject<IList<BlogPost>>(responseString);
+            }
+
+            return blogs;
         }
 
         public async Task<IList<Challenge>> GetChallenges(string token, string raceKey)
@@ -42,11 +45,13 @@ namespace FWMobile.Infrastructure.Services
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = authHeaders;
-                var response = await client.GetAsync(challengesUrl);
-                if (response.IsSuccessStatusCode)
+                using (var response = await client.GetAsync(challengesUrl))
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    challenges = JsonConvert.DeserializeObject<IList<Challenge>>(responseString);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        challenges = JsonConvert.DeserializeObject<IList<Challenge>>(responseString);
+                    }
                 }
             }
             return challenges;
@@ -62,11 +67,13 @@ namespace FWMobile.Infrastructure.Services
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = authHeaders;
-                var response = await client.GetAsync(driverUrl);
-                if (response.IsSuccessStatusCode)
+                using (var response = await client.GetAsync(driverUrl))
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    drivers = JsonConvert.DeserializeObject<IList<Driver>>(responseString, _jsonSettings);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        drivers = JsonConvert.DeserializeObject<IList<Driver>>(responseString, _jsonSettings);
+                    }
                 }
             }
 
@@ -81,11 +88,13 @@ namespace FWMobile.Infrastructure.Services
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = authHeaders;
-                var response = await client.GetAsync(raceUrl);
-                if (response.IsSuccessStatusCode)
+                using (var response = await client.GetAsync(raceUrl))
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    races = JsonConvert.DeserializeObject<IList<Race>>(responseString, _jsonSettings);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        races = JsonConvert.DeserializeObject<IList<Race>>(responseString, _jsonSettings);
+                    }
                 }
             }
 
@@ -100,12 +109,14 @@ namespace FWMobile.Infrastructure.Services
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = authHeaders;
-                var response = await client.GetAsync(choicesUrl);
-                if (response.IsSuccessStatusCode)
+                using (var response = await client.GetAsync(choicesUrl))
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    var choices = JsonConvert.DeserializeObject<IList<KeyValuePair<string, string>>>(responseString);
-                    userChoices = choices.ToDictionary(pair => pair.Key, pair => pair.Value);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        var choices = JsonConvert.DeserializeObject<IList<KeyValuePair<string, string>>>(responseString);
+                        userChoices = choices.ToDictionary(pair => pair.Key, pair => pair.Value);
+                    }
                 }
             }
 
@@ -127,14 +138,15 @@ namespace FWMobile.Infrastructure.Services
             string userKey = string.Empty;
             using (var client = new HttpClient())
             {
-                var response = await client.PostAsync(loginUrl, content);
-                
-                if (response.IsSuccessStatusCode)
+                using (var response = await client.PostAsync(loginUrl, content))
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    var credToken = JsonConvert.DeserializeObject<JToken>(responseString);
-                    idToken = credToken.Value<string>("id_token");
-                    userKey = credToken.Value<string>("key");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        var credToken = JsonConvert.DeserializeObject<JToken>(responseString);
+                        idToken = credToken.Value<string>("id_token");
+                        userKey = credToken.Value<string>("key");
+                    }
                 }
             }
 
@@ -149,12 +161,14 @@ namespace FWMobile.Infrastructure.Services
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = authHeaders;
-                var response = await client.GetAsync(userUrl);
-                if (response.IsSuccessStatusCode)
+                using (var response = await client.GetAsync(userUrl))
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    user = JsonConvert.DeserializeObject<User>(responseString, _jsonSettings);
-                    user.Token = idToken;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        user = JsonConvert.DeserializeObject<User>(responseString, _jsonSettings);
+                        user.Token = idToken;
+                    }
                 }
             }
 
@@ -173,8 +187,10 @@ namespace FWMobile.Infrastructure.Services
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = authHeaders;
-                var response = await client.PostAsync(savePicksUrl, content);
-                success = response.IsSuccessStatusCode;
+                using (var response = await client.PostAsync(savePicksUrl, content))
+                {
+                    success = response.IsSuccessStatusCode;
+                }
             }
 
             return success;

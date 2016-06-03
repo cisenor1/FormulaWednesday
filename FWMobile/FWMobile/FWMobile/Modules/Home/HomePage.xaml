@@ -25,4 +25,7 @@
       </ListView>
     </StackLayout>
   </ContentPage.Content>
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Command="{Binding ShowAboutCommand}" Text="Profile" Icon="ic_person_white_24dp"></ToolbarItem>
+  </ContentPage.ToolbarItems>
 </ContentPage>

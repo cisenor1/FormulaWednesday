@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace FWMobile.Modules.MyPicks
+namespace FWMobile.Modules.Races
 {
     [ImplementPropertyChanged]
     public class RaceChoicePageModel : FreshMvvm.FreshBasePageModel

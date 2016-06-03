@@ -101,7 +101,12 @@ namespace FWMobile.Infrastructure.Services
 
         public async Task<IList<BlogPost>> GetBlogPosts()
         {
-            return await _restService.GetBlogPosts();
+            List<BlogPost> blogs = (await _restService.GetBlogPosts()).ToList();
+            blogs.Sort(delegate (BlogPost x, BlogPost y)
+            {
+                return x.PostDate.CompareTo(y.PostDate);
+            });
+            return blogs;
         }
 
         public DataService(IRestService restService)

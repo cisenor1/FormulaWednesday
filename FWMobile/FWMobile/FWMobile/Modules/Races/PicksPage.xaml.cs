@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using XLabs.Forms.Controls;
 
-namespace FWMobile.Modules.MyPicks
+namespace FWMobile.Modules.Races
 {
     public partial class PicksPage : ContentPage
     {

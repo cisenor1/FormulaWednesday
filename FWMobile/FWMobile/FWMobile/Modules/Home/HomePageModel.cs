@@ -8,6 +8,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace FWMobile.Modules.Home
 {
@@ -16,16 +18,19 @@ namespace FWMobile.Modules.Home
     {
         private IDataService _dataService;
         public IUserDialogs _userDialogs;
+        public IUserManager _userManager;
         public string MainText { get; set; } = "Welcome to the Formula Wednesday Android App. This is a work in progress, so expect bugs and crashes.";
-
+        public ICommand ShowAboutCommand { get; set; }
         public ObservableCollection<DisplayPost> Posts { get; set; }
 
         public async override void Init(object initData)
         {
             base.Init(initData);
-            
+            ShowAboutCommand = new Command(() =>
+            {
+                CoreMethods.PushPageModel<Profile.ProfilePageModel>();
+            });
             Posts = new ObservableCollection<DisplayPost>();
-
             var blogPosts = await _dataService.GetBlogPosts();
             foreach (var blogPost in blogPosts)
             {
@@ -34,10 +39,11 @@ namespace FWMobile.Modules.Home
             }
         }
 
-        public HomePageModel(IDataService dataService, IUserDialogs userDialogs)
+        public HomePageModel(IDataService dataService, IUserManager userManager, IUserDialogs userDialogs)
         {
             _dataService = dataService;
             _userDialogs = userDialogs;
+            _userManager = userManager;
         }
 
         protected override void ViewIsAppearing(object sender, EventArgs e)
@@ -54,14 +60,14 @@ namespace FWMobile.Modules.Home
         public DisplayPost(BlogPost post)
         {
             string ds = string.Empty;
-            if (post.Timestamp != DateTime.MinValue)
+            if (post.PostDate != DateTime.MinValue)
             {
-                ds = post.Timestamp.ToString("d");
+                ds = post.PostDate.ToString("d");
             }
             
             Message = post.Message;
             Title = post.Title;
-            UserInfo = post.User + " on " + ds;
+            UserInfo = post.UserDisplayName + " on " + ds;
         }
     }
 }

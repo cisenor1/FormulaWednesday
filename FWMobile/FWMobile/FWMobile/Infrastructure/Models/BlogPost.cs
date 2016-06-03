@@ -10,8 +10,7 @@ namespace FWMobile.Infrastructure.Models
     {
         public string Title { get; set; }
         public string Message { get; set; }
-        public string User { get; set; }
-        public DateTime Timestamp { get; set; }
-        public string Key { get; set; }
+        public string UserDisplayName { get; set; }
+        public DateTime PostDate { get; set; }
     }
 }

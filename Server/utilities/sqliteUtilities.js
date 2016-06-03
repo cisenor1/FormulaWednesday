@@ -14,7 +14,22 @@ const userSelectNoPass = "select users.displayname as displayName, users.email, 
 const userChoiceSelect = "select userchoices.challengeKey as key, userchoices.choice as value from userchoices";
 const userInsert = "INSERT INTO users (key, email, pass, displayname, firstname, lastname, role)";
 
+const blogQuery = "select blogs.message, blogs.title, blogs.userkey as userKey, blogs.postdate as postDate from blogs";
+
 const userChoicesInsert = "INSERT OR REPLACE INTO userchoices (userkey, season, racekey, challengekey, choice)";
+
+function getBlogs() {
+    return new Promise((resolve, reject) => {
+        let statement = blogQuery;
+        db.all(statement, (err, rows) => {
+           if (err) {
+               reject(err);
+               return;
+           }
+           resolve(rows);
+        });     
+    });
+}
 
 function getDrivers(key) {
     return new Promise((resolve, reject) => {
@@ -243,5 +258,6 @@ module.exports = {
     getBasicUsers: getBasicUsers,
     saveUser: saveUser,
     getUserPicks: getUserPicks,
-    saveUserPicks: saveUserPicks
+    saveUserPicks: saveUserPicks,
+    getBlogs: getBlogs
 }

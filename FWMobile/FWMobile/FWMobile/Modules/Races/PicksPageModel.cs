@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
-namespace FWMobile.Modules.MyPicks
+namespace FWMobile.Modules.Races
 {
     [ImplementPropertyChanged]
     public class PicksPageModel : FreshMvvm.FreshBasePageModel

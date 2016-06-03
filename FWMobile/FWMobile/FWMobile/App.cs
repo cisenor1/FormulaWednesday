@@ -15,18 +15,18 @@ namespace FWMobile
         public App()
         {
             SetupIOC();
-            var masterDetailPage = new FreshMvvm.FreshMasterDetailNavigationContainer();
-            masterDetailPage.Init("Menu");
-            masterDetailPage.AddPage<Modules.Home.HomePageModel>("Home");
-            masterDetailPage.AddPage<Modules.Profile.ProfilePageModel>("Profile");
-            //masterDetailPage.AddPage<ChallengesPageModel>("Challenges");
-            masterDetailPage.AddPage<Modules.MyPicks.RaceChoicePageModel>("My Picks");
-            MainPage = masterDetailPage;
-            //var tabbedPage = new FreshMvvm.FreshTabbedNavigationContainer();
-            //tabbedPage.AddTab<HomePageModel>("Home", "");
-            //tabbedPage.AddTab<UserInfoPageModel>("Profile", "");
-            //tabbedPage.AddTab<ChallengesPageModel>("Challenges", "");
-            //MainPage = tabbedPage;
+            //var masterDetailPage = new FreshMvvm.FreshMasterDetailNavigationContainer();
+            //masterDetailPage.Init("Menu");
+            //masterDetailPage.AddPage<Modules.Home.HomePageModel>("Home");
+            //masterDetailPage.AddPage<Modules.Profile.ProfilePageModel>("Profile");
+            ////masterDetailPage.AddPage<ChallengesPageModel>("Challenges");
+            //masterDetailPage.AddPage<Modules.MyPicks.RaceChoicePageModel>("My Picks");
+            //MainPage = masterDetailPage;
+            var tabbedPage = new FreshMvvm.FreshTabbedNavigationContainer();
+            tabbedPage.AddTab<Modules.Home.HomePageModel>("Home", "");
+            tabbedPage.AddTab<Modules.Races.RaceChoicePageModel>("Races", "");
+            
+            MainPage = tabbedPage;
         }
 
         private void SetupIOC()

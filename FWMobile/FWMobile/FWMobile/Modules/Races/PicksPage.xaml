@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              xmlns:fe="clr-namespace:FreshEssentials;assembly=FreshEssentials"
-             x:Class="FWMobile.Modules.MyPicks.PicksPage"
+             x:Class="FWMobile.Modules.Races.PicksPage"
              Title="{Binding Title}">
   <ContentPage.Resources>
     <ResourceDictionary>
