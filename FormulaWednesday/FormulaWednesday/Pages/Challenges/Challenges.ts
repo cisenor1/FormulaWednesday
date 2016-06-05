@@ -106,6 +106,7 @@ class ChallengesPage extends PageBase implements Page {
         FirebaseUtilities.saveChallengeChoices(this.app.user, this.app.selectedRace, challenges)
             .then((b) => {
                 this.vm.isDirty(false);
+                
             })
             .catch((e) => {
                 this.vm.errorMessage(e.message);

@@ -18,9 +18,9 @@ var HomePage = (function (_super) {
         return new Promise(function (resolve, reject) {
             _this.getBlogPosts(5).then(function (bs) {
                 _this.blogPosts(bs);
-                var esc = FirebaseUtilities.escape("<u>Jenson Button (about Rio Haryanto)</u>: \"Get that car out the way.He's going to cost us time. I know he thinks he's quick, but he's not.\"");
+                var esc = FirebaseUtilities.escape("<u>Daniel Ricciardo (after finishing the race in 2nd)</u>: \"Just save it. Nothing you can say can make it any better.\"");
                 _this.quote(FirebaseUtilities.unescape(esc));
-                _this.imageSource("http://i.huffpost.com/gen/1893329/thumbs/o-JENSON-BUTTON-570.jpg");
+                _this.imageSource("http://cdn.scahw.com.au/cdn-1d1b9f5cca9ef30/imagevaultfiles/id_405499/cf_7/ricciardo-monaco-628.jpg");
                 resolve(_this);
             }).catch(function (e) {
                 alert(e);

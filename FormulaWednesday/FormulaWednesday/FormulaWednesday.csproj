@@ -114,6 +114,7 @@
     <TypeScriptCompile Include="Models\MenuItem.ts" />
     <TypeScriptCompile Include="Models\Page.ts" />
     <TypeScriptCompile Include="Models\Race.ts" />
+    <TypeScriptCompile Include="Models\Standings.ts" />
     <TypeScriptCompile Include="Models\Team.ts" />
     <TypeScriptCompile Include="Models\PageBase.ts" />
     <TypeScriptCompile Include="Models\User.ts" />

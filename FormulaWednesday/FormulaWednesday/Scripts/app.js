@@ -65,7 +65,7 @@ var FormulaWednesdayApp = (function () {
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
-        FirebaseUtilities.getRaces().then(function (races) {
+        FirebaseUtilities.getRaces("2016").then(function (races) {
             _this.races(races);
         });
         this.isAdmin(user.role().toLowerCase() == "admin");

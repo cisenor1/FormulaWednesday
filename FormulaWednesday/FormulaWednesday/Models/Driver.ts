@@ -4,4 +4,5 @@
     team: string;
     points: number;
     active: boolean;
+    wins?: number;
 }

@@ -21,11 +21,11 @@
             </div>
             <div data-bind="if:validating()">
                 <div class="panel">
-                    <ul data-bind="foreach: $parent.challenges" class="race-validation">
-                        <li>
+                    <ul data-bind="foreach: challenges" class="race-validation">
+                        <li>    
                             <div class="input-group">
                                 <span class="input-group-addon" id="basic-addon1" data-bind="text: message"></span>
-                                <select class="form-control" data-bind="options: $parents[1].drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: function($context, e){$parents[1].change($context,$parent, e, $root)}}"></select>
+                                <select class="form-control" data-bind="options: drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: function($context, e){$parents[1].change($context,$parent, e, $root)}}"></select>
                             </div>
                         </li>
                     </ul>

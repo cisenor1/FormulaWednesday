@@ -22,7 +22,7 @@ var RacesAdmin = (function (_super) {
             return false;
         }
         return new Promise(function (resolve, reject) {
-            FirebaseUtilities.getRaces().then(function (values) {
+            FirebaseUtilities.getRaces("2016").then(function (values) {
                 _this.races(values);
                 _this.currentRace = ko.observable(values[0]);
                 _this.races().forEach(function (r) {
@@ -30,11 +30,8 @@ var RacesAdmin = (function (_super) {
                     r.date = ko.observable(r.date.toDateString());
                     r.validating = ko.observable(false);
                 });
-                FirebaseUtilities.getChallenges().then(function (c) {
-                    _this.challenges(c);
-                });
-                FirebaseUtilities.getDrivers().then(function (d) {
-                    _this.drivers(d);
+                FirebaseUtilities.getDrivers().then(function (ds) {
+                    _this.drivers(ds);
                 });
                 resolve(_this);
             });
@@ -54,13 +51,13 @@ var RacesAdmin = (function (_super) {
         return this.vmPromise;
     };
     RacesAdmin.prototype.submitValidateRace = function (race, vm) {
+        var _this = this;
         race.validating(false);
         FirebaseUtilities.setRaceResults(race).then(function (r) {
             var self = vm;
             vm.app.sortedUsers().forEach(function (u) {
-                debugger;
                 var results = r.results;
-                var chals = self.challenges();
+                var chals = r.challenges();
                 if (!u.results) {
                     return;
                 }
@@ -74,6 +71,9 @@ var RacesAdmin = (function (_super) {
                         var currentChal = chals.filter(function (c) {
                             return c.key = p;
                         })[0];
+                        if (!currentChal) {
+                            return;
+                        }
                         var win = r.results[p];
                         var picked = picks[p];
                         if (win == picked) {
@@ -82,7 +82,9 @@ var RacesAdmin = (function (_super) {
                             u.points(currPts);
                         }
                     }
-                    FirebaseUtilities.setPoints(u);
+                    FirebaseUtilities.setPoints(u).then(function () {
+                        _this.updateDriverStandings();
+                    });
                 }
             });
         });
@@ -92,7 +94,14 @@ var RacesAdmin = (function (_super) {
     };
     RacesAdmin.prototype.validateRace = function (race) {
         this.currentRace(race);
+        this.races().forEach(function (x) {
+            if (x.validating) {
+                x.validating(false);
+            }
+        });
         race.validating(true);
+    };
+    RacesAdmin.prototype.updateDriverStandings = function () {
     };
     RacesAdmin.prototype.change = function (challenge, race, e, vm) {
         var driverKey = e.target.value;

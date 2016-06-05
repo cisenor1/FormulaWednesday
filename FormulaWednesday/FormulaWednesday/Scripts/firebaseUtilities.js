@@ -33,6 +33,7 @@ var FirebaseUtilities = (function () {
         });
     };
     FirebaseUtilities.getChallengeByKey = function (key) {
+        var _this = this;
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges/" + key);
             return fb.once("value").then(function (ds) {
@@ -40,18 +41,20 @@ var FirebaseUtilities = (function () {
                 if (!fbChal) {
                     return resolve(null);
                 }
-                var chal = {
-                    choice: ko.observable(fbChal.choice),
-                    description: ko.observable(fbChal.description),
-                    key: ko.observable(key),
-                    allSeason: ko.observable(fbChal.allSeason),
-                    message: ko.observable(fbChal.message),
-                    value: ko.observable(fbChal.value),
-                    editing: ko.observable(false),
-                    type: ko.observable(fbChal.type),
-                    drivers: ko.observableArray([])
-                };
-                return resolve(chal);
+                _this.getDrivers().then(function (d) {
+                    var chal = {
+                        choice: ko.observable(fbChal.choice),
+                        description: ko.observable(fbChal.description),
+                        key: ko.observable(key),
+                        allSeason: ko.observable(fbChal.allSeason),
+                        message: ko.observable(fbChal.message),
+                        value: ko.observable(fbChal.value),
+                        editing: ko.observable(false),
+                        type: ko.observable(fbChal.type),
+                        drivers: ko.observableArray(d)
+                    };
+                    return resolve(chal);
+                });
             });
         });
     };
@@ -167,9 +170,10 @@ var FirebaseUtilities = (function () {
             }).catch(reject);
         });
     };
-    FirebaseUtilities.getRaces = function () {
+    FirebaseUtilities.getRaces = function (season) {
+        var _this = this;
         return new Promise(function (resolve, reject) {
-            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/2016");
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + season);
             return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
@@ -182,6 +186,11 @@ var FirebaseUtilities = (function () {
                     race.done = ko.observable(new Date() > race.cutoff);
                     c.push(race);
                 }
+                Promise.map(c, function (r, i, l) {
+                    _this.getChallengesForRace(r).then(function (chal) {
+                        r.challenges = ko.observableArray(chal);
+                    });
+                });
                 c = c.sort(function (r1, r2) {
                     return r1.date.getTime() - r2.date.getTime();
                 });
@@ -412,13 +421,29 @@ var FirebaseUtilities = (function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             var fb = new Firebase(_this.firebaseUrl + "races/" + race.season + "/" + race.name + "/results");
-            return fb.set(race.results).then(function () { return resolve(race); }).catch(reject);
+            return fb.set(race.results).then(function () {
+                fb = new Firebase(_this.firebaseUrl + "races/" + race.season + "/" + race.name + "/scored");
+                return fb.set(true).then(function () {
+                    return resolve(race);
+                });
+            }).catch(reject);
         });
     };
     FirebaseUtilities.setPoints = function (user) {
         var url = this.firebaseUrl + "users/" + user.key() + "/points";
         var fb = new Firebase(url);
         return fb.set(user.points());
+    };
+    FirebaseUtilities.setDriverPoints = function (drivers) {
+        var _this = this;
+        drivers.forEach(function (x) {
+            var url = _this.firebaseUrl + "drivers/" + x.key + "/points";
+            var fb = new Firebase(url);
+            fb.set(+x.points);
+            url = _this.firebaseUrl + "drivers/" + x.key + "/wins";
+            fb = new Firebase(url);
+            fb.set(+x.wins);
+        });
     };
     FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
     return FirebaseUtilities;

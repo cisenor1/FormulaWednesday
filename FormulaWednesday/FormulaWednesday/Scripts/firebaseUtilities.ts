@@ -42,18 +42,20 @@
                 if (!fbChal) {
                     return resolve(null);
                 }
-                var chal: Challenge = {
-                    choice: ko.observable(fbChal.choice),
-                    description: ko.observable(fbChal.description),
-                    key: ko.observable(key),
-                    allSeason: ko.observable(fbChal.allSeason),
-                    message: ko.observable(fbChal.message),
-                    value: ko.observable(fbChal.value),
-                    editing: ko.observable(false),
-                    type: ko.observable(fbChal.type),
-                    drivers: ko.observableArray([])
-                };
-                return resolve(chal);
+                this.getDrivers().then((d) => {
+                    var chal: Challenge = {
+                        choice: ko.observable(fbChal.choice),
+                        description: ko.observable(fbChal.description),
+                        key: ko.observable(key),
+                        allSeason: ko.observable(fbChal.allSeason),
+                        message: ko.observable(fbChal.message),
+                        value: ko.observable(fbChal.value),
+                        editing: ko.observable(false),
+                        type: ko.observable(fbChal.type),
+                        drivers: ko.observableArray(d)
+                    };
+                    return resolve(chal);
+                });
             });
         });
     }
@@ -69,7 +71,7 @@
                     if (typeof values[p] === "string") {
                         promises.push(FirebaseUtilities.getChallengeByKey(values[p]));
                     } else {
-                        promises.push(FirebaseUtilities.getBestOfTheWorstCandidates(values[p]))
+                        promises.push(FirebaseUtilities.getBestOfTheWorstCandidates(values[p]));
                     }
                 }
                 if (promises.length) {
@@ -175,9 +177,9 @@
         });
     }
 
-    static getRaces(): Promise<Race[]> {
+    static getRaces(season: string): Promise<Race[]> {
         return new Promise<Race[]>((resolve, reject) => {
-            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/2016");
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + season);
             return fb.once("value").then((ds) => {
                 var values = ds.val();
                 var c: Race[] = [];
@@ -190,7 +192,11 @@
                     race.done = ko.observable(new Date() > race.cutoff);
                     c.push(race);
                 }
-
+                Promise.map(c, (r, i, l) => {
+                    this.getChallengesForRace(r).then((chal) => {
+                        r.challenges = ko.observableArray(chal);
+                    });
+                });
                 c = c.sort((r1, r2) => {
                     return r1.date.getTime() - r2.date.getTime();
                 });
@@ -427,7 +433,12 @@
     static setRaceResults(race: Race): Promise<Race> {
         return new Promise<Race>((resolve, reject) => {
             var fb = new Firebase(this.firebaseUrl + "races/" + race.season + "/" + race.name + "/results");
-            return fb.set(race.results).then(() => { return resolve(race) }).catch(reject);
+            return fb.set(race.results).then(() => {
+                fb = new Firebase(this.firebaseUrl + "races/" + race.season + "/" + race.name + "/scored");
+                return fb.set(true).then(() => {
+                    return resolve(race);
+                });
+            }).catch(reject);
         });
     }
 
@@ -435,5 +446,16 @@
         var url = this.firebaseUrl + "users/" + user.key() + "/points";
         var fb = new Firebase(url);
         return fb.set(user.points());
+    }
+
+    static setDriverPoints(drivers: Driver[]) {
+        drivers.forEach((x) => {
+            var url = this.firebaseUrl + "drivers/" + x.key + "/points";
+            var fb = new Firebase(url);
+            fb.set(+x.points);
+            url = this.firebaseUrl + "drivers/" + x.key + "/wins";
+             fb = new Firebase(url);
+            fb.set(+x.wins);
+        });
     }
 }

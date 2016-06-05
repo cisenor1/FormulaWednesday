@@ -19,7 +19,7 @@
             return <any>false;
         }
         return new Promise<any>((resolve, reject) => {
-            FirebaseUtilities.getRaces().then((values) => {
+            FirebaseUtilities.getRaces("2016").then((values) => {
                 this.races(values);
                 this.currentRace = ko.observable(values[0]);
                 this.races().forEach((r) => {
@@ -27,11 +27,8 @@
                     r.date = <any>ko.observable(r.date.toDateString());
                     r.validating = ko.observable(false);
                 });
-                FirebaseUtilities.getChallenges().then((c) => {
-                    this.challenges(c);
-                });
-                FirebaseUtilities.getDrivers().then((d) => {
-                    this.drivers(d);
+                FirebaseUtilities.getDrivers().then((ds) => {
+                    this.drivers(ds);
                 });
                 resolve(this);
             });
@@ -58,9 +55,8 @@
         FirebaseUtilities.setRaceResults(race).then((r) => {
             var self = vm;
             vm.app.sortedUsers().forEach((u) => {
-                debugger;
                 var results = r.results;
-                var chals = self.challenges();
+                var chals = r.challenges();
                 if (!u.results) {
                     return;
                 }
@@ -74,6 +70,9 @@
                         var currentChal = chals.filter((c) => {
                             return c.key = p;
                         })[0];
+                        if (!currentChal) {
+                            return;
+                        }
                         var win = r.results[p];
                         var picked = picks[p];
                         if (win == picked) {
@@ -82,7 +81,9 @@
                             u.points(currPts);
                         }
                     }
-                    FirebaseUtilities.setPoints(u);
+                    FirebaseUtilities.setPoints(u).then(() => {
+                        this.updateDriverStandings();
+                    });
                 }
             });
         });
@@ -94,7 +95,16 @@
 
     validateRace(race: Race) {
         this.currentRace(race);
+        this.races().forEach((x) => {
+            if (x.validating) {
+                x.validating(false);
+            }
+        });
         race.validating(true);
+    }
+
+    updateDriverStandings(): void {
+
     }
 
     change(challenge: Challenge, race: Race, e, vm: RacesAdmin) {

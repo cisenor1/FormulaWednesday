@@ -10,6 +10,7 @@
     season: number;
     validating?: KnockoutObservable<boolean>
     done: KnockoutObservable<boolean>;
+    challenges?: KnockoutObservableArray<Challenge>;
     scored?: KnockoutObservable<boolean>;
 }
 
