@@ -35,6 +35,7 @@ namespace FWMobile
             FreshMvvm.FreshIOC.Container.Register<IRestService, RestService>();
             FreshMvvm.FreshIOC.Container.Register<IDataService, DataService>();
             FreshMvvm.FreshIOC.Container.Register<IUserManager, UserManager>();
+            FreshMvvm.FreshIOC.Container.Register<IWeatherService, WeatherService>();
         }
 
         protected override void OnStart()

@@ -20,7 +20,7 @@ module.exports = [
                                 {
                                     blog.userDisplayName = user.displayName;
                                     blog.userKey = undefined;
-                                } 
+                                }
                             });
                         }
                         reply(blogs);

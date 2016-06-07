@@ -1,4 +1,5 @@
-﻿using FWMobile.Infrastructure;
+﻿using Acr.UserDialogs;
+using FWMobile.Infrastructure;
 using FWMobile.Infrastructure.Models;
 using PropertyChanged;
 using System;
@@ -15,16 +16,20 @@ namespace FWMobile.Modules.Races
     public class RacePageModel : FreshMvvm.FreshBasePageModel
     {
         private IDataService _dataService;
+        private IWeatherService _weatherService;
+        private IUserDialogs _userDialogs;
 
         public Race Race { get; set; }
         public ICommand MakePicksCommand { get; set; }
 
-        public RacePageModel(IDataService dataService)
+        public RacePageModel(IDataService dataService, IWeatherService weatherService, IUserDialogs userDialogs)
         {
             _dataService = dataService;
+            _weatherService = weatherService;
+            _userDialogs = userDialogs;
         }
 
-        public override void Init(object initData)
+        public async override void Init(object initData)
         {
             base.Init(initData);
 
@@ -32,13 +37,22 @@ namespace FWMobile.Modules.Races
             {
                 CoreMethods.PushPageModel<PicksPageModel>(Race);
             });
-
+            _userDialogs.ShowLoading("Loading race data");
             if (initData is Race)
             {
                 Race = initData as Race;
+                object forecast = null;
+                if (Race.RaceDate != DateTime.MinValue)
+                {
+                    DateTimeOffset raceDate = new DateTimeOffset(Race.RaceDate);
+                    forecast = await _weatherService.GetForecast(Race.Latitude, Race.Longitude, raceDate);
+                }
+                else
+                {
+                    forecast = await _weatherService.GetForecast(Race.Latitude, Race.Longitude);
+                }
             }
-
-
+            _userDialogs.HideLoading();
         }
     }
 }
