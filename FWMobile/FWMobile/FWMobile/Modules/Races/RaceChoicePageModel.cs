@@ -29,7 +29,7 @@ namespace FWMobile.Modules.Races
             {
                 return new Command<Race>(async (race) =>
                 {
-                    await CoreMethods.PushPageModel<PicksPageModel>(race);
+                    await CoreMethods.PushPageModel<RacePageModel>(race);
                 });
             }
         }
