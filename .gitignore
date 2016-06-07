@@ -13,3 +13,12 @@ FormulaWednesday/FormulaWednesday/obj/
 FormulaWednesday/FormulaWednesday/FormulaWednesday.csproj.user
 *.suo
 Server/node_modules/
+FormulaWednesday/.vs/FormulaWednesday/v14/.suo
+*.suo
+FormulaWednesday/FormulaWednesday/FWEDServer/obj/Debug/FWEDServer.csproj.FileListAbsolute.txt
+*.cache
+FormulaWednesday/FormulaWednesday/FWEDServer/obj/Debug/FWEDServer.dll
+*.pdb
+FormulaWednesday/FormulaWednesday/FWEDServer/obj/Debug/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
+FormulaWednesday/FormulaWednesday/FWEDServer/obj/Debug/TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs
+*.suo
