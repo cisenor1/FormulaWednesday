@@ -1,7 +1,7 @@
 /// <reference path="../models/user.ts" />
 /// <reference path="typings/knockout/knockout.d.ts" />
-var FormulaWednesdayApp = (function () {
-    function FormulaWednesdayApp() {
+class FormulaWednesdayApp {
+    constructor() {
         this.adminDropdown = "admin-dropdown";
         this.challenges = ko.observableArray([]);
         this.credentialsKey = "formulawednesday.user";
@@ -43,47 +43,44 @@ var FormulaWednesdayApp = (function () {
             }
         ]);
     }
-    FormulaWednesdayApp.prototype.initialize = function () {
-        var _this = this;
+    initialize() {
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
         if (this.credentials) {
-            this.logInProcedure(this.credentials.name, this.credentials.password).then(function (user) {
-                _this.refreshUserInfo(user);
-            }).catch(function (e) {
+            this.logInProcedure(this.credentials.name, this.credentials.password).then((user) => {
+                this.refreshUserInfo(user);
+            }).catch((e) => {
                 alert(e);
             });
         }
-        this.currentPage.subscribe(function (page) {
-            _this.loadPage(page);
+        this.currentPage.subscribe((page) => {
+            this.loadPage(page);
         });
         this.currentPage("homepage");
         ko.applyBindings(this);
-    };
-    FormulaWednesdayApp.prototype.refreshUserInfo = function (user) {
-        var _this = this;
+    }
+    refreshUserInfo(user) {
         this.buildStandingsTable();
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
-        FirebaseUtilities.getRaces("2016").then(function (races) {
-            _this.races(races);
+        FirebaseUtilities.getRaces("2016").then((races) => {
+            this.races(races);
         });
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
-    };
-    FormulaWednesdayApp.prototype.doLogIn = function () {
-        var _this = this;
+    }
+    doLogIn() {
         if (!this.nameObservable()) {
             return;
         }
         var hashed = md5(this.pwObservable());
-        this.logInProcedure(this.nameObservable(), hashed).then(function (user) {
-            _this.refreshUserInfo(user);
-        }).catch(function (e) {
+        this.logInProcedure(this.nameObservable(), hashed).then((user) => {
+            this.refreshUserInfo(user);
+        }).catch((e) => {
             alert(e);
         });
-    };
-    FormulaWednesdayApp.prototype.doLogOut = function () {
+    }
+    doLogOut() {
         window.localStorage.removeItem(this.credentialsKey);
         window.localStorage.removeItem(this.currentPageKey);
         window.localStorage.removeItem(this.currentRaceKey);
@@ -92,19 +89,18 @@ var FormulaWednesdayApp = (function () {
         this.nameObservable("");
         this.pwObservable("");
         this.launchHomepage();
-    };
-    FormulaWednesdayApp.prototype.logInProcedure = function (name, password) {
+    }
+    logInProcedure(name, password) {
         this.credentials = {
             name: name,
             password: password
         };
         return FirebaseUtilities.getUserInfo(this.credentials);
-    };
-    FormulaWednesdayApp.prototype.loadPage = function (page) {
+    }
+    loadPage(page) {
         //if (this.loggedIn()) {
         //    window.localStorage.setItem(this.currentPageKey, page);
         //}
-        var _this = this;
         var newPage;
         switch (page.split("#")[0]) {
             case "homepage":
@@ -139,62 +135,60 @@ var FormulaWednesdayApp = (function () {
                 newPage = new HomePage(this);
                 break;
         }
-        newPage.getViewModel().then(function (vm) {
-            newPage.getMarkup().then(function (markup) {
-                var ele = document.getElementById(_this.pageContent);
+        newPage.getViewModel().then((vm) => {
+            newPage.getMarkup().then((markup) => {
+                var ele = document.getElementById(this.pageContent);
                 ko.cleanNode(ele);
                 ele.innerHTML = markup;
                 ko.applyBindings(vm, ele);
             });
         });
-    };
-    FormulaWednesdayApp.prototype.buildForm = function () {
+    }
+    buildForm() {
         if (!this.loggedIn()) {
             return;
         }
-    };
-    FormulaWednesdayApp.prototype.launchHomepage = function () {
+    }
+    launchHomepage() {
         this.currentPage("homepage");
-    };
-    FormulaWednesdayApp.prototype.launchAdmin = function () {
+    }
+    launchAdmin() {
         if (this.user.role().toLowerCase() !== "admin") {
             return;
         }
         window.location.href = window.location.origin + "/admin.html";
-    };
-    FormulaWednesdayApp.prototype.launchChallenges = function () {
+    }
+    launchChallenges() {
         this.currentPage('challenges');
-    };
-    FormulaWednesdayApp.prototype.launchAdminPage = function (item) {
+    }
+    launchAdminPage(item) {
         this.currentPage(item.binding);
-    };
-    FormulaWednesdayApp.prototype.launchUserPreferences = function () {
+    }
+    launchUserPreferences() {
         this.currentPage("preferences");
-    };
-    FormulaWednesdayApp.prototype.launchRacePage = function (race) {
+    }
+    launchRacePage(race) {
         this.selectedRace = race;
         this.currentPage('challenges#' + race.name);
-    };
-    FormulaWednesdayApp.prototype.launchStandings = function () {
+    }
+    launchStandings() {
         this.currentPage("standings");
-    };
-    FormulaWednesdayApp.prototype.buildStandingsTable = function () {
-        var _this = this;
-        FirebaseUtilities.getAllUsers().then(function (allUsers) {
-            var sortedUsers = allUsers.sort(function (a, b) {
+    }
+    buildStandingsTable() {
+        FirebaseUtilities.getAllUsers().then((allUsers) => {
+            var sortedUsers = allUsers.sort((a, b) => {
                 return b.points() - a.points();
             });
-            _this.sortedUsers(sortedUsers);
+            this.sortedUsers(sortedUsers);
         });
-        FirebaseUtilities.getDrivers().then(function (d) {
-            var sortedDrivers = d.sort(function (a, b) {
+        FirebaseUtilities.getDrivers().then((d) => {
+            var sortedDrivers = d.sort((a, b) => {
                 return b.points - a.points;
             });
-            _this.sortedDrivers(sortedDrivers);
+            this.sortedDrivers(sortedDrivers);
         });
-    };
-    return FormulaWednesdayApp;
-})();
+    }
+}
 window.onload = function () {
     tinymce.init({ selector: '#new-blog-content' });
     var formulawednesdayapp = new FormulaWednesdayApp();

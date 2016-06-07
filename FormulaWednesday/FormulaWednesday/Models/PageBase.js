@@ -1,8 +1,7 @@
-var PageBase = (function () {
-    function PageBase(app) {
+class PageBase {
+    constructor(app) {
         this.app = app;
     }
-    PageBase.prototype.createVM = function () {
-    };
-    return PageBase;
-})();
+    createVM() {
+    }
+}

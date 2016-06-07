@@ -1,9 +1,15 @@
 ﻿body {
 }
 
-#challenge-form ul li{
+#challenge-form ul li {
     margin-bottom: 2em;
     list-style: none;
+}
+
+.navbar-brand img {
+    height: 22px;
+    width: 22px;
+    display: inline-block;
 }
 
 /*#page-content-div {
@@ -13,6 +19,7 @@
 li.menuraceover {
     background: rgba(255, 0, 0, 0.19);
 }
+
 #admin-dropdown li a,
 #races-dropdown li a {
     cursor: pointer;
@@ -20,7 +27,7 @@ li.menuraceover {
     border-top: none;
 }
 
-.navbar-nav>li>.dropdown-menu {
+.navbar-nav > li > .dropdown-menu {
     margin-top: 0;
     padding: 0;
     border-top-left-radius: 0;
@@ -33,6 +40,7 @@ li.menuraceover {
     vertical-align: middle;
     margin-bottom: 1em;
 }
+
 .input-group-addon:first-child {
     border-right: 0;
     width: 9em;
@@ -59,6 +67,7 @@ li.menuraceover {
     /* line-height: 100%; */
     font-size: 2em;
 }
+
 p.list-group-item-text.fwed-user-points {
 }
 
@@ -83,15 +92,18 @@ img.image {
     top: 8em;
     right: 38em;
 }
+
 .homepage-message {
     z-index: 10;
     margin-top: 3em;
 }
+
 img.panel-body {
     border-radius: 3px;
     width: 100%;
     padding: 1px;
 }
+
 textarea {
     width: 80% !important;
     display: block;
@@ -101,6 +113,7 @@ textarea {
     overflow: auto;
     outline: none;
 }
+
 li.form-group.list-group-item.raceover {
     border: 1px #FFAFAF solid;
     /* border-bottom: 1px solid red; */
@@ -129,7 +142,7 @@ div#side-bar {
 }
 
 span.blog-user {
-    float:right;
+    float: right;
 }
 
 span.blog-date {
@@ -137,6 +150,7 @@ span.blog-date {
     font-weight: bold;
     color: grey;
 }
+
 .blog-title {
     font-size: large;
     /* width: 30%; */

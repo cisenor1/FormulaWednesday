@@ -1,35 +1,33 @@
-var FormulaWednesdaysUtilities = (function () {
-    function FormulaWednesdaysUtilities() {
-    }
-    FormulaWednesdaysUtilities.hashPassword = function (pass) {
+class FormulaWednesdaysUtilities {
+    static hashPassword(pass) {
         return md5(pass);
-    };
-    FormulaWednesdaysUtilities.validateUsername = function (name) {
+    }
+    static validateUsername(name) {
         if (!name.match(/^[a-z0-9_-]{3,16}$/)) {
             return false;
         }
         return true;
-    };
-    FormulaWednesdaysUtilities.getKeyFromEmail = function (email) {
+    }
+    static getKeyFromEmail(email) {
         var split = email.split("@")[0];
         var cleaned = split.split(".").join("");
         return cleaned;
-    };
-    FormulaWednesdaysUtilities.positionToPoints = function (pos) {
+    }
+    static positionToPoints(pos) {
         return this.posToPts[pos];
-    };
-    FormulaWednesdaysUtilities.getDriverStandings = function (season) {
+    }
+    static getDriverStandings(season) {
         if (!season) {
             season = "current";
         }
         var url = this.ergastUrl + season + "/driverstandings.json";
-        return new Promise(function (resolve, reject) {
-            fetch(url).then(function (res) {
-                res.text().then(function (x) {
+        return new Promise((resolve, reject) => {
+            fetch(url).then((res) => {
+                res.text().then((x) => {
                     var standings = JSON.parse(x);
                     var out = [];
                     var driverStandings = standings.MRData.StandingsTable.StandingsLists[0].DriverStandings;
-                    driverStandings.forEach(function (d) {
+                    driverStandings.forEach((d) => {
                         out.push({
                             key: d.Driver.code,
                             points: d.points,
@@ -38,10 +36,9 @@ var FormulaWednesdaysUtilities = (function () {
                     });
                     resolve(out);
                 });
-            }).catch(function (err) { reject(err); });
+            }).catch((err) => { reject(err); });
         });
-    };
-    FormulaWednesdaysUtilities.ergastUrl = "http://ergast.com/api/f1/";
-    FormulaWednesdaysUtilities.posToPts = [0, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
-    return FormulaWednesdaysUtilities;
-})();
+    }
+}
+FormulaWednesdaysUtilities.ergastUrl = "http://ergast.com/api/f1/";
+FormulaWednesdaysUtilities.posToPts = [0, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1];

@@ -1,12 +1,6 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var DriversAdmin = (function (_super) {
-    __extends(DriversAdmin, _super);
-    function DriversAdmin(app) {
-        _super.call(this, app);
+class DriversAdmin extends PageBase {
+    constructor(app) {
+        super(app);
         this.markupUri = "Pages/Admin/Drivers.html";
         this.divId = "drivers-admin";
         this.drivers = ko.observableArray([]);
@@ -21,37 +15,35 @@ var DriversAdmin = (function (_super) {
         this.newPassConfirm = ko.observable("");
         this.vmPromise = this.createVM();
     }
-    DriversAdmin.prototype.createVM = function () {
-        var _this = this;
+    createVM() {
         if (!this.app.user) {
             return false;
         }
-        return new Promise(function (resolve, reject) {
-            FirebaseUtilities.getDrivers(true).then(function (values) {
-                _this.drivers(values);
-                resolve(_this);
+        return new Promise((resolve, reject) => {
+            FirebaseUtilities.getDrivers(true).then((values) => {
+                this.drivers(values);
+                resolve(this);
             });
         });
-    };
-    DriversAdmin.prototype.getMarkup = function () {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            fetch(_this.markupUri).then(function (value) {
-                value.text().then(function (output) {
+    }
+    getMarkup() {
+        return new Promise((resolve, reject) => {
+            fetch(this.markupUri).then((value) => {
+                value.text().then((output) => {
                     resolve(output);
                 });
             });
         });
-    };
-    DriversAdmin.prototype.getViewModel = function () {
+    }
+    getViewModel() {
         return this.vmPromise;
-    };
-    DriversAdmin.prototype.setActive = function (active, driver) {
-    };
-    DriversAdmin.prototype.saveDriver = function (driver) {
+    }
+    setActive(active, driver) {
+    }
+    saveDriver(driver) {
         debugger;
-    };
-    DriversAdmin.prototype.editUser = function (user) {
+    }
+    editUser(user) {
         this.cachedUser = {
             key: ko.observable(user.key()),
             points: ko.observable(user.points()),
@@ -63,14 +55,14 @@ var DriversAdmin = (function (_super) {
         };
         this.editing(true);
         user.editing(true);
-    };
-    DriversAdmin.prototype.saveData = function (item) {
-        FirebaseUtilities.saveUser(item).then(function (success) {
-        }).catch(function (e) { alert(e); });
+    }
+    saveData(item) {
+        FirebaseUtilities.saveUser(item).then((success) => {
+        }).catch((e) => { alert(e); });
         item.editing(false);
         this.editing(false);
-    };
-    DriversAdmin.prototype.cancel = function (item) {
+    }
+    cancel(item) {
         var c = this.cachedUser;
         item.key(c.key());
         item.fullname(c.fullname());
@@ -79,11 +71,11 @@ var DriversAdmin = (function (_super) {
         item.role(c.role());
         item.editing(false);
         this.editing(false);
-    };
-    DriversAdmin.prototype.addUser = function () {
+    }
+    addUser() {
         this.showAddUserPane(true);
-    };
-    DriversAdmin.prototype.submitCreateUser = function () {
+    }
+    submitCreateUser() {
         var fullName = this.newName();
         var username = this.newId();
         if (!FormulaWednesdaysUtilities.validateUsername(username)) {
@@ -109,16 +101,15 @@ var DriversAdmin = (function (_super) {
             editing: ko.observable(false)
         };
         var hashedPass = FormulaWednesdaysUtilities.hashPassword(pass);
-        FirebaseUtilities.createUser(user, hashedPass).then(function (v) {
+        FirebaseUtilities.createUser(user, hashedPass).then((v) => {
             // go on to add user to database
             var uid = v.uid;
-            FirebaseUtilities.addNewUser(user).then(function (s) {
+            FirebaseUtilities.addNewUser(user).then((s) => {
                 debugger;
             });
-        }).catch(function (e) {
+        }).catch((e) => {
             // handle the error
             alert(e);
         });
-    };
-    return DriversAdmin;
-})(PageBase);
+    }
+}

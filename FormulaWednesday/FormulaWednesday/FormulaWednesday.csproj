@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="admin.html" />
+    <Content Include="favicon.ico" />
     <Content Include="packages.config" />
     <Content Include="Pages\Admin\Blog.html" />
     <Content Include="Pages\Admin\Races.html" />
@@ -85,11 +86,8 @@
     <Content Include="Scripts\jquery.tinymce.min.js" />
     <Content Include="Scripts\knockout-3.4.0.debug.js" />
     <Content Include="Scripts\knockout-3.4.0.js" />
-    <Content Include="Scripts\tinymce.min.js" />
     <Content Include="Scripts\widgEditor.js" />
     <Content Include="Styles\styles.css" />
-    <Content Include="user.json" />
-    <Content Include="bettingOptions.json" />
     <Content Include="Scripts\jquery-1.9.1.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -166,7 +164,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptTarget>ES6</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
     <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>

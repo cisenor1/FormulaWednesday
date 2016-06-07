@@ -1,13 +1,7 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var PreferencesPage = (function (_super) {
-    __extends(PreferencesPage, _super);
+class PreferencesPage extends PageBase {
     // constructor will do heavy lifting
-    function PreferencesPage(app) {
-        _super.call(this, app);
+    constructor(app) {
+        super(app);
         this.markupUri = "Pages/Preferences/Preferences.html";
         this.fullname = ko.observable("");
         this.username = ko.observable("");
@@ -22,30 +16,27 @@ var PreferencesPage = (function (_super) {
         this.fullname = this.app.user.fullname;
         this.vmPromise = this.createVM();
     }
-    PreferencesPage.prototype.createVM = function () {
-        var _this = this;
+    createVM() {
         if (!this.app.user) {
             return false;
         }
-        return new Promise(function (resolve, reject) {
-            resolve(_this);
+        return new Promise((resolve, reject) => {
+            resolve(this);
         });
-    };
-    PreferencesPage.prototype.getMarkup = function () {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            fetch(_this.markupUri).then(function (value) {
-                value.text().then(function (output) {
+    }
+    getMarkup() {
+        return new Promise((resolve, reject) => {
+            fetch(this.markupUri).then((value) => {
+                value.text().then((output) => {
                     resolve(output);
                 });
             });
         });
-    };
-    PreferencesPage.prototype.getViewModel = function () {
+    }
+    getViewModel() {
         return this.vmPromise;
-    };
-    PreferencesPage.prototype.changePassword = function () {
-        var _this = this;
+    }
+    changePassword() {
         var newpass = this.newPass();
         var confirm = this.confirmPass();
         if (newpass !== confirm) {
@@ -55,37 +46,35 @@ var PreferencesPage = (function (_super) {
         this.passwordAlert("");
         var oldPassword = FormulaWednesdaysUtilities.hashPassword(this.oldPass());
         var hashed = FormulaWednesdaysUtilities.hashPassword(newpass);
-        FirebaseUtilities.changePassword(this.app.user, oldPassword, hashed).then(function (b) {
-            _this.passwordSuccess("Your password has been changed successfully.");
-            _this.newPass("");
-            _this.oldPass("");
-            _this.confirmPass("");
-            _this.app.credentials.password = hashed;
-            _this.app.refreshUserInfo(_this.app.user);
-        }).catch(function (e) {
-            _this.newPass("");
-            _this.oldPass("");
-            _this.confirmPass("");
-            _this.passwordAlert(e.message);
+        FirebaseUtilities.changePassword(this.app.user, oldPassword, hashed).then((b) => {
+            this.passwordSuccess("Your password has been changed successfully.");
+            this.newPass("");
+            this.oldPass("");
+            this.confirmPass("");
+            this.app.credentials.password = hashed;
+            this.app.refreshUserInfo(this.app.user);
+        }).catch((e) => {
+            this.newPass("");
+            this.oldPass("");
+            this.confirmPass("");
+            this.passwordAlert(e.message);
         });
-    };
-    PreferencesPage.prototype.changeUsername = function () {
-        var _this = this;
+    }
+    changeUsername() {
         var username = this.username();
-        return FirebaseUtilities.changeUsername(this.app.user, username).then(function (b) {
-            _this.usernameSuccess("Your username has been changed successfully.");
-            _this.app.user.username(username);
-            _this.app.refreshUserInfo(_this.app.user);
-            _this.username("");
-        }).catch(function (e) {
-            _this.usernameAlert(e.message);
+        return FirebaseUtilities.changeUsername(this.app.user, username).then((b) => {
+            this.usernameSuccess("Your username has been changed successfully.");
+            this.app.user.username(username);
+            this.app.refreshUserInfo(this.app.user);
+            this.username("");
+        }).catch((e) => {
+            this.usernameAlert(e.message);
             return;
         });
-    };
-    PreferencesPage.prototype.clearUsernameAlert = function (d, e) {
+    }
+    clearUsernameAlert(d, e) {
         if (e.keyCode !== 13) {
             this.usernameSuccess("");
         }
-    };
-    return PreferencesPage;
-})(PageBase);
+    }
+}
