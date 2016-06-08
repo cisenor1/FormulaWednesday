@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ForecastIOPortable;
 using ForecastIOPortable.Models;
+using FWMobile.Infrastructure.Models.Weather;
 
 namespace FWMobile.Infrastructure.Services
 {
@@ -12,7 +13,7 @@ namespace FWMobile.Infrastructure.Services
     {
         const string FORECAST_API_KEY = "de753b14c13a2db1687f7e66f1f8ae92";
 
-        public async Task<object> GetForecast(double latitude, double longitude, DateTimeOffset? forecastDate = null)
+        public async Task<IList<DayForecast>> GetForecast(double latitude, double longitude, DateTimeOffset? forecastDate = null)
         {
             try
             {
@@ -26,7 +27,8 @@ namespace FWMobile.Infrastructure.Services
                 {
                     result = await client.GetWeatherDataAsync(latitude, longitude);
                 }
-                return result;
+                var days = WeatherFactory.CreateDayForecasts(result);
+                return days;
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿using Acr.UserDialogs;
 using FWMobile.Infrastructure;
 using FWMobile.Infrastructure.Models;
+using FWMobile.Infrastructure.Models.Weather;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -41,15 +42,16 @@ namespace FWMobile.Modules.Races
             if (initData is Race)
             {
                 Race = initData as Race;
-                object forecast = null;
+                IList<DayForecast> dayForecasts = null;
                 if (Race.RaceDate != DateTime.MinValue)
                 {
+                    
                     DateTimeOffset raceDate = new DateTimeOffset(Race.RaceDate);
-                    forecast = await _weatherService.GetForecast(Race.Latitude, Race.Longitude, raceDate);
+                    dayForecasts = await _weatherService.GetForecast(Race.Latitude, Race.Longitude, raceDate);
                 }
                 else
                 {
-                    forecast = await _weatherService.GetForecast(Race.Latitude, Race.Longitude);
+                    dayForecasts = await _weatherService.GetForecast(Race.Latitude, Race.Longitude);
                 }
             }
             _userDialogs.HideLoading();

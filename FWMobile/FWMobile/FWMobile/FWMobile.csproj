@@ -45,6 +45,8 @@
     <Compile Include="Infrastructure\Models\Race.cs" />
     <Compile Include="Infrastructure\Models\User.cs" />
     <Compile Include="Infrastructure\IUserManager.cs" />
+    <Compile Include="Infrastructure\Models\Weather\DayForecast.cs" />
+    <Compile Include="Infrastructure\Models\Weather\WeatherFactory.cs" />
     <Compile Include="Infrastructure\Services\DataService.cs" />
     <Compile Include="Infrastructure\Services\RestService.cs" />
     <Compile Include="Infrastructure\Services\UserManager.cs" />
@@ -71,6 +73,7 @@
     <Compile Include="Modules\Races\RacePageModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\DateUtilities.cs" />
+    <Compile Include="Utilities\WeatherUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Acr.UserDialogs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

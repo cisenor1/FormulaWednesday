@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FWMobile.Infrastructure.Models.Weather;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace FWMobile.Infrastructure
 {
     public interface IWeatherService
     {
-        Task<object> GetForecast(double latitude, double longitude, DateTimeOffset? forecastDate = null);
+        Task<IList<DayForecast>> GetForecast(double latitude, double longitude, DateTimeOffset? forecastDate = null);
     }
 }
