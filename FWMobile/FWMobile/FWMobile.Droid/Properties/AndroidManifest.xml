@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="club.formulawednesday.fwmobile" android:installLocation="auto" android:versionCode="1" android:versionName="alpha">
-	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="23" />
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:theme="@style/MyTheme" android:label="Formula W" android:icon="@drawable/icon"></application>
-</manifest>
