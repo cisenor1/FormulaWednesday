@@ -1,21 +1,20 @@
-﻿declare var fetch;
-class PreferencesPage extends PageBase implements Page {
+﻿class PreferencesPage extends PageBase implements Page {
 
     markupUri: string = "Pages/Preferences/Preferences.html";
 
     fullname = ko.observable("");
-    username = ko.observable("");
+    displayName = ko.observable("");
     newPass = ko.observable("");
     confirmPass = ko.observable("");
     passwordAlert = ko.observable();
-    usernameAlert = ko.observable();
+    displayNameAlert = ko.observable();
     oldPass = ko.observable("");
     passwordSuccess = ko.observable("");
-    usernameSuccess = ko.observable("");
+    displayNameSuccess = ko.observable("");
     // constructor will do heavy lifting
     constructor(app: FormulaWednesdayApp) {
         super(app);
-        this.username = this.app.user.username;
+        this.displayName = this.app.user.displayName;
         this.fullname = this.app.user.fullname;
         this.vmPromise = this.createVM();
     }
@@ -68,22 +67,22 @@ class PreferencesPage extends PageBase implements Page {
         });
     }
 
-    changeUsername() {
-        var username = this.username();
-        return FirebaseUtilities.changeUsername(this.app.user, username).then((b) => {
-            this.usernameSuccess("Your username has been changed successfully.");
-            this.app.user.username(username);
+    changedisplayName() {
+        var displayName = this.displayName();
+        return FirebaseUtilities.changedisplayName(this.app.user, displayName).then((b) => {
+            this.displayNameSuccess("Your displayName has been changed successfully.");
+            this.app.user.displayName(displayName);
             this.app.refreshUserInfo(this.app.user);
-            this.username("");
+            this.displayName("");
         }).catch((e) => {
-            this.usernameAlert(e.message);
+            this.displayNameAlert(e.message);
             return;
         });
     }
 
-    clearUsernameAlert(d, e: KeyboardEvent) {
+    cleardisplayNameAlert(d, e: KeyboardEvent) {
         if (e.keyCode !== 13) {
-            this.usernameSuccess("");
+            this.displayNameSuccess("");
         }
     }
 }

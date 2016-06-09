@@ -2,7 +2,7 @@ class FormulaWednesdaysUtilities {
     static hashPassword(pass) {
         return md5(pass);
     }
-    static validateUsername(name) {
+    static validatedisplayName(name) {
         if (!name.match(/^[a-z0-9_-]{3,16}$/)) {
             return false;
         }

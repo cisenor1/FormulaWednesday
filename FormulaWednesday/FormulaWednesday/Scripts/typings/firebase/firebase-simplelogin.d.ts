@@ -69,7 +69,7 @@ declare class FirebaseSimpleLogin {
     id: string;
     provider: string;
     uid: string;
-    username: string;
+    displayName: string;
 
     constructor(firebase: Firebase, callback: (err: IFirebaseSimpleLoginError, user: IFirebaseSimpleLoginUser) => any);
 

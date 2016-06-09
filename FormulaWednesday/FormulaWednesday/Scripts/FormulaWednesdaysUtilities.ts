@@ -5,7 +5,7 @@
         return md5(pass);
     }
 
-    static validateUsername(name: string): boolean {
+    static validatedisplayName(name: string): boolean {
         if (!name.match(/^[a-z0-9_-]{3,16}$/)) {
             return false;
         }

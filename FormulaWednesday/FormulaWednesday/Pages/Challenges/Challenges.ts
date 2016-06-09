@@ -1,5 +1,4 @@
-﻿declare var fetch;
-class ChallengesPage extends PageBase implements Page {
+﻿class ChallengesPage extends PageBase implements Page {
     originalChoices: any;
     vm: ChallengesVM = {
         drivers: ko.observableArray<Driver>(),

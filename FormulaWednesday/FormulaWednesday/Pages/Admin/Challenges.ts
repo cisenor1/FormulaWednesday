@@ -54,7 +54,7 @@
         ////var c = this.cachedUser;
         //item.key(c.key());
         //item.fullname(c.fullname());
-        //item.username(c.username());
+        //item.displayName(c.displayName());
         //item.points(c.points());
         //item.role(c.role());
         //item.editing(false);
@@ -70,9 +70,9 @@
 
     submitCreateChallenge() {
         //var fullName = this.newName();
-        //var username = this.newId();
-        //if (!FormulaWednesdaysUtilities.validateUsername(username)) {
-        //    alert("Bad Username");
+        //var displayName = this.newId();
+        //if (!FormulaWednesdaysUtilities.validatedisplayName(displayName)) {
+        //    alert("Bad displayName");
         //    return false;
         //}
         //var pass = this.newPass();
@@ -86,7 +86,7 @@
         //var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
         //var user: User = {
         //    key: ko.observable(key),
-        //    username: ko.observable(username),
+        //    displayName: ko.observable(displayName),
         //    fullname: ko.observable(fullName),
         //    points: ko.observable(0),
         //    role: ko.observable(role),

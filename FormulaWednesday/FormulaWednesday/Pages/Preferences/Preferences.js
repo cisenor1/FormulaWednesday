@@ -4,15 +4,15 @@ class PreferencesPage extends PageBase {
         super(app);
         this.markupUri = "Pages/Preferences/Preferences.html";
         this.fullname = ko.observable("");
-        this.username = ko.observable("");
+        this.displayName = ko.observable("");
         this.newPass = ko.observable("");
         this.confirmPass = ko.observable("");
         this.passwordAlert = ko.observable();
-        this.usernameAlert = ko.observable();
+        this.displayNameAlert = ko.observable();
         this.oldPass = ko.observable("");
         this.passwordSuccess = ko.observable("");
-        this.usernameSuccess = ko.observable("");
-        this.username = this.app.user.username;
+        this.displayNameSuccess = ko.observable("");
+        this.displayName = this.app.user.displayName;
         this.fullname = this.app.user.fullname;
         this.vmPromise = this.createVM();
     }
@@ -60,21 +60,21 @@ class PreferencesPage extends PageBase {
             this.passwordAlert(e.message);
         });
     }
-    changeUsername() {
-        var username = this.username();
-        return FirebaseUtilities.changeUsername(this.app.user, username).then((b) => {
-            this.usernameSuccess("Your username has been changed successfully.");
-            this.app.user.username(username);
+    changedisplayName() {
+        var displayName = this.displayName();
+        return FirebaseUtilities.changedisplayName(this.app.user, displayName).then((b) => {
+            this.displayNameSuccess("Your displayName has been changed successfully.");
+            this.app.user.displayName(displayName);
             this.app.refreshUserInfo(this.app.user);
-            this.username("");
+            this.displayName("");
         }).catch((e) => {
-            this.usernameAlert(e.message);
+            this.displayNameAlert(e.message);
             return;
         });
     }
-    clearUsernameAlert(d, e) {
+    cleardisplayNameAlert(d, e) {
         if (e.keyCode !== 13) {
-            this.usernameSuccess("");
+            this.displayNameSuccess("");
         }
     }
 }

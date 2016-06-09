@@ -2,9 +2,9 @@
     private message: string;
     private timestamp: Date;
     private user: string;
-    constructor(message: string, username: string, date?:string) {
+    constructor(message: string, displayName: string, date?:string) {
         this.message = message;
-        this.user = username;
+        this.user = displayName;
         if (date) {
             this.timestamp = new Date(Date.parse(date));
         } else {

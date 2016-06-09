@@ -49,7 +49,7 @@ class DriversAdmin extends PageBase {
             points: ko.observable(user.points()),
             role: ko.observable(user.role()),
             fullname: ko.observable(user.fullname()),
-            username: ko.observable(user.username()),
+            displayName: ko.observable(user.displayName()),
             email: ko.observable(user.email()),
             editing: ko.observable(false)
         };
@@ -66,7 +66,7 @@ class DriversAdmin extends PageBase {
         var c = this.cachedUser;
         item.key(c.key());
         item.fullname(c.fullname());
-        item.username(c.username());
+        item.displayName(c.displayName());
         item.points(c.points());
         item.role(c.role());
         item.editing(false);
@@ -77,9 +77,9 @@ class DriversAdmin extends PageBase {
     }
     submitCreateUser() {
         var fullName = this.newName();
-        var username = this.newId();
-        if (!FormulaWednesdaysUtilities.validateUsername(username)) {
-            alert("Bad Username");
+        var displayName = this.newId();
+        if (!FormulaWednesdaysUtilities.validatedisplayName(displayName)) {
+            alert("Bad displayName");
             return false;
         }
         var pass = this.newPass();
@@ -93,7 +93,7 @@ class DriversAdmin extends PageBase {
         var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
         var user = {
             key: ko.observable(key),
-            username: ko.observable(username),
+            displayName: ko.observable(displayName),
             fullname: ko.observable(fullName),
             points: ko.observable(0),
             role: ko.observable(role),

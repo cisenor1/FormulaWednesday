@@ -1,5 +1,4 @@
-﻿declare var fetch;
-class StandingsPage extends PageBase implements Page {
+﻿class StandingsPage extends PageBase implements Page {
     markupUri: string = "Pages/Standings/Standings.html";
     divId = "standings";
     sortedDrivers: KnockoutObservableArray<Driver> = ko.observableArray([]);

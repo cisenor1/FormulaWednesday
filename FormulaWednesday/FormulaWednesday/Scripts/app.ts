@@ -76,16 +76,16 @@ class FormulaWednesdayApp {
             this.races(races);
         });
         this.isAdmin(user.role().toLowerCase() == "admin");
-        this.logOutMessage(this.logOutText + user.username());
+        this.logOutMessage(this.logOutText + user.displayName());
     }
 
     doLogIn() {
         if (!this.nameObservable()) {
             return;
         }
-        var hashed = md5(this.pwObservable());
-        this.logInProcedure(this.nameObservable(), hashed).then((user) => {
+        RestUtilities.logIn(this.nameObservable(), this.pwObservable()).then((user) => {
             this.refreshUserInfo(user);
+            RestUtilities.getAllUsers().then(u => { debugger});
         }).catch((e) => {
             alert(e);
         });

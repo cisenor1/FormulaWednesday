@@ -3,6 +3,7 @@
 <head>
     <title></title>
     <meta charset="utf-8" />
+    <script src="Scripts/RestUtilities.js"></script>
     <script src="http://cdn.jsdelivr.net/bluebird/3.3.5/bluebird.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
     <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
@@ -12,7 +13,6 @@
     <script src="Hashing/md5.js"></script>
     <script src="Models/PageBase.js"></script>
     <script src="Scripts/FormulaWednesdaysUtilities.js"></script>
-    <script src="Scripts/tinymce.min.js"></script>
     <script src="Pages/Standings/Standings.js"></script>
     <script src="Pages/Admin/Admin.js"></script>
     <script src="Pages/Admin/Users.js"></script>
@@ -98,7 +98,7 @@
                     <table class="table" data-bind="foreach: sortedUsers">
                         <tr>
                             <td data-bind="text:  $index() + 1 + '.'"></td>
-                            <td data-bind="text:username"></td>
+                            <td data-bind="text:displayName"></td>
                             <td data-bind="text:points"></td>
                         </tr>
                     </table>

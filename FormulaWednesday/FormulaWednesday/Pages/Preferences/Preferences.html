@@ -21,14 +21,14 @@
         </form>
     </div>
     <div class="panel">
-        <form data-bind="submit: changeUsername">
-            <h3>Change Username</h3>
+        <form data-bind="submit: changedisplayName">
+            <h3>Change displayName</h3>
             <div class="input-group">
-                <span class="input-group-addon" id="basic-addon1">Username:</span>
-                <input class="form-control" type="text" required data-bind="text: username, value: username, event: {'keyup': clearUsernameAlert }" />
+                <span class="input-group-addon" id="basic-addon1">displayName:</span>
+                <input class="form-control" type="text" required data-bind="text: displayName, value: displayName, event: {'keyup': cleardisplayNameAlert }" />
             </div>
-            <div class="alert alert-danger" data-bind="visible: usernameAlert(), text: usernameAlert"></div>
-            <div class="alert alert-success" data-bind="visible: usernameSuccess(), text: usernameSuccess"></div>
+            <div class="alert alert-danger" data-bind="visible: displayNameAlert(), text: displayNameAlert"></div>
+            <div class="alert alert-success" data-bind="visible: displayNameSuccess(), text: displayNameSuccess"></div>
             <input type="submit" />
         </form>
     </div>

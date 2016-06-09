@@ -150,9 +150,9 @@ interface JQueryAjaxSettings {
      */
     url?: string;
     /**
-     * A username to be used with XMLHttpRequest in response to an HTTP access authentication request.
+     * A displayName to be used with XMLHttpRequest in response to an HTTP access authentication request.
      */
-    username?: string;
+    displayName?: string;
     /**
      * Callback for creating the XMLHttpRequest object. Defaults to the ActiveXObject when available (IE), the XMLHttpRequest otherwise. Override to provide your own implementation for XMLHttpRequest or enhancements to the factory.
      */

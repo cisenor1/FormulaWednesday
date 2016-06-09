@@ -17,7 +17,7 @@ class FirebaseUtilities {
                         key: ko.observable(key),
                         role: ko.observable(fbUser.role),
                         points: ko.observable(fbUser.points),
-                        username: ko.observable(fbUser.username),
+                        displayName: ko.observable(fbUser.displayName),
                         fullname: ko.observable(fbUser.fullname),
                         editing: ko.observable(false),
                         email: ko.observable(fbUser.email)
@@ -216,7 +216,7 @@ class FirebaseUtilities {
                         role: ko.observable(u.role),
                         fullname: ko.observable(u.fullname),
                         results: u.results || {},
-                        username: ko.observable(u.username),
+                        displayName: ko.observable(u.displayName),
                         editing: ko.observable(false),
                         email: ko.observable(u.email)
                     };
@@ -250,7 +250,7 @@ class FirebaseUtilities {
         return new Promise((resolve, reject) => {
             var fb = new Firebase(this.firebaseUrl + "users/" + user.key());
             return fb.set({
-                username: user.username(),
+                displayName: user.displayName(),
                 fullname: user.fullname(),
                 points: user.points(),
                 role: user.role(),
@@ -297,10 +297,10 @@ class FirebaseUtilities {
             });
         });
     }
-    static changeUsername(user, newUsername) {
+    static changedisplayName(user, newdisplayName) {
         return new Promise((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl + "/users/" + user.key() + "/username");
-            return fb.set(newUsername, (error) => {
+            var fb = new Firebase(this.firebaseUrl + "/users/" + user.key() + "/displayName");
+            return fb.set(newdisplayName, (error) => {
                 if (error) {
                     reject(error);
                     return;
@@ -315,7 +315,7 @@ class FirebaseUtilities {
             var processedEmail = FormulaWednesdaysUtilities.getKeyFromEmail(email);
             var fb = new Firebase(this.firebaseUrl + "users/" + processedEmail);
             var newUser = {
-                "username": user.username(),
+                "displayName": user.displayName(),
                 "fullname": user.fullname(),
                 "points": 0,
                 "email": user.email(),
@@ -337,7 +337,7 @@ class FirebaseUtilities {
                     points: ko.observable(value["points"]),
                     key: ko.observable(key),
                     role: ko.observable(value["role"]),
-                    username: ko.observable(value["username"])
+                    displayName: ko.observable(value["displayName"])
                 };
                 return resolve(userData);
             });

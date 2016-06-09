@@ -1,7 +1,7 @@
 class BlogPost {
-    constructor(message, username, date) {
+    constructor(message, displayName, date) {
         this.message = message;
-        this.user = username;
+        this.user = displayName;
         if (date) {
             this.timestamp = new Date(Date.parse(date));
         }
