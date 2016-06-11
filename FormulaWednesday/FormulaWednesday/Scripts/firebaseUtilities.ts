@@ -4,7 +4,7 @@
     static getUserInfo(credentials: Credentials): Promise<User> {
         return new Promise<User>((resolve, reject) => {
             var fbCred: FirebaseCredentials = {
-                email: credentials.name,
+                email: credentials.name.toLowerCase(),
                 password: credentials.password
             };
 

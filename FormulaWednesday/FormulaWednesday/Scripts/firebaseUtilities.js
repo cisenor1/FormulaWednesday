@@ -2,7 +2,7 @@ class FirebaseUtilities {
     static getUserInfo(credentials) {
         return new Promise((resolve, reject) => {
             var fbCred = {
-                email: credentials.name,
+                email: credentials.name.toLowerCase(),
                 password: credentials.password
             };
             var firebase = new Firebase(FirebaseUtilities.firebaseUrl);
