@@ -13,7 +13,7 @@ class ChallengesPage extends PageBase implements Page {
         save: () => { this.saveRaceData() },
         valid: ko.observable<boolean>(),
         reset: () => { this.reset() },
-        change: (item: Challenge, e: Event) => { this.changed(item, event) },
+        change: (item: Challenge, e: Event) => { this.changed(item, e) },
         isDirty: ko.observable<boolean>(false),
         errorMessage: ko.observable<string>()
     };

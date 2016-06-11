@@ -177,8 +177,10 @@ class FirebaseUtilities {
                     var race = values[p];
                     race.scored = ko.observable(!!values[p]["scored"]);
                     race.name = p;
-                    race.date = new Date(race.date);
-                    race.cutoff = new Date(race.cutoff);
+                    var raceDate = race.date.replace(/-/g, '/');
+                    var cutoffDate = race.cutoff.replace(/-/g, '/');
+                    race.date = new Date(raceDate);
+                    race.cutoff = new Date(cutoffDate);
                     // increment cutoff by 1 to set it to midnight of that day
                     race.cutoff.setDate(race.cutoff.getDate() + 1);
                     race.done = ko.observable(new Date() > race.cutoff);

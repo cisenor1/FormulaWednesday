@@ -60,7 +60,7 @@ class RacesAdmin extends PageBase {
                 if (picks) {
                     for (var p in picks) {
                         var currentChal = chals.filter((c) => {
-                            return c.key = p;
+                            return c.key() == p;
                         })[0];
                         if (!currentChal) {
                             return;

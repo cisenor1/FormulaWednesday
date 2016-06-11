@@ -14,7 +14,7 @@ class ChallengesPage extends PageBase {
             save: () => { this.saveRaceData(); },
             valid: ko.observable(),
             reset: () => { this.reset(); },
-            change: (item, e) => { this.changed(item, event); },
+            change: (item, e) => { this.changed(item, e); },
             isDirty: ko.observable(false),
             errorMessage: ko.observable()
         };

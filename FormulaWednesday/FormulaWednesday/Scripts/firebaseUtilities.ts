@@ -187,8 +187,10 @@
                     var race: Race = values[p];
                     race.scored = ko.observable(!!values[p]["scored"]);
                     race.name = p;
-                    race.date = new Date((<any>race.date));
-                    race.cutoff = new Date((<any>race.cutoff));
+                    var raceDate = (<any>race.date).replace(/-/g, '/');
+                    var cutoffDate = (<any>race.cutoff).replace(/-/g, '/');
+                    race.date = new Date(raceDate);
+                    race.cutoff = new Date(cutoffDate);
                     // increment cutoff by 1 to set it to midnight of that day
                     race.cutoff.setDate(race.cutoff.getDate() + 1);
                     race.done = ko.observable(new Date() > race.cutoff);

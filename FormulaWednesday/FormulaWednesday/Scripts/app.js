@@ -190,13 +190,6 @@ class FormulaWednesdayApp {
     }
 }
 window.onload = function () {
-    tinymce.init({ selector: '#new-blog-content' });
     var formulawednesdayapp = new FormulaWednesdayApp();
     formulawednesdayapp.initialize();
 };
-// Prevent Bootstrap dialog from blocking focusin
-$(document).on('focusin', function (e) {
-    if ($(e.target).closest(".mce-window").length) {
-        e.stopImmediatePropagation();
-    }
-});
