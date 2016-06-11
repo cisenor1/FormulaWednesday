@@ -1,0 +1,36 @@
+﻿<div class="form-group">
+    <h1 data-bind="text: title"></h1>
+    <div>
+        <span>Race:</span>
+        <span data-bind="text: date"></span>
+    </div>
+    <div>
+        <span>Cutoff:</span>
+        <span data-bind="text: cutoff"></span>
+    </div>
+    <div class="alert alert-warning" data-bind="visible: isDirty">
+        <span>Make sure you save your changes..</span>
+        <input type="button" value="Save" data-bind="click: save, enable: valid" />
+        <input type="button" value="Reset" data-bind="click: reset" />
+    </div>
+    <div class="alert alert-danger" data-bind="visible: errorMessage">
+        <span data-bind="text: errorMessage"></span>
+    </div>
+</div>
+<form class="form row" id="challenge-form">
+    <div data-bind="foreach: challenges" class="list-group">
+        <div class="col-md-4">
+            <div class="form-group list-group-item">
+                <h2 data-bind="text: message" class="list-group-item-heading"></h2>
+                <p data-bind="text: description" class="list-group-item-text"></p>
+                    <div data-bind="if: drivers().length">
+                        <select class="form-control" data-bind="visible:$parent.valid, options: drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: $parent.change}"></select>
+                    </div>
+                    <div data-bind="ifnot: drivers().length">
+                        <select class="form-control" data-bind="visible:$parent.valid, options: $parent.drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: $parent.change}"></select>
+                    </div>
+                    <span class="form-control" data-bind="visible: !$parent.valid()"></span>
+            </div>
+        </div>
+    </div>
+</form>

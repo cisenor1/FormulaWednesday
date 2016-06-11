@@ -1,0 +1,38 @@
+﻿<div class="panel">
+    <ul>
+        <li class="form-group list-group-item">
+            <button data-bind="click: validateRace, visible: !showValidateRacePane()" class="fwed-button">Validate Race</button>
+            <form id="new-challenge-form" data-bind="visible: showValidateRacePane, submit: submitValidateRace">
+                <h3>Validate Race</h3>
+
+                <input class="fwed-button" type="submit" value="Validate Race" />
+            </form>
+        </li>
+    </ul>
+    <ul data-bind="foreach: races">
+        <li class="form-group list-group-item" data-bind="css:{raceover: done}">
+            <div class="left">
+                <h3 data-bind="text: title"></h3>
+                <span data-bind="text:city"></span>, <span data-bind="text: country"></span>
+                <p data-bind="text: date"></p>
+            </div>
+            <div class="right" data-bind="if: (done() && !validating()) && !scored()">
+                <a data-bind="click: function(item){ $parent.validateRace(item) }">Score this race</a>
+            </div>
+            <div data-bind="if:validating()">
+                <div class="panel">
+                    <ul data-bind="foreach: challenges" class="race-validation">
+                        <li>    
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" data-bind="text: message"></span>
+                                <select class="form-control" data-bind="options: drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: function($context, e){$parents[1].change($context,$parent, e, $root)}}"></select>
+                            </div>
+                        </li>
+                    </ul>
+                    <button data-bind="click: function(){$parent.submitValidateRace($data,$parent)}" class="fwed-button">Validate</button>
+                    <button data-bind="click: function(item){$parent.cancelValidate(item)}" class="fwed-button">Cancel</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,63 @@
+﻿<div class="panel">
+    <ul>
+        <li class="form-group list-group-item">
+            <button data-bind="click: addChallenge, visible: !showAddChallengePane()" class="fwed-button">Add Challenge</button>
+            <form id="new-challenge-form" data-bind="visible: showAddChallengePane, submit: submitCreateChallenge">
+                <h3>Add Challenge</h3>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Challenge Name:</span>
+                    <input class="form-control" type="text" required data-bind="value: newChallengeName" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Key:</span>
+                    <input class="form-control" type="text" pattern="^[a-z0-9_-]{3,16}$" title="Must contain no punctuation or spaces." required data-bind="value: newChallengeKey" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Point Value:</span>
+                    <input class="form-control" type="email" required data-bind="value: newPointValue" />
+                </div>
+                <input class="fwed-button" type="submit" value="Create Challenge" />
+            </form>
+        </li>
+    </ul>
+    <ul data-bind="foreach: challenges">
+        <li class="form-group list-group-item">
+            <div data-bind="visible: !editing()">
+                <div class="fwed-user-details">
+                    <h3 data-bind="text: message" class="list-group-item-heading fwed-user-fullname"></h3>
+                    <p data-bind="text: description" class="list-group-item-text fwed-user-username"></p>
+                    <p data-bind="text: value" class="list-group-item-text fwed-user-key"></p>
+                    <p data-bind="text: key" class="list-group-item-text fwed-user-email"></p>
+                </div>
+                <div class="fwed-user-points-box">
+                    <span> Value</span><p data-bind="text: value" class="list-group-item-text fwed-user-points"></p>
+                </div>
+                <button class="fwed-button" data-bind="click: function(item){$parent.editChallenge(item)}, visible: !editing() && !$parent.editing()">Edit</button>
+            </div>
+            <form data-bind="visible: editing" class="form-group ">
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Key:</span>
+                    <input class="form-control" type="text" data-bind="value: key" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Message:</span>
+                    <input class="form-control" type="text" required data-bind="value: message" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Value:</span>
+                    <input class="form-control" type="text" required data-bind="value: value" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Description:</span>
+                    <input class="form-control" type="text" required data-bind="value: description" />
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">Type:</span>
+                    <input class="form-control" type="number" required data-bind="value: type" />
+                </div>
+                <button class="fwed-button" data-bind="click: function(item){$parent.saveData(item)}">Save Changes</button>
+                <button class="fwed-button" data-bind="click: function(item){$parent.cancel(item)}">Cancel</button>
+            </form>
+        </li>
+    </ul>
+</div>

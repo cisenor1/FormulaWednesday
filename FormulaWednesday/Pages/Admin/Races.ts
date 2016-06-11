@@ -1,0 +1,120 @@
+﻿class RacesAdmin extends PageBase implements Page {
+
+    markupUri: string = "Pages/Admin/Races.html";
+    divId: string = "races-admin";
+    races: KnockoutObservableArray<Race> = ko.observableArray([]);
+    challenges: KnockoutObservableArray<Challenge> = ko.observableArray([]);
+    showValidateRacePane = ko.observable(false);
+    editing = ko.observable(false);
+    drivers = ko.observableArray([]);
+    currentRace: KnockoutObservable<Race>;
+
+    constructor(app: FormulaWednesdayApp) {
+        super(app);
+        this.vmPromise = this.createVM();
+    }
+
+    createVM(): Promise<any> {
+        if (!this.app.user) {
+            return <any>false;
+        }
+        return new Promise<any>((resolve, reject) => {
+            FirebaseUtilities.getRaces("2016").then((values) => {
+                this.races(values);
+                this.currentRace = ko.observable(values[0]);
+                this.races().forEach((r) => {
+                    r.done = ko.observable(r.cutoff < new Date(Date.now()));
+                    r.date = <any>ko.observable(r.date.toDateString());
+                    r.validating = ko.observable(false);
+                });
+                FirebaseUtilities.getDrivers().then((ds) => {
+                    this.drivers(ds);
+                });
+                resolve(this);
+            });
+        });
+    }
+
+
+    getMarkup(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            fetch(this.markupUri).then((value) => {
+                value.text().then((output) => {
+                    resolve(output);
+                });
+            });
+        });
+    }
+
+    getViewModel(): Promise<any> {
+        return this.vmPromise;
+    }
+
+    submitValidateRace(race: Race, vm: RacesAdmin) {
+        race.validating(false);
+        FirebaseUtilities.setRaceResults(race).then((r) => {
+            var self = vm;
+            vm.app.sortedUsers().forEach((u) => {
+                var results = r.results;
+                var chals = r.challenges();
+                if (!u.results) {
+                    return;
+                }
+                var season = u.results[r.season];
+                if (!season) {
+                    return;
+                }
+                var picks = u.results[r.season][r.name];
+                if (picks) {
+                    for (var p in picks) {
+                        var currentChal = chals.filter((c) => {
+                            return c.key() == p;
+                        })[0];
+                        if (!currentChal) {
+                            return;
+                        }
+                        var win = r.results[p];
+                        var picked = picks[p];
+                        if (win == picked) {
+                            var currPts = u.points();
+                            currPts += currentChal.value();
+                            u.points(currPts);
+                        }
+                    }
+                    FirebaseUtilities.setPoints(u).then(() => {
+                        this.updateDriverStandings();
+                    });
+                }
+            });
+        });
+    }
+
+    cancelValidate(race: Race) {
+        race.validating(false);
+    }
+
+    validateRace(race: Race) {
+        this.currentRace(race);
+        this.races().forEach((x) => {
+            if (x.validating) {
+                x.validating(false);
+            }
+        });
+        race.validating(true);
+    }
+
+    updateDriverStandings(): void {
+
+    }
+
+    change(challenge: Challenge, race: Race, e, vm: RacesAdmin) {
+        var driverKey = e.target.value;
+        var currRace = vm.currentRace()
+        if (!currRace.results) {
+            currRace.results = [];
+        }
+        var key = challenge.key();
+        currRace.results[challenge.key()] = driverKey;
+        vm.currentRace(currRace);
+    }
+}
