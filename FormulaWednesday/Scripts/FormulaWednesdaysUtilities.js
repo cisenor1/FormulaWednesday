@@ -16,6 +16,29 @@ class FormulaWednesdaysUtilities {
     static positionToPoints(pos) {
         return this.posToPts[pos];
     }
+    static getLapTimes(round, season) {
+        if (!season) {
+            season = "current";
+        }
+        var url = this.ergastUrl + season + "/" + round + "/laps.json";
+        return new Promise((resolve, reject) => {
+            fetch(url).then((res) => {
+                res.text().then((x) => {
+                    var standings = JSON.parse(x);
+                    var out = [];
+                    debugger;
+                    var driverStandings = standings.MRData.StandingsTable.StandingsLists[0].DriverStandings;
+                    driverStandings.forEach((d) => {
+                        out.push({
+                            key: d.Driver.code,
+                            laps: d.wins
+                        });
+                    });
+                    resolve(out);
+                });
+            }).catch((err) => { reject(err); });
+        });
+    }
     static getDriverStandings(season) {
         if (!season) {
             season = "current";

@@ -47,7 +47,7 @@ class PreferencesPage extends PageBase {
         var oldPassword = FormulaWednesdaysUtilities.hashPassword(this.oldPass());
         var hashed = FormulaWednesdaysUtilities.hashPassword(newpass);
         FirebaseUtilities.changePassword(this.app.user, oldPassword, hashed).then((b) => {
-            this.passwordSuccess("Your password has been changed successfully.");
+            this.app.alert("Your password has been changed successfully.");
             this.newPass("");
             this.oldPass("");
             this.confirmPass("");
@@ -57,7 +57,7 @@ class PreferencesPage extends PageBase {
             this.newPass("");
             this.oldPass("");
             this.confirmPass("");
-            this.passwordAlert(e.message);
+            this.app.alert(e.message);
         });
     }
     changeUsername() {

@@ -24,6 +24,14 @@ class FormulaWednesdayApp {
     sortedDrivers: KnockoutObservableArray<Driver> = ko.observableArray([]);
     teams: KnockoutObservableArray<Team> = ko.observableArray([]);
     user: User;
+    nextRaceId = ko.observable();
+    modalVisible = ko.observable(false);
+    modalText = ko.observable("");
+    modalTitle = ko.observable("");
+    modalOKText = ko.observable("");
+    modalCancelText = ko.observable("");
+    countdownText = ko.observable("");
+    countdownValue = ko.observable("");
     adminMenu: KnockoutObservableArray<MenuItem> = ko.observableArray([
         {
             binding: "admin-users",
@@ -57,14 +65,26 @@ class FormulaWednesdayApp {
             this.logInProcedure(this.credentials.name, this.credentials.password).then((user: User) => {
                 this.refreshUserInfo(user);
             }).catch((e) => {
-                alert(e);
+                this.alert(e);
             });
         }
         this.currentPage.subscribe((page) => {
             this.loadPage(page);
         });
         this.currentPage("homepage");
+        this.buildCountdown();
         ko.applyBindings(this);
+    }
+
+    buildCountdown() {
+        FirebaseUtilities.getNextRace().then((race) => {
+            this.nextRaceId(race.
+            this.countdownText("Cutoff for the " + race.title + ": ");
+            setInterval(() => {
+                var countdown;
+                this.countdownValue((<any>moment()).countdown(race.cutoff).toString());
+            }, 1000);
+        });
     }
 
     refreshUserInfo(user: User) {
@@ -102,6 +122,7 @@ class FormulaWednesdayApp {
         this.launchHomepage();
     }
 
+
     logInProcedure(name, password): Promise<User> {
         this.credentials = {
             name: name,
@@ -114,7 +135,7 @@ class FormulaWednesdayApp {
         //if (this.loggedIn()) {
         //    window.localStorage.setItem(this.currentPageKey, page);
         //}
-        
+
 
         var newPage: Page;
 
@@ -215,6 +236,63 @@ class FormulaWednesdayApp {
         });
     }
 
+    confirm(inString: string, title?: string, okText?: string, cancelText?: string, okCallback?: () => any, cancelCallback?: () => any) {
+        this.modalText(inString);
+        this.modalTitle(title || "Formula Wednesday");
+        this.modalOKText(okText || "OK");
+        this.modalCancelText(cancelText || "Cancel");
+        $("#confirm-modal").modal({
+            backdrop: "static",
+            show: true,
+            keyboard: false
+        }).one(
+            "click",
+            "#modal-ok",
+            () => {
+                $("#confirm-modal").modal('hide');
+                this.cleanUpModal();
+                if (okCallback) {
+                    okCallback();
+                }
+            }
+        ).one(
+            "click",
+            "#modal-cancel",
+            () => {
+                this.cleanUpModal();
+                if (cancelCallback) {
+                    cancelCallback();
+                }
+            }
+);
+    }
+
+    alert(inString: string, title?: string, okText?: string, callback?: () => any) {
+        this.modalText(inString);
+        this.modalTitle(title || "Formula Wednesday");
+        this.modalOKText(okText || "OK");
+        $("#alert-modal").modal({
+            backdrop: "static",
+            show: true,
+            keyboard: false
+        }).one(
+            "click",
+            "#modal-ok",
+            () => {
+                $("#alert-modal").modal('hide');
+                this.cleanUpModal();
+                if (callback) {
+                    callback();
+                }
+            });
+    }
+
+    cleanUpModal() {
+        this.modalCancelText("");
+        this.modalTitle("");
+        this.modalOKText("");
+        this.modalText("");
+    }
 }
 
 window.onload = function () {

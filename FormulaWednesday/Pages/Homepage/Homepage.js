@@ -11,12 +11,12 @@ class HomePage extends PageBase {
         return new Promise((resolve, reject) => {
             this.getBlogPosts(5).then((bs) => {
                 this.blogPosts(bs);
-                var esc = FirebaseUtilities.escape("<u>Daniel Ricciardo (after finishing the race in 2nd)</u>: \"Just save it. Nothing you can say can make it any better.\"");
+                var esc = FirebaseUtilities.escape("<u>Fernando Alonso</u>: \"Can I stop now?\"<br><u>Pit Wall</u>: \"No Fernando, keep going, we want to see if we can get a point if something happens to other cars.\"<br/><u>Fernando Alonso</u>: \"Awww... ARGH!..\"");
                 this.quote(FirebaseUtilities.unescape(esc));
-                this.imageSource("http://cdn.scahw.com.au/cdn-1d1b9f5cca9ef30/imagevaultfiles/id_405499/cf_7/ricciardo-monaco-628.jpg");
+                this.imageSource("http://cdn-1.motorsport.com/static/img/mgl/6000000/6030000/6035000/6035900/6035921/s8/f1-brazilian-gp-2015-fernando-alonso-mclaren-watches-qualifying-from-a-chair-at-the-side-o.jpg");
                 resolve(this);
             }).catch((e) => {
-                alert(e);
+                this.app.alert(e);
             });
         });
     }

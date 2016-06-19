@@ -38,3 +38,17 @@ E:\Projects\FormulaWednesday\FormulaWednesday\bin\Microsoft.CodeDom.Providers.Do
 E:\Projects\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.csprojResolveAssemblyReference.cache
 E:\Projects\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.dll
 E:\Projects\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.pdb
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\csc.exe.config
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\csc.rsp
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\csi.exe
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\csi.rsp
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\System.AppContext.dll
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\System.IO.FileSystem.dll
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\vbc.exe.config
+E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\vbc.rsp

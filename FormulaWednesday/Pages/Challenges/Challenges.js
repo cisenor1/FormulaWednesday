@@ -16,7 +16,8 @@ class ChallengesPage extends PageBase {
             reset: () => { this.reset(); },
             change: (item, e) => { this.changed(item, e); },
             isDirty: ko.observable(false),
-            errorMessage: ko.observable()
+            errorMessage: ko.observable(),
+            saveText: ko.observable("Save Changes")
         };
         this.markupUri = "Pages/Challenges/Challenges.html";
         this.divId = "challenges";
@@ -91,14 +92,19 @@ class ChallengesPage extends PageBase {
         return this.vmPromise;
     }
     saveRaceData() {
+        var stored = this.vm.saveText();
+        this.vm.saveText("Saving...");
         var race = this.app.selectedRace;
         var challenges = this.createChallengeObject();
         FirebaseUtilities.saveChallengeChoices(this.app.user, this.app.selectedRace, challenges)
             .then((b) => {
             this.vm.isDirty(false);
+            this.app.alert("Save was successful", "Save");
         })
             .catch((e) => {
-            this.vm.errorMessage(e.message);
+            this.app.alert(e, "Save");
+        }).finally(() => {
+            this.vm.saveText(stored);
         });
     }
     reset() {

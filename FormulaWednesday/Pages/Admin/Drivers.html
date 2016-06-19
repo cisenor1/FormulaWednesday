@@ -1,4 +1,5 @@
-﻿<ul data-bind="foreach: drivers">
+﻿<button data-bind="click: updateDriverStandings,text:updateDriverStandingsText"></button>
+<ul data-bind="foreach: drivers">
     <li>
         <form data-bind="submit: function(){return $parent.saveDriver($data)}">
             <span data-bind="text:name"></span>

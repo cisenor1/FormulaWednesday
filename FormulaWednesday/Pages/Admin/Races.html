@@ -1,6 +1,7 @@
 ﻿<div class="panel">
     <ul>
         <li class="form-group list-group-item">
+            <button data-bind="click: getLapTimes">La</button>
             <button data-bind="click: validateRace, visible: !showValidateRacePane()" class="fwed-button">Validate Race</button>
             <form id="new-challenge-form" data-bind="visible: showValidateRacePane, submit: submitValidateRace">
                 <h3>Validate Race</h3>

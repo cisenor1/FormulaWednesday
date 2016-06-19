@@ -21,6 +21,14 @@ class FormulaWednesdayApp {
         this.sortedUsers = ko.observableArray([]);
         this.sortedDrivers = ko.observableArray([]);
         this.teams = ko.observableArray([]);
+        this.nextRaceId = ko.observable();
+        this.modalVisible = ko.observable(false);
+        this.modalText = ko.observable("");
+        this.modalTitle = ko.observable("");
+        this.modalOKText = ko.observable("");
+        this.modalCancelText = ko.observable("");
+        this.countdownText = ko.observable("");
+        this.countdownValue = ko.observable("");
         this.adminMenu = ko.observableArray([
             {
                 binding: "admin-users",
@@ -49,14 +57,24 @@ class FormulaWednesdayApp {
             this.logInProcedure(this.credentials.name, this.credentials.password).then((user) => {
                 this.refreshUserInfo(user);
             }).catch((e) => {
-                alert(e);
+                this.alert(e);
             });
         }
         this.currentPage.subscribe((page) => {
             this.loadPage(page);
         });
         this.currentPage("homepage");
+        this.buildCountdown();
         ko.applyBindings(this);
+    }
+    buildCountdown() {
+        FirebaseUtilities.getNextRace().then((race) => {
+            this.countdownText("Cutoff for the " + race.title + ": ");
+            setInterval(() => {
+                var countdown;
+                this.countdownValue(moment().countdown(race.cutoff).toString());
+            }, 1000);
+        });
     }
     refreshUserInfo(user) {
         this.buildStandingsTable();
@@ -187,6 +205,50 @@ class FormulaWednesdayApp {
             });
             this.sortedDrivers(sortedDrivers);
         });
+    }
+    confirm(inString, title, okText, cancelText, okCallback, cancelCallback) {
+        this.modalText(inString);
+        this.modalTitle(title || "Formula Wednesday");
+        this.modalOKText(okText || "OK");
+        this.modalCancelText(cancelText || "Cancel");
+        $("#confirm-modal").modal({
+            backdrop: "static",
+            show: true,
+            keyboard: false
+        }).one("click", "#modal-ok", () => {
+            $("#confirm-modal").modal('hide');
+            this.cleanUpModal();
+            if (okCallback) {
+                okCallback();
+            }
+        }).one("click", "#modal-cancel", () => {
+            this.cleanUpModal();
+            if (cancelCallback) {
+                cancelCallback();
+            }
+        });
+    }
+    alert(inString, title, okText, callback) {
+        this.modalText(inString);
+        this.modalTitle(title || "Formula Wednesday");
+        this.modalOKText(okText || "OK");
+        $("#alert-modal").modal({
+            backdrop: "static",
+            show: true,
+            keyboard: false
+        }).one("click", "#modal-ok", () => {
+            $("#alert-modal").modal('hide');
+            this.cleanUpModal();
+            if (callback) {
+                callback();
+            }
+        });
+    }
+    cleanUpModal() {
+        this.modalCancelText("");
+        this.modalTitle("");
+        this.modalOKText("");
+        this.modalText("");
     }
 }
 window.onload = function () {

@@ -167,6 +167,19 @@ class FirebaseUtilities {
             }).catch(reject);
         });
     }
+    static updateDriverStandings(standings) {
+        return new Promise((resolve, reject) => {
+            standings.forEach((x) => {
+                var url = this.firebaseUrl + "drivers/" + x.key.toLowerCase() + "/points";
+                var fb = new Firebase(url);
+                fb.set(+x.points);
+                url = this.firebaseUrl + "drivers/" + x.key.toLowerCase() + "/wins";
+                fb = new Firebase(url);
+                fb.set(+x.wins);
+            });
+            resolve();
+        });
+    }
     static getRaces(season) {
         return new Promise((resolve, reject) => {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + season);
@@ -434,6 +447,35 @@ class FirebaseUtilities {
             url = this.firebaseUrl + "drivers/" + x.key + "/wins";
             fb = new Firebase(url);
             fb.set(+x.wins);
+        });
+    }
+    static getNextRace(year) {
+        if (!year) {
+            year = 2016;
+        }
+        return new Promise((resolve, reject) => {
+            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + year.toString());
+            return fb.once("value").then((ds) => {
+                var value = ds.val();
+                var currentDate = new Date(Date.now());
+                var dateArray = [];
+                for (var p in value) {
+                    var raceDate = new Date(value[p]["cutoff"]);
+                    var name = p;
+                    dateArray.push({
+                        name: name,
+                        date: raceDate
+                    });
+                }
+                dateArray.sort((a, b) => { return a.date.getTime() - b.date.getTime(); });
+                var nextName = dateArray.filter((x) => { return x.date.getTime() > currentDate.getTime(); })[0].name;
+                var nextData = value[nextName];
+                var nextRace = nextData;
+                nextRace.date = new Date(nextRace.date);
+                nextRace.cutoff = new Date(nextRace.cutoff);
+                nextRace.name = nextName;
+                return resolve(nextRace);
+            });
         });
     }
 }

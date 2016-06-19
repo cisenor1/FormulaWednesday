@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <script src="http://cdn.jsdelivr.net/bluebird/3.3.5/bluebird.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
-    <script type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js'></script>
+    <script src="Scripts/knockout-3.4.0.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="Hashing/md5.js"></script>
@@ -16,11 +16,14 @@
     <script src="Pages/Admin/Users.js"></script>
     <script src="Pages/Admin/Blog.js"></script>
     <script src="Pages/Preferences/Preferences.js"></script>
+    <script src="Scripts/moment.js"></script>
+    <script src="node_modules/countdown/countdown.js"></script>
+    <script src="node_modules/moment-countdown/dist/moment-countdown.min.js"></script>
     <script src="Pages/Homepage/Homepage.js"></script>
     <script src="Pages/Admin/Challenges.js"></script>
     <script src="Pages/Admin/Drivers.js"></script>
     <script src="Pages/Admin/Races.js"></script>
-    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/jquery-2.2.4.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="Pages/Challenges/Challenges.js"></script>
     <script src="Scripts/firebaseUtilities.js"></script>
@@ -37,8 +40,12 @@
                     <img src="favicon.ico" />
                     Formula Wednesday
                 </a>
-                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="true"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-
+                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="true">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -77,12 +84,13 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right" data-bind="if: loggedIn()">
                     <li class="navbar-right"><a href="#" data-bind="text: logOutMessage, click: doLogOut"></a></li>
-                    <li class="dropdown">
+                    <li class="navbar-right dropdown">
                         <a class="glyphicon glyphicon-cog dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"></a>
                         <ul id="options-dropdown" class="list-group dropdown-menu">
                             <li><a href="#" data-bind="click: launchUserPreferences">Options</a></li>
                         </ul>
                     </li>
+                    <li class="navbar-right"><a><span data-bind="text: countdownText"></span><span class="countdown" data-bind="text:countdownValue"></span></a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -117,5 +125,38 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" data-bind="text:modalTitle"></h4>
+                </div>
+                <div class="modal-body">
+                    <p data-bind="text:modalText"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="modal-cancel" data-bind="text:modalCancelText"></button>
+                    <button type="button" class="btn btn-primary" id="modal-ok" data-bind="text:modalOKText"></button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div class="modal fade" id="alert-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" data-bind="text:modalTitle"></h4>
+                </div>
+                <div class="modal-body">
+                    <p data-bind="text:modalText"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="modal-ok" data-bind="text:modalOKText"></button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </body>
 </html>

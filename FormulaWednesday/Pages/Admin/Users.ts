@@ -62,7 +62,8 @@
 
     saveData(item: User) {
         FirebaseUtilities.saveUser(item).then((success) => {
-        }).catch((e: Error) => { alert(e); });
+            this.app.alert(item.username + " has been saved successfully.");
+        }).catch((e: Error) => { this.app.alert(e.message); });
         item.editing(false);
         this.editing(false);
     }
@@ -86,7 +87,7 @@
         var fullName = this.newName();
         var username = this.newId();
         if (!FormulaWednesdaysUtilities.validateUsername(username)) {
-            alert("Bad Username");
+            this.app.alert("Bad Username");
             return false;
         }
         var pass = this.newPass();
@@ -94,7 +95,7 @@
         var email = this.newEmail();
         var role = this.role();
         if (pass.localeCompare(passConfirm)) {
-            alert("nope");
+            this.app.alert("Passwords must match.");
             return;
         }
         var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
@@ -108,16 +109,16 @@
             editing: ko.observable(false)
         }
         var hashedPass = FormulaWednesdaysUtilities.hashPassword(pass);
-        FirebaseUtilities.createUser(user, hashedPass).then((v:any) => {
+        FirebaseUtilities.createUser(user, hashedPass).then((v: any) => {
             // go on to add user to database
             var uid = v.uid;
             FirebaseUtilities.addNewUser(user).then((s) => {
-                debugger;
+                this.app.alert(user.username + " has been created successfully");
             });
 
         }).catch((e) => {
-        // handle the error
-            alert(e);
+            // handle the error
+            this.app.alert(e);
         });
     }
 }

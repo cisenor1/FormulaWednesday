@@ -74,7 +74,6 @@ class RacesAdmin extends PageBase {
                         }
                     }
                     FirebaseUtilities.setPoints(u).then(() => {
-                        this.updateDriverStandings();
                     });
                 }
             });
@@ -92,8 +91,6 @@ class RacesAdmin extends PageBase {
         });
         race.validating(true);
     }
-    updateDriverStandings() {
-    }
     change(challenge, race, e, vm) {
         var driverKey = e.target.value;
         var currRace = vm.currentRace();
@@ -103,5 +100,8 @@ class RacesAdmin extends PageBase {
         var key = challenge.key();
         currRace.results[challenge.key()] = driverKey;
         vm.currentRace(currRace);
+    }
+    getLapTimes() {
+        FormulaWednesdaysUtilities.getLapTimes(7);
     }
 }

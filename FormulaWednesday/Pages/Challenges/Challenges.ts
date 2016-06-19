@@ -15,7 +15,8 @@ class ChallengesPage extends PageBase implements Page {
         reset: () => { this.reset() },
         change: (item: Challenge, e: Event) => { this.changed(item, e) },
         isDirty: ko.observable<boolean>(false),
-        errorMessage: ko.observable<string>()
+        errorMessage: ko.observable<string>(),
+        saveText: ko.observable("Save Changes")
     };
     markupUri: string = "Pages/Challenges/Challenges.html";
     divId = "challenges";
@@ -101,17 +102,22 @@ class ChallengesPage extends PageBase implements Page {
     }
 
     saveRaceData(): void {
+        var stored = this.vm.saveText();
+        this.vm.saveText("Saving...");
         var race = this.app.selectedRace;
         var challenges = this.createChallengeObject();
         FirebaseUtilities.saveChallengeChoices(this.app.user, this.app.selectedRace, challenges)
             .then((b) => {
                 this.vm.isDirty(false);
-                
+                this.app.alert("Save was successful", "Save");
             })
             .catch((e) => {
-                this.vm.errorMessage(e.message);
+                this.app.alert(e, "Save");
+            }).finally(() => {
+                this.vm.saveText(stored);
             });
     }
+
     reset(): void {
         this.processChoices(this.originalChoices);
     }
@@ -147,4 +153,5 @@ interface ChallengesVM extends ViewModelBase {
     change: (Challenge, Event) => void;
     isDirty: KnockoutObservable<boolean>;
     errorMessage: KnockoutObservable<string>;
+    saveText: KnockoutObservable<string>;
 }

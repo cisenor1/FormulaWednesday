@@ -82,7 +82,6 @@
                         }
                     }
                     FirebaseUtilities.setPoints(u).then(() => {
-                        this.updateDriverStandings();
                     });
                 }
             });
@@ -102,11 +101,7 @@
         });
         race.validating(true);
     }
-
-    updateDriverStandings(): void {
-
-    }
-
+    
     change(challenge: Challenge, race: Race, e, vm: RacesAdmin) {
         var driverKey = e.target.value;
         var currRace = vm.currentRace()
@@ -116,5 +111,9 @@
         var key = challenge.key();
         currRace.results[challenge.key()] = driverKey;
         vm.currentRace(currRace);
+    }
+
+    getLapTimes() {
+        FormulaWednesdaysUtilities.getLapTimes(7);
     }
 }

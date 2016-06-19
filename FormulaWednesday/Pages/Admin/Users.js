@@ -53,7 +53,8 @@ class UsersAdmin extends PageBase {
     }
     saveData(item) {
         FirebaseUtilities.saveUser(item).then((success) => {
-        }).catch((e) => { alert(e); });
+            this.app.alert(item.username + " has been saved successfully.");
+        }).catch((e) => { this.app.alert(e.message); });
         item.editing(false);
         this.editing(false);
     }
@@ -74,7 +75,7 @@ class UsersAdmin extends PageBase {
         var fullName = this.newName();
         var username = this.newId();
         if (!FormulaWednesdaysUtilities.validateUsername(username)) {
-            alert("Bad Username");
+            this.app.alert("Bad Username");
             return false;
         }
         var pass = this.newPass();
@@ -82,7 +83,7 @@ class UsersAdmin extends PageBase {
         var email = this.newEmail();
         var role = this.role();
         if (pass.localeCompare(passConfirm)) {
-            alert("nope");
+            this.app.alert("Passwords must match.");
             return;
         }
         var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
@@ -100,11 +101,11 @@ class UsersAdmin extends PageBase {
             // go on to add user to database
             var uid = v.uid;
             FirebaseUtilities.addNewUser(user).then((s) => {
-                debugger;
+                this.app.alert(user.username + " has been created successfully");
             });
         }).catch((e) => {
             // handle the error
-            alert(e);
+            this.app.alert(e);
         });
     }
 }
