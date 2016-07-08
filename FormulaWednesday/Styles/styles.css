@@ -179,7 +179,7 @@ span.blog-date {
     display: block;
     width: 90%;
     bottom: 1em;
-    position: absolute;
+    /*position: absolute;*/
     height: 34px;
     padding: 6px 12px;
     font-size: 14px;

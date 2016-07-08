@@ -78,7 +78,6 @@ class FormulaWednesdayApp {
 
     buildCountdown() {
         FirebaseUtilities.getNextRace().then((race) => {
-            this.nextRaceId(race.
             this.countdownText("Cutoff for the " + race.title + ": ");
             setInterval(() => {
                 var countdown;
