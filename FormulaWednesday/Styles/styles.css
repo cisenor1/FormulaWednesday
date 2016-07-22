@@ -167,7 +167,7 @@ span.blog-date {
 
 .list-group-item {
     position: relative;
-    height: 11em;
+    min-height: 11em;
     display: block;
     padding: 10px 15px;
     margin-bottom: -1px;
