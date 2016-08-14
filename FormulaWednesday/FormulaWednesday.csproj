@@ -457,6 +457,7 @@
     <Content Include="Hashing\md5.js" />
     <Content Include="index.html" />
     <Content Include="Markup\InputForm.html" />
+    <TypeScriptCompile Include="Models\FWEDError.ts" />
     <TypeScriptCompile Include="Models\BlogPost.ts" />
     <TypeScriptCompile Include="Models\Challenge.ts" />
     <TypeScriptCompile Include="Models\Credentials.ts" />

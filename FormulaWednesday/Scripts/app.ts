@@ -32,6 +32,7 @@ class FormulaWednesdayApp {
     modalCancelText = ko.observable("");
     countdownText = ko.observable("");
     countdownValue = ko.observable("");
+    errors = ko.observableArray<FWEDError>([]);
     adminMenu: KnockoutObservableArray<MenuItem> = ko.observableArray([
         {
             binding: "admin-users",
@@ -83,7 +84,7 @@ class FormulaWednesdayApp {
                 var countdown;
                 this.countdownValue((<any>moment()).countdown(race.cutoff).toString());
             }, 1000);
-        });
+        }).catch((err) => { this.errors.push(err); });;
     }
 
     refreshUserInfo(user: User) {
@@ -93,7 +94,7 @@ class FormulaWednesdayApp {
         this.user = user;
         FirebaseUtilities.getRaces("2016").then((races) => {
             this.races(races);
-        });
+        }).catch((err) => { this.errors.push(err); });
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
     }
@@ -105,9 +106,7 @@ class FormulaWednesdayApp {
         var hashed = md5(this.pwObservable());
         this.logInProcedure(this.nameObservable(), hashed).then((user) => {
             this.refreshUserInfo(user);
-        }).catch((e) => {
-            alert(e);
-        });
+        }).catch((err) => { this.errors.push(err); });
     }
 
     doLogOut() {
@@ -127,7 +126,7 @@ class FormulaWednesdayApp {
             name: name,
             password: password
         };
-        return FirebaseUtilities.getUserInfo(this.credentials);
+        return FirebaseUtilities.getUserInfo(this.credentials).catch((err) => { this.errors.push(err); });
     }
 
     loadPage(page: string) {

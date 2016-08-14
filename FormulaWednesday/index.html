@@ -95,6 +95,9 @@
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
+    <ul data-bind="visible:errors,foreach:errors">
+        <li data-bind="text:message"></li>
+    </ul>
     <div id="page-content-div" class="container"></div>
     <div class="container hidden-sm hidden-xs" data-bind="if: loggedIn()">
         <!--score sheet-->

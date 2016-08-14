@@ -1,0 +1,2 @@
+﻿interface FWEDError extends Error {
+}
