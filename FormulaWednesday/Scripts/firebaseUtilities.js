@@ -492,6 +492,17 @@ var FirebaseUtilities = (function () {
             });
         });
     };
+    FirebaseUtilities.getError = function (err) {
+        var f = err;
+        if (f.name.toLocaleLowerCase().indexOf("error") > -1) {
+            f.severity = "error";
+        }
+        else {
+            f.severity = "info";
+        }
+        f.time = moment().toDate().toString();
+        return f;
+    };
     FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
     return FirebaseUtilities;
 }());

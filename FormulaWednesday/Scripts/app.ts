@@ -26,6 +26,7 @@ class FormulaWednesdayApp {
     user: User;
     nextRaceId = ko.observable();
     modalVisible = ko.observable(false);
+    logVisible = ko.observable(false);
     modalText = ko.observable("");
     modalTitle = ko.observable("");
     modalOKText = ko.observable("");
@@ -33,6 +34,8 @@ class FormulaWednesdayApp {
     countdownText = ko.observable("");
     countdownValue = ko.observable("");
     errors = ko.observableArray<FWEDError>([]);
+    longClicking = false;
+    longClickTimer;
     adminMenu: KnockoutObservableArray<MenuItem> = ko.observableArray([
         {
             binding: "admin-users",
@@ -54,10 +57,32 @@ class FormulaWednesdayApp {
             label: "Blog"
         }
     ]);
-
+    
 
     constructor() {
 
+    }
+
+    beginLongClick(e) {
+        this.longClicking = true;
+        this.longClickTimer = setTimeout(() => { this.openLog(); }, 1500);
+        return e;
+    }
+
+    openLog() {
+        if (this.longClickTimer) {
+            clearTimeout(this.longClickTimer);
+        }
+        if (this.longClicking) {
+            this.logVisible(!this.logVisible());
+        }
+    }
+
+    endLongClick(e) {
+        if (this.longClickTimer) {
+            clearTimeout(this.longClickTimer);
+        }
+        this.longClicking = false;
     }
 
     initialize() {
@@ -84,7 +109,9 @@ class FormulaWednesdayApp {
                 var countdown;
                 this.countdownValue((<any>moment()).countdown(race.cutoff).toString());
             }, 1000);
-        }).catch((err) => { this.errors.push(err); });;
+        }).catch((err) => {
+            this.logError(err);
+        });;
     }
 
     refreshUserInfo(user: User) {
@@ -94,7 +121,9 @@ class FormulaWednesdayApp {
         this.user = user;
         FirebaseUtilities.getRaces("2016").then((races) => {
             this.races(races);
-        }).catch((err) => { this.errors.push(err); });
+        }).catch((err) => {
+            this.logError(err);
+        });
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
     }
@@ -106,7 +135,9 @@ class FormulaWednesdayApp {
         var hashed = md5(this.pwObservable());
         this.logInProcedure(this.nameObservable(), hashed).then((user) => {
             this.refreshUserInfo(user);
-        }).catch((err) => { this.errors.push(err); });
+        }).catch((err) => {
+            this.logError(err);
+        });
     }
 
     doLogOut() {
@@ -126,14 +157,12 @@ class FormulaWednesdayApp {
             name: name,
             password: password
         };
-        return FirebaseUtilities.getUserInfo(this.credentials).catch((err) => { this.errors.push(err); });
+        return FirebaseUtilities.getUserInfo(this.credentials).catch((err) => {
+            this.logError(err);
+        });
     }
 
     loadPage(page: string) {
-        //if (this.loggedIn()) {
-        //    window.localStorage.setItem(this.currentPageKey, page);
-        //}
-
 
         var newPage: Page;
 
@@ -290,6 +319,11 @@ class FormulaWednesdayApp {
         this.modalTitle("");
         this.modalOKText("");
         this.modalText("");
+    }
+
+    logError(err: Error): void {
+        let f = FirebaseUtilities.getError(err);
+        this.errors.push(f);
     }
 }
 

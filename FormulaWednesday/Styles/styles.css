@@ -196,8 +196,26 @@ span.blog-date {
     -moz-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 }
-.countdown{
+
+.countdown {
     width: 21em;
     display: inline-block;
     text-align: left;
 }
+
+.log-view {
+    width: 100%;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+    .log-view table {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+        .log-view tr.error {
+            color: red;
+        }

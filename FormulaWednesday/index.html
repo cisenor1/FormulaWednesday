@@ -38,11 +38,30 @@
     <link href="Styles/styles.css" rel="stylesheet" />
 </head>
 <body>
+    <div class="log-view" data-bind="visible: logVisible">
+        <table >
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Code</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach:errors">
+                <tr data-bind="css:severity">
+                    <td data-bind="text:time"></td>
+                    <td data-bind="text:name"></td>
+                    <td data-bind="text:message"></td>
+                </tr>
+            </tbody>
+            
+        </table>
+    </div>
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <a class="navbar-brand" href="#" data-bind="click: launchHomepage">
+                <a class="navbar-brand" href="#" data-bind="click: launchHomepage, event: {mousedown:beginLongClick, mouseup:endLongClick}">
                     <img src="favicon.ico" />
                     Formula Wednesday
                 </a>
@@ -101,9 +120,6 @@
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
-    <ul data-bind="visible:errors,foreach:errors">
-        <li data-bind="text:message"></li>
-    </ul>
     <div id="page-content-div" class="container"></div>
     <div class="container hidden-sm hidden-xs" data-bind="if: loggedIn()">
         <!--score sheet-->

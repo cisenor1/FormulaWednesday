@@ -506,4 +506,15 @@
             });
         });
     }
+
+    static getError(err: Error): FWEDError {
+        let f = <FWEDError>err;
+        if (f.name.toLocaleLowerCase().indexOf("error") > -1) {
+            f.severity = "error";
+        } else {
+            f.severity = "info";
+        }
+        f.time = moment().toDate().toString();
+        return f;
+    }
 }
