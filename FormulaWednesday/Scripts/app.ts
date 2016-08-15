@@ -71,6 +71,7 @@ class FormulaWednesdayApp {
 
     openLog() {
         if (this.longClickTimer) {
+
             clearTimeout(this.longClickTimer);
         }
         if (this.longClicking) {
