@@ -28,6 +28,11 @@
     <script src="Pages/Challenges/Challenges.js"></script>
     <script src="Scripts/firebaseUtilities.js"></script>
     <script src="Scripts/app.js"></script>
+    <script>
+        function doLogIn(e) {
+            alert("ASD");
+        }
+    </script>
     <!-- Latest compiled and minified CSS -->
     <link href="Styles/styles.css" rel="stylesheet" />
 </head>
@@ -77,8 +82,8 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" data-bind="value: nameObservable" placeholder="Email">
                                 <input type="password" class="form-control" data-bind="value: pwObservable" placeholder="Password">
-                            </div>
-                            <button data-bind="click: function () {alert('SADASDADDS')}" class="btn btn-default">Log In!</button>
+                            </div><!--data-bind="click: function () {alert('SADASDADDS')}"-->
+                            <button onclick="doLogIn()"  class="btn btn-default">Log In!</button>
                         </form>
                     </li>
                 </ul>
