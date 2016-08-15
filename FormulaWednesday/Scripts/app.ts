@@ -26,7 +26,7 @@ class FormulaWednesdayApp {
     user: User;
     nextRaceId = ko.observable();
     modalVisible = ko.observable(false);
-    logVisible = ko.observable(false);
+    logIsVisible = ko.observable(false);
     modalText = ko.observable("");
     modalTitle = ko.observable("");
     modalOKText = ko.observable("");
@@ -75,7 +75,7 @@ class FormulaWednesdayApp {
             clearTimeout(this.longClickTimer);
         }
         if (this.longClicking) {
-            this.logVisible(!this.logVisible());
+            this.logIsVisible(!this.logIsVisible());
         }
     }
 
