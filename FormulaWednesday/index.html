@@ -78,13 +78,13 @@
                 </ul>
                 <ul data-bind="if: !loggedIn()">
                     <li>
-                        <form class="navbar-form navbar-right" role="search">
+                        <div class="navbar-form navbar-right" role="search">
                             <div class="form-group">
                                 <input type="text" class="form-control" data-bind="value: nameObservable" placeholder="Email">
                                 <input type="password" class="form-control" data-bind="value: pwObservable" placeholder="Password">
                             </div><!--data-bind="click: function () {alert('SADASDADDS')}"-->
                             <button onclick="doLogIn()"  class="btn btn-default">Log In!</button>
-                        </form>
+                        </div>
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right" data-bind="if: loggedIn()">
