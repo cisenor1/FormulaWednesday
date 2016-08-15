@@ -100,6 +100,7 @@ class FormulaWednesdayApp {
     }
 
     doLogIn() {
+        alert("here");
         if (!this.nameObservable()) {
             return;
         }
