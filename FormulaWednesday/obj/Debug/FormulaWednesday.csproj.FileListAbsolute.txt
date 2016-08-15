@@ -51,3 +51,4 @@ E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\System.IO.FileSystem.dl
 E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\System.IO.FileSystem.Primitives.dll
 E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\vbc.exe.config
 E:\Projects\FormulaWednesday\FormulaWednesday\bin\roslyn\vbc.rsp
+E:\Projects\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.csprojResolveAssemblyReference.cache

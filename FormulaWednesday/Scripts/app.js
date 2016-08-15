@@ -94,6 +94,7 @@ var FormulaWednesdayApp = (function () {
     };
     FormulaWednesdayApp.prototype.doLogIn = function () {
         var _this = this;
+        alert("here");
         if (!this.nameObservable()) {
             return;
         }
