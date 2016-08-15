@@ -1,6 +1,13 @@
-class AdminPage extends PageBase {
-    constructor(app, key) {
-        super(app);
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var AdminPage = (function (_super) {
+    __extends(AdminPage, _super);
+    function AdminPage(app, key) {
+        var _this = this;
+        _super.call(this, app);
         this.markupUri = "Pages/Admin/Admin.html";
         this.vm = {};
         this.divId = "admin";
@@ -11,29 +18,31 @@ class AdminPage extends PageBase {
             default:
                 this.subPage = new UsersAdmin(this.app);
         }
-        this.subPage.getViewModel().then((vm) => {
-            this.vm = vm;
+        this.subPage.getViewModel().then(function (vm) {
+            _this.vm = vm;
         });
     }
-    createVM() {
+    AdminPage.prototype.createVM = function () {
+        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        return new Promise((resolve, reject) => {
+        return new Promise(function (resolve, reject) {
             var promises = [];
-            Promise.all(promises).then((values) => {
-                resolve(this.vm);
+            Promise.all(promises).then(function (values) {
+                resolve(_this.vm);
             });
         });
-    }
-    getMarkup() {
-        return new Promise((resolve, reject) => {
+    };
+    AdminPage.prototype.getMarkup = function () {
+        return new Promise(function (resolve, reject) {
             resolve("");
         });
-    }
-    getViewModel() {
-        return new Promise((resolve, reject) => {
+    };
+    AdminPage.prototype.getViewModel = function () {
+        return new Promise(function (resolve, reject) {
             resolve({});
         });
-    }
-}
+    };
+    return AdminPage;
+}(PageBase));

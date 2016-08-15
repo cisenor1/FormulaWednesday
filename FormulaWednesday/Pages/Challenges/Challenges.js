@@ -1,20 +1,27 @@
-class ChallengesPage extends PageBase {
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var ChallengesPage = (function (_super) {
+    __extends(ChallengesPage, _super);
     // constructor will do heavy lifting
-    constructor(app) {
-        super(app);
+    function ChallengesPage(app) {
+        var _this = this;
+        _super.call(this, app);
         this.vm = {
             drivers: ko.observableArray(),
             teams: ko.observableArray(),
             challenges: ko.observableArray(),
-            sortDriversByName: () => { this.sortDriversByName(); },
-            sortDriversByTeam: () => { this.sortDriversByTeam(); },
+            sortDriversByName: function () { _this.sortDriversByName(); },
+            sortDriversByTeam: function () { _this.sortDriversByTeam(); },
             title: ko.observable(),
             date: ko.observable(),
             cutoff: ko.observable(),
-            save: () => { this.saveRaceData(); },
+            save: function () { _this.saveRaceData(); },
             valid: ko.observable(),
-            reset: () => { this.reset(); },
-            change: (item, e) => { this.changed(item, e); },
+            reset: function () { _this.reset(); },
+            change: function (item, e) { _this.changed(item, e); },
             isDirty: ko.observable(false),
             errorMessage: ko.observable(),
             saveText: ko.observable("Save Changes")
@@ -23,47 +30,49 @@ class ChallengesPage extends PageBase {
         this.divId = "challenges";
         this.vmPromise = this.createVM();
     }
-    createVM() {
+    ChallengesPage.prototype.createVM = function () {
+        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        return new Promise((resolve, reject) => {
+        return new Promise(function (resolve, reject) {
             var promises = [];
-            promises.push(FirebaseUtilities.getChallengesForRace(this.app.selectedRace));
+            promises.push(FirebaseUtilities.getChallengesForRace(_this.app.selectedRace));
             promises.push(FirebaseUtilities.getTeams());
             promises.push(FirebaseUtilities.getDrivers());
-            promises.push(FirebaseUtilities.getUserChoices(this.app.user));
-            Promise.all(promises).then((values) => {
-                this.vm.challenges(values[0]);
-                this.vm.teams(values[1]);
-                this.vm.drivers(values[2]);
-                if (this.app.selectedRace) {
-                    this.vm.title(this.app.selectedRace.title);
-                    this.vm.date(this.app.selectedRace.date.toDateString());
-                    this.vm.cutoff(this.app.selectedRace.cutoff.toDateString());
-                    this.vm.valid(!this.app.selectedRace.done());
-                    this.originalChoices = values[3];
-                    this.processChoices(this.originalChoices);
+            promises.push(FirebaseUtilities.getUserChoices(_this.app.user));
+            Promise.all(promises).then(function (values) {
+                _this.vm.challenges(values[0]);
+                _this.vm.teams(values[1]);
+                _this.vm.drivers(values[2]);
+                if (_this.app.selectedRace) {
+                    _this.vm.title(_this.app.selectedRace.title);
+                    _this.vm.date(_this.app.selectedRace.date.toDateString());
+                    _this.vm.cutoff(_this.app.selectedRace.cutoff.toDateString());
+                    _this.vm.valid(!_this.app.selectedRace.done());
+                    _this.originalChoices = values[3];
+                    _this.processChoices(_this.originalChoices);
                 }
-                resolve(this.vm);
+                resolve(_this.vm);
             });
         });
-    }
-    sortDriversByName() {
-        this.vm.drivers.sort((aDriver, bDriver) => {
+    };
+    ChallengesPage.prototype.sortDriversByName = function () {
+        this.vm.drivers.sort(function (aDriver, bDriver) {
             var aName = aDriver.name;
             var bName = bDriver.name;
             return aName.localeCompare(bName);
         });
-    }
-    sortDriversByTeam() {
-        this.vm.drivers.sort((aDriver, bDriver) => {
+    };
+    ChallengesPage.prototype.sortDriversByTeam = function () {
+        this.vm.drivers.sort(function (aDriver, bDriver) {
             var aTeam = aDriver.team;
             var bTeam = bDriver.team;
             return aTeam.localeCompare(bTeam);
         });
-    }
-    processChoices(choices) {
+    };
+    ChallengesPage.prototype.processChoices = function (choices) {
+        var _this = this;
         if (!choices) {
             return;
         }
@@ -71,56 +80,58 @@ class ChallengesPage extends PageBase {
         if (!targetChoices) {
             return;
         }
-        this.vm.challenges().forEach((challenge) => {
-            var choices = this.vm.drivers().filter((driver) => {
+        this.vm.challenges().forEach(function (challenge) {
+            var choices = _this.vm.drivers().filter(function (driver) {
                 return driver.key == targetChoices[challenge.key()];
             });
             challenge.choice(choices[0]);
             //challenge.choice(targetChoices[challenge.key]);
         });
-    }
-    getMarkup() {
-        return new Promise((resolve, reject) => {
-            fetch(this.markupUri).then((value) => {
-                value.text().then((output) => {
+    };
+    ChallengesPage.prototype.getMarkup = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            fetch(_this.markupUri).then(function (value) {
+                value.text().then(function (output) {
                     resolve(output);
                 });
             });
         });
-    }
-    getViewModel() {
+    };
+    ChallengesPage.prototype.getViewModel = function () {
         return this.vmPromise;
-    }
-    saveRaceData() {
+    };
+    ChallengesPage.prototype.saveRaceData = function () {
+        var _this = this;
         var stored = this.vm.saveText();
         this.vm.saveText("Saving...");
         var race = this.app.selectedRace;
         var challenges = this.createChallengeObject();
         FirebaseUtilities.saveChallengeChoices(this.app.user, this.app.selectedRace, challenges)
-            .then((b) => {
-            this.vm.isDirty(false);
-            this.app.alert("Save was successful", "Save");
+            .then(function (b) {
+            _this.vm.isDirty(false);
+            _this.app.alert("Save was successful", "Save");
         })
-            .catch((e) => {
-            this.app.alert(e, "Save");
-        }).finally(() => {
-            this.vm.saveText(stored);
+            .catch(function (e) {
+            _this.app.alert(e, "Save");
+        }).finally(function () {
+            _this.vm.saveText(stored);
         });
-    }
-    reset() {
+    };
+    ChallengesPage.prototype.reset = function () {
         this.processChoices(this.originalChoices);
-    }
-    changed(item, e) {
+    };
+    ChallengesPage.prototype.changed = function (item, e) {
         this.vm.isDirty(true);
         var key = e.target.value;
-        var driver = this.vm.drivers().filter((d) => {
+        var driver = this.vm.drivers().filter(function (d) {
             return d.key === key;
         })[0];
         item.choice(driver);
-    }
-    createChallengeObject() {
+    };
+    ChallengesPage.prototype.createChallengeObject = function () {
         var o = {};
-        this.vm.challenges().forEach((c) => {
+        this.vm.challenges().forEach(function (c) {
             if (c.choice()) {
                 if (c.choice().key) {
                     o[c.key()] = c.choice().key;
@@ -128,5 +139,6 @@ class ChallengesPage extends PageBase {
             }
         });
         return o;
-    }
-}
+    };
+    return ChallengesPage;
+}(PageBase));

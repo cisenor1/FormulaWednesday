@@ -1,40 +1,49 @@
-class BlogAdmin extends PageBase {
-    constructor(app) {
-        super(app);
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var BlogAdmin = (function (_super) {
+    __extends(BlogAdmin, _super);
+    function BlogAdmin(app) {
+        _super.call(this, app);
         this.markupUri = "Pages/Admin/Blog.html";
         this.newTitle = ko.observable("");
         this.newContent = ko.observable("");
         this.vmPromise = this.createVM();
     }
-    createVM() {
+    BlogAdmin.prototype.createVM = function () {
+        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        return new Promise((resolve, reject) => {
-            resolve(this);
+        return new Promise(function (resolve, reject) {
+            resolve(_this);
         });
-    }
-    getMarkup() {
-        return new Promise((resolve, reject) => {
-            fetch(this.markupUri).then((value) => {
-                value.text().then((output) => {
+    };
+    BlogAdmin.prototype.getMarkup = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            fetch(_this.markupUri).then(function (value) {
+                value.text().then(function (output) {
                     resolve(output);
                 });
             });
         });
-    }
-    getViewModel() {
+    };
+    BlogAdmin.prototype.getViewModel = function () {
         return this.vmPromise;
-    }
-    submitCreateBlogPost() {
+    };
+    BlogAdmin.prototype.submitCreateBlogPost = function () {
         FirebaseUtilities.addNewBlogPost({
             title: this.newTitle(),
             message: this.newContent(),
             timestamp: Date.now().toString(),
             user: this.app.user
         });
-    }
-    formatDate(timestamp) {
+    };
+    BlogAdmin.prototype.formatDate = function (timestamp) {
         alert(timestamp);
-    }
-}
+    };
+    return BlogAdmin;
+}(PageBase));

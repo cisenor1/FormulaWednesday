@@ -1,6 +1,12 @@
-class ChallengesAdmin extends PageBase {
-    constructor(app) {
-        super(app);
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var ChallengesAdmin = (function (_super) {
+    __extends(ChallengesAdmin, _super);
+    function ChallengesAdmin(app) {
+        _super.call(this, app);
         this.markupUri = "Pages/Admin/Challenges.html";
         this.challenges = ko.observableArray([]);
         this.showAddChallengePane = ko.observable(false);
@@ -12,36 +18,38 @@ class ChallengesAdmin extends PageBase {
         this.role = ko.observable("");
         this.vmPromise = this.createVM();
     }
-    createVM() {
+    ChallengesAdmin.prototype.createVM = function () {
+        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        return new Promise((resolve, reject) => {
-            FirebaseUtilities.getChallengesForRace(this.app.selectedRace).then((values) => {
-                this.challenges(values);
-                resolve(this);
+        return new Promise(function (resolve, reject) {
+            FirebaseUtilities.getChallengesForRace(_this.app.selectedRace).then(function (values) {
+                _this.challenges(values);
+                resolve(_this);
             });
         });
-    }
-    getMarkup() {
-        return new Promise((resolve, reject) => {
-            fetch(this.markupUri).then((value) => {
-                value.text().then((output) => {
+    };
+    ChallengesAdmin.prototype.getMarkup = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            fetch(_this.markupUri).then(function (value) {
+                value.text().then(function (output) {
                     resolve(output);
                 });
             });
         });
-    }
-    getViewModel() {
+    };
+    ChallengesAdmin.prototype.getViewModel = function () {
         return this.vmPromise;
-    }
-    saveData(item) {
-        FirebaseUtilities.saveUser(item).then((success) => {
-        }).catch((e) => { alert(e); });
+    };
+    ChallengesAdmin.prototype.saveData = function (item) {
+        FirebaseUtilities.saveUser(item).then(function (success) {
+        }).catch(function (e) { alert(e); });
         item.editing(false);
         this.editing(false);
-    }
-    cancel(item) {
+    };
+    ChallengesAdmin.prototype.cancel = function (item) {
         ////var c = this.cachedUser;
         //item.key(c.key());
         //item.fullname(c.fullname());
@@ -50,13 +58,13 @@ class ChallengesAdmin extends PageBase {
         //item.role(c.role());
         //item.editing(false);
         //this.editing(false);
-    }
-    addChallenge() {
+    };
+    ChallengesAdmin.prototype.addChallenge = function () {
         this.showAddChallengePane(true);
-    }
-    editChallenge(item) {
-    }
-    submitCreateChallenge() {
+    };
+    ChallengesAdmin.prototype.editChallenge = function (item) {
+    };
+    ChallengesAdmin.prototype.submitCreateChallenge = function () {
         //var fullName = this.newName();
         //var username = this.newId();
         //if (!FormulaWednesdaysUtilities.validateUsername(username)) {
@@ -92,5 +100,6 @@ class ChallengesAdmin extends PageBase {
         //// handle the error
         //    alert(e);
         //});
-    }
-}
+    };
+    return ChallengesAdmin;
+}(PageBase));

@@ -1,5 +1,5 @@
-class BlogPost {
-    constructor(message, username, date) {
+var BlogPost = (function () {
+    function BlogPost(message, username, date) {
         this.message = message;
         this.user = username;
         if (date) {
@@ -9,13 +9,14 @@ class BlogPost {
             this.timestamp = new Date();
         }
     }
-    getUser() {
+    BlogPost.prototype.getUser = function () {
         return this.user;
-    }
-    getMessage() {
+    };
+    BlogPost.prototype.getMessage = function () {
         return this.message;
-    }
-    getTimestamp() {
+    };
+    BlogPost.prototype.getTimestamp = function () {
         return this.timestamp.toLocaleDateString();
-    }
-}
+    };
+    return BlogPost;
+}());

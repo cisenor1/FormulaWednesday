@@ -1,7 +1,8 @@
-class PageBase {
-    constructor(app) {
+var PageBase = (function () {
+    function PageBase(app) {
         this.app = app;
     }
-    createVM() {
-    }
-}
+    PageBase.prototype.createVM = function () {
+    };
+    return PageBase;
+}());

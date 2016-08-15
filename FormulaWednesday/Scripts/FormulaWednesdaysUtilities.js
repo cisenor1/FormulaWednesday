@@ -1,34 +1,36 @@
-class FormulaWednesdaysUtilities {
-    static hashPassword(pass) {
-        return md5(pass);
+var FormulaWednesdaysUtilities = (function () {
+    function FormulaWednesdaysUtilities() {
     }
-    static validateUsername(name) {
+    FormulaWednesdaysUtilities.hashPassword = function (pass) {
+        return md5(pass);
+    };
+    FormulaWednesdaysUtilities.validateUsername = function (name) {
         if (!name.match(/^[a-z0-9_-]{3,16}$/)) {
             return false;
         }
         return true;
-    }
-    static getKeyFromEmail(email) {
+    };
+    FormulaWednesdaysUtilities.getKeyFromEmail = function (email) {
         var split = email.split("@")[0];
         var cleaned = split.split(".").join("");
         return cleaned;
-    }
-    static positionToPoints(pos) {
+    };
+    FormulaWednesdaysUtilities.positionToPoints = function (pos) {
         return this.posToPts[pos];
-    }
-    static getLapTimes(round, season) {
+    };
+    FormulaWednesdaysUtilities.getLapTimes = function (round, season) {
         if (!season) {
             season = "current";
         }
         var url = this.ergastUrl + season + "/" + round + "/laps.json";
-        return new Promise((resolve, reject) => {
-            fetch(url).then((res) => {
-                res.text().then((x) => {
+        return new Promise(function (resolve, reject) {
+            fetch(url).then(function (res) {
+                res.text().then(function (x) {
                     var standings = JSON.parse(x);
                     var out = [];
                     debugger;
                     var driverStandings = standings.MRData.StandingsTable.StandingsLists[0].DriverStandings;
-                    driverStandings.forEach((d) => {
+                    driverStandings.forEach(function (d) {
                         out.push({
                             key: d.Driver.code,
                             laps: d.wins
@@ -36,21 +38,21 @@ class FormulaWednesdaysUtilities {
                     });
                     resolve(out);
                 });
-            }).catch((err) => { reject(err); });
+            }).catch(function (err) { reject(err); });
         });
-    }
-    static getDriverStandings(season) {
+    };
+    FormulaWednesdaysUtilities.getDriverStandings = function (season) {
         if (!season) {
             season = "current";
         }
         var url = this.ergastUrl + season + "/driverstandings.json";
-        return new Promise((resolve, reject) => {
-            fetch(url).then((res) => {
-                res.text().then((x) => {
+        return new Promise(function (resolve, reject) {
+            fetch(url).then(function (res) {
+                res.text().then(function (x) {
                     var standings = JSON.parse(x);
                     var out = [];
                     var driverStandings = standings.MRData.StandingsTable.StandingsLists[0].DriverStandings;
-                    driverStandings.forEach((d) => {
+                    driverStandings.forEach(function (d) {
                         out.push({
                             key: d.Driver.code,
                             points: d.points,
@@ -59,9 +61,10 @@ class FormulaWednesdaysUtilities {
                     });
                     resolve(out);
                 });
-            }).catch((err) => { reject(err); });
+            }).catch(function (err) { reject(err); });
         });
-    }
-}
-FormulaWednesdaysUtilities.ergastUrl = "http://ergast.com/api/f1/";
-FormulaWednesdaysUtilities.posToPts = [0, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+    };
+    FormulaWednesdaysUtilities.ergastUrl = "http://ergast.com/api/f1/";
+    FormulaWednesdaysUtilities.posToPts = [0, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+    return FormulaWednesdaysUtilities;
+}());

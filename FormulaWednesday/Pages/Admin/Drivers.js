@@ -1,6 +1,12 @@
-class DriversAdmin extends PageBase {
-    constructor(app) {
-        super(app);
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var DriversAdmin = (function (_super) {
+    __extends(DriversAdmin, _super);
+    function DriversAdmin(app) {
+        _super.call(this, app);
         this.markupUri = "Pages/Admin/Drivers.html";
         this.divId = "drivers-admin";
         this.drivers = ko.observableArray([]);
@@ -16,44 +22,48 @@ class DriversAdmin extends PageBase {
         this.updateDriverStandingsText = ko.observable("Update Driver's Championship");
         this.vmPromise = this.createVM();
     }
-    createVM() {
+    DriversAdmin.prototype.createVM = function () {
+        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        return new Promise((resolve, reject) => {
-            FirebaseUtilities.getDrivers(true).then((values) => {
-                this.drivers(values);
-                resolve(this);
+        return new Promise(function (resolve, reject) {
+            FirebaseUtilities.getDrivers(true).then(function (values) {
+                _this.drivers(values);
+                resolve(_this);
             });
         });
-    }
-    getMarkup() {
-        return new Promise((resolve, reject) => {
-            fetch(this.markupUri).then((value) => {
-                value.text().then((output) => {
+    };
+    DriversAdmin.prototype.getMarkup = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            fetch(_this.markupUri).then(function (value) {
+                value.text().then(function (output) {
                     resolve(output);
                 });
             });
         });
-    }
-    getViewModel() {
+    };
+    DriversAdmin.prototype.getViewModel = function () {
         return this.vmPromise;
-    }
-    setActive(active, driver) {
-    }
-    saveDriver(driver) {
+    };
+    DriversAdmin.prototype.setActive = function (active, driver) {
+    };
+    DriversAdmin.prototype.saveDriver = function (driver) {
         debugger;
-    }
-    updateDriverStandings() {
+    };
+    DriversAdmin.prototype.updateDriverStandings = function () {
+        var _this = this;
         var stored = this.updateDriverStandingsText();
         this.updateDriverStandingsText("Updating...");
-        FormulaWednesdaysUtilities.getDriverStandings().then((standings) => {
-            FirebaseUtilities.updateDriverStandings(standings).then(() => {
-                this.updateDriverStandingsText(stored);
-                this.app.alert("Driver standings updated.");
+        FormulaWednesdaysUtilities.getDriverStandings().then(function (standings) {
+            FirebaseUtilities.updateDriverStandings(standings).then(function () {
+                _this.updateDriverStandingsText(stored);
+                _this.app.alert("Driver standings updated.");
             });
-        }).catch((err) => {
-            this.app.alert(err);
+        }).catch(function (err) {
+            _this.app.alert(err);
         });
-    }
-}
+    };
+    return DriversAdmin;
+}(PageBase));

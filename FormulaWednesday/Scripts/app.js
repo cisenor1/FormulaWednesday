@@ -1,7 +1,7 @@
 /// <reference path="../models/user.ts" />
 /// <reference path="typings/knockout/knockout.d.ts" />
-class FormulaWednesdayApp {
-    constructor() {
+var FormulaWednesdayApp = (function () {
+    function FormulaWednesdayApp() {
         this.adminDropdown = "admin-dropdown";
         this.challenges = ko.observableArray([]);
         this.credentialsKey = "formulawednesday.user";
@@ -52,53 +52,57 @@ class FormulaWednesdayApp {
             }
         ]);
     }
-    initialize() {
+    FormulaWednesdayApp.prototype.initialize = function () {
+        var _this = this;
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
         if (this.credentials) {
-            this.logInProcedure(this.credentials.name, this.credentials.password).then((user) => {
-                this.refreshUserInfo(user);
-            }).catch((e) => {
-                this.alert(e);
+            this.logInProcedure(this.credentials.name, this.credentials.password).then(function (user) {
+                _this.refreshUserInfo(user);
+            }).catch(function (e) {
+                _this.alert(e);
             });
         }
-        this.currentPage.subscribe((page) => {
-            this.loadPage(page);
+        this.currentPage.subscribe(function (page) {
+            _this.loadPage(page);
         });
         this.currentPage("homepage");
         this.buildCountdown();
         ko.applyBindings(this);
-    }
-    buildCountdown() {
-        FirebaseUtilities.getNextRace().then((race) => {
-            this.countdownText("Cutoff for the " + race.title + ": ");
-            setInterval(() => {
+    };
+    FormulaWednesdayApp.prototype.buildCountdown = function () {
+        var _this = this;
+        FirebaseUtilities.getNextRace().then(function (race) {
+            _this.countdownText("Cutoff for the " + race.title + ": ");
+            setInterval(function () {
                 var countdown;
-                this.countdownValue(moment().countdown(race.cutoff).toString());
+                _this.countdownValue(moment().countdown(race.cutoff).toString());
             }, 1000);
-        }).catch((err) => { this.errors.push(err); });
+        }).catch(function (err) { _this.errors.push(err); });
         ;
-    }
-    refreshUserInfo(user) {
+    };
+    FormulaWednesdayApp.prototype.refreshUserInfo = function (user) {
+        var _this = this;
         this.buildStandingsTable();
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
-        FirebaseUtilities.getRaces("2016").then((races) => {
-            this.races(races);
-        }).catch((err) => { this.errors.push(err); });
+        FirebaseUtilities.getRaces("2016").then(function (races) {
+            _this.races(races);
+        }).catch(function (err) { _this.errors.push(err); });
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
-    }
-    doLogIn() {
+    };
+    FormulaWednesdayApp.prototype.doLogIn = function () {
+        var _this = this;
         if (!this.nameObservable()) {
             return;
         }
         var hashed = md5(this.pwObservable());
-        this.logInProcedure(this.nameObservable(), hashed).then((user) => {
-            this.refreshUserInfo(user);
-        }).catch((err) => { this.errors.push(err); });
-    }
-    doLogOut() {
+        this.logInProcedure(this.nameObservable(), hashed).then(function (user) {
+            _this.refreshUserInfo(user);
+        }).catch(function (err) { _this.errors.push(err); });
+    };
+    FormulaWednesdayApp.prototype.doLogOut = function () {
         window.localStorage.removeItem(this.credentialsKey);
         window.localStorage.removeItem(this.currentPageKey);
         window.localStorage.removeItem(this.currentRaceKey);
@@ -107,18 +111,20 @@ class FormulaWednesdayApp {
         this.nameObservable("");
         this.pwObservable("");
         this.launchHomepage();
-    }
-    logInProcedure(name, password) {
+    };
+    FormulaWednesdayApp.prototype.logInProcedure = function (name, password) {
+        var _this = this;
         this.credentials = {
             name: name,
             password: password
         };
-        return FirebaseUtilities.getUserInfo(this.credentials).catch((err) => { this.errors.push(err); });
-    }
-    loadPage(page) {
+        return FirebaseUtilities.getUserInfo(this.credentials).catch(function (err) { _this.errors.push(err); });
+    };
+    FormulaWednesdayApp.prototype.loadPage = function (page) {
         //if (this.loggedIn()) {
         //    window.localStorage.setItem(this.currentPageKey, page);
         //}
+        var _this = this;
         var newPage;
         switch (page.split("#")[0]) {
             case "homepage":
@@ -153,60 +159,62 @@ class FormulaWednesdayApp {
                 newPage = new HomePage(this);
                 break;
         }
-        newPage.getViewModel().then((vm) => {
-            newPage.getMarkup().then((markup) => {
-                var ele = document.getElementById(this.pageContent);
+        newPage.getViewModel().then(function (vm) {
+            newPage.getMarkup().then(function (markup) {
+                var ele = document.getElementById(_this.pageContent);
                 ko.cleanNode(ele);
                 ele.innerHTML = markup;
                 ko.applyBindings(vm, ele);
             });
         });
-    }
-    buildForm() {
+    };
+    FormulaWednesdayApp.prototype.buildForm = function () {
         if (!this.loggedIn()) {
             return;
         }
-    }
-    launchHomepage() {
+    };
+    FormulaWednesdayApp.prototype.launchHomepage = function () {
         this.currentPage("homepage");
-    }
-    launchAdmin() {
+    };
+    FormulaWednesdayApp.prototype.launchAdmin = function () {
         if (this.user.role().toLowerCase() !== "admin") {
             return;
         }
         window.location.href = window.location.origin + "/admin.html";
-    }
-    launchChallenges() {
+    };
+    FormulaWednesdayApp.prototype.launchChallenges = function () {
         this.currentPage('challenges');
-    }
-    launchAdminPage(item) {
+    };
+    FormulaWednesdayApp.prototype.launchAdminPage = function (item) {
         this.currentPage(item.binding);
-    }
-    launchUserPreferences() {
+    };
+    FormulaWednesdayApp.prototype.launchUserPreferences = function () {
         this.currentPage("preferences");
-    }
-    launchRacePage(race) {
+    };
+    FormulaWednesdayApp.prototype.launchRacePage = function (race) {
         this.selectedRace = race;
         this.currentPage('challenges#' + race.name);
-    }
-    launchStandings() {
+    };
+    FormulaWednesdayApp.prototype.launchStandings = function () {
         this.currentPage("standings");
-    }
-    buildStandingsTable() {
-        FirebaseUtilities.getAllUsers().then((allUsers) => {
-            var sortedUsers = allUsers.sort((a, b) => {
+    };
+    FormulaWednesdayApp.prototype.buildStandingsTable = function () {
+        var _this = this;
+        FirebaseUtilities.getAllUsers().then(function (allUsers) {
+            var sortedUsers = allUsers.sort(function (a, b) {
                 return b.points() - a.points();
             });
-            this.sortedUsers(sortedUsers);
+            _this.sortedUsers(sortedUsers);
         });
-        FirebaseUtilities.getDrivers().then((d) => {
-            var sortedDrivers = d.sort((a, b) => {
+        FirebaseUtilities.getDrivers().then(function (d) {
+            var sortedDrivers = d.sort(function (a, b) {
                 return b.points - a.points;
             });
-            this.sortedDrivers(sortedDrivers);
+            _this.sortedDrivers(sortedDrivers);
         });
-    }
-    confirm(inString, title, okText, cancelText, okCallback, cancelCallback) {
+    };
+    FormulaWednesdayApp.prototype.confirm = function (inString, title, okText, cancelText, okCallback, cancelCallback) {
+        var _this = this;
         this.modalText(inString);
         this.modalTitle(title || "Formula Wednesday");
         this.modalOKText(okText || "OK");
@@ -215,20 +223,21 @@ class FormulaWednesdayApp {
             backdrop: "static",
             show: true,
             keyboard: false
-        }).one("click", "#modal-ok", () => {
+        }).one("click", "#modal-ok", function () {
             $("#confirm-modal").modal('hide');
-            this.cleanUpModal();
+            _this.cleanUpModal();
             if (okCallback) {
                 okCallback();
             }
-        }).one("click", "#modal-cancel", () => {
-            this.cleanUpModal();
+        }).one("click", "#modal-cancel", function () {
+            _this.cleanUpModal();
             if (cancelCallback) {
                 cancelCallback();
             }
         });
-    }
-    alert(inString, title, okText, callback) {
+    };
+    FormulaWednesdayApp.prototype.alert = function (inString, title, okText, callback) {
+        var _this = this;
         this.modalText(inString);
         this.modalTitle(title || "Formula Wednesday");
         this.modalOKText(okText || "OK");
@@ -236,21 +245,22 @@ class FormulaWednesdayApp {
             backdrop: "static",
             show: true,
             keyboard: false
-        }).one("click", "#modal-ok", () => {
+        }).one("click", "#modal-ok", function () {
             $("#alert-modal").modal('hide');
-            this.cleanUpModal();
+            _this.cleanUpModal();
             if (callback) {
                 callback();
             }
         });
-    }
-    cleanUpModal() {
+    };
+    FormulaWednesdayApp.prototype.cleanUpModal = function () {
         this.modalCancelText("");
         this.modalTitle("");
         this.modalOKText("");
         this.modalText("");
-    }
-}
+    };
+    return FormulaWednesdayApp;
+}());
 window.onload = function () {
     var formulawednesdayapp = new FormulaWednesdayApp();
     formulawednesdayapp.initialize();

@@ -1,17 +1,19 @@
-class FirebaseUtilities {
-    static getUserInfo(credentials) {
-        return new Promise((resolve, reject) => {
+var FirebaseUtilities = (function () {
+    function FirebaseUtilities() {
+    }
+    FirebaseUtilities.getUserInfo = function (credentials) {
+        return new Promise(function (resolve, reject) {
             var fbCred = {
                 email: credentials.name.toLowerCase(),
                 password: credentials.password
             };
             var firebase = new Firebase(FirebaseUtilities.firebaseUrl);
-            return firebase.authWithPassword(fbCred).then((auth) => {
+            return firebase.authWithPassword(fbCred).then(function (auth) {
                 // output user
                 var key = FormulaWednesdaysUtilities.getKeyFromEmail(fbCred.email);
                 var userUrl = FirebaseUtilities.firebaseUrl + "users/" + key;
                 var fb = new Firebase(userUrl);
-                return fb.once("value").then((ds) => {
+                return fb.once("value").then(function (ds) {
                     var fbUser = ds.val();
                     var user = {
                         key: ko.observable(key),
@@ -29,16 +31,17 @@ class FirebaseUtilities {
                 });
             }).catch(reject);
         });
-    }
-    static getChallengeByKey(key) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getChallengeByKey = function (key) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges/" + key);
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var fbChal = ds.val();
                 if (!fbChal) {
                     return resolve(null);
                 }
-                this.getDrivers().then((d) => {
+                _this.getDrivers().then(function (d) {
                     var chal = {
                         choice: ko.observable(fbChal.choice),
                         description: ko.observable(fbChal.description),
@@ -54,11 +57,11 @@ class FirebaseUtilities {
                 });
             });
         });
-    }
-    static getChallengesForRace(race) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getChallengesForRace = function (race) {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + race.season + "/" + race.name + "/selectedChallenges");
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 var promises = [];
@@ -71,8 +74,8 @@ class FirebaseUtilities {
                     }
                 }
                 if (promises.length) {
-                    Promise.all(promises).then((values) => {
-                        values.forEach((x) => {
+                    Promise.all(promises).then(function (values) {
+                        values.forEach(function (x) {
                             if (x.length) {
                                 // it's a driver array
                                 var drivers = x;
@@ -95,24 +98,24 @@ class FirebaseUtilities {
                             }
                             return resolve(c);
                         });
-                    }).catch((e) => { debugger; });
+                    }).catch(function (e) { debugger; });
                 }
             }).catch(reject);
         });
-    }
-    static getBestOfTheWorstCandidates(names) {
-        return new Promise((resolve, reject) => {
-            Promise.map(names, (name, index, array) => {
+    };
+    FirebaseUtilities.getBestOfTheWorstCandidates = function (names) {
+        return new Promise(function (resolve, reject) {
+            Promise.map(names, function (name, index, array) {
                 return FirebaseUtilities.getDriverByName(name);
-            }).then((values) => {
+            }).then(function (values) {
                 return resolve(values);
             });
         });
-    }
-    static getChallenges() {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getChallenges = function () {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "challenges");
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -134,21 +137,21 @@ class FirebaseUtilities {
                 return resolve(c);
             }).catch(reject);
         });
-    }
-    static getDriverByName(key) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getDriverByName = function (key) {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "drivers/" + key);
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var driver = ds.val();
                 driver.key = key;
                 return resolve(driver);
             });
         });
-    }
-    static getDrivers(getInactive) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getDrivers = function (getInactive) {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "drivers");
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -158,7 +161,7 @@ class FirebaseUtilities {
                         c.push(driver);
                     }
                 }
-                c.sort((aDriver, bDriver) => {
+                c.sort(function (aDriver, bDriver) {
                     var aTeam = aDriver.team;
                     var bTeam = bDriver.team;
                     return aTeam.localeCompare(bTeam);
@@ -166,24 +169,26 @@ class FirebaseUtilities {
                 return resolve(c);
             }).catch(reject);
         });
-    }
-    static updateDriverStandings(standings) {
-        return new Promise((resolve, reject) => {
-            standings.forEach((x) => {
-                var url = this.firebaseUrl + "drivers/" + x.key.toLowerCase() + "/points";
+    };
+    FirebaseUtilities.updateDriverStandings = function (standings) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            standings.forEach(function (x) {
+                var url = _this.firebaseUrl + "drivers/" + x.key.toLowerCase() + "/points";
                 var fb = new Firebase(url);
                 fb.set(+x.points);
-                url = this.firebaseUrl + "drivers/" + x.key.toLowerCase() + "/wins";
+                url = _this.firebaseUrl + "drivers/" + x.key.toLowerCase() + "/wins";
                 fb = new Firebase(url);
                 fb.set(+x.wins);
             });
             resolve();
         });
-    }
-    static getRaces(season) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getRaces = function (season) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + season);
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -199,30 +204,30 @@ class FirebaseUtilities {
                     race.done = ko.observable(new Date() > race.cutoff);
                     c.push(race);
                 }
-                Promise.map(c, (r, i, l) => {
-                    this.getChallengesForRace(r).then((chal) => {
+                Promise.map(c, function (r, i, l) {
+                    _this.getChallengesForRace(r).then(function (chal) {
                         r.challenges = ko.observableArray(chal);
                     });
                 });
-                c = c.sort((r1, r2) => {
+                c = c.sort(function (r1, r2) {
                     return r1.date.getTime() - r2.date.getTime();
                 });
                 return resolve(c);
             }).catch(reject);
         });
-    }
-    static getUserChoices(user) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getUserChoices = function (user) {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + user.key() + "/results/2016");
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 return resolve(ds.val());
             }).catch(reject);
         });
-    }
-    static getAllUsers() {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getAllUsers = function () {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users");
-            return fb.on("value", ((ds) => {
+            return fb.on("value", (function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -240,13 +245,13 @@ class FirebaseUtilities {
                     c.push(user);
                 }
                 return resolve(c);
-            }), (error) => { (reject); });
+            }), function (error) { (reject); });
         });
-    }
-    static getTeams() {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getTeams = function () {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "teams");
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var c = [];
                 for (var p in values) {
@@ -254,7 +259,7 @@ class FirebaseUtilities {
                     team.key = p;
                     c.push(team);
                 }
-                c.sort((aTeam, bTeam) => {
+                c.sort(function (aTeam, bTeam) {
                     var aName = aTeam.name;
                     var bName = bTeam.name;
                     return aName.localeCompare(bName);
@@ -262,33 +267,36 @@ class FirebaseUtilities {
                 return resolve(c);
             }).catch(reject);
         });
-    }
-    static saveUser(user) {
-        return new Promise((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl + "users/" + user.key());
+    };
+    FirebaseUtilities.saveUser = function (user) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl + "users/" + user.key());
             return fb.set({
                 username: user.username(),
                 fullname: user.fullname(),
                 points: user.points(),
                 role: user.role(),
                 email: user.email()
-            }).then(() => { return resolve(true); }).catch(reject);
+            }).then(function () { return resolve(true); }).catch(reject);
         });
-    }
-    static saveChallengeChoices(user, race, challenges) {
-        return new Promise((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl + "users/" + user.key() + "/results/2016/" + race.name);
-            return fb.set(challenges).then(() => { return resolve(true); }).catch(reject);
+    };
+    FirebaseUtilities.saveChallengeChoices = function (user, race, challenges) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl + "users/" + user.key() + "/results/2016/" + race.name);
+            return fb.set(challenges).then(function () { return resolve(true); }).catch(reject);
         });
-    }
-    static createUser(user, hashedPassword) {
-        return new Promise((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl);
+    };
+    FirebaseUtilities.createUser = function (user, hashedPassword) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl);
             var fbCred = {
                 email: user.email(),
                 password: hashedPassword
             };
-            return fb.createUser(fbCred, (error, userData) => {
+            return fb.createUser(fbCred, function (error, userData) {
                 if (error) {
                     reject(error);
                     return;
@@ -296,16 +304,17 @@ class FirebaseUtilities {
                 return resolve(userData);
             });
         });
-    }
-    static changePassword(user, oldPassword, newPassword) {
-        return new Promise((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl);
+    };
+    FirebaseUtilities.changePassword = function (user, oldPassword, newPassword) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl);
             var fbCred = {
                 email: user.email(),
                 oldPassword: oldPassword,
                 newPassword: newPassword
             };
-            return fb.changePassword(fbCred, (error) => {
+            return fb.changePassword(fbCred, function (error) {
                 if (error) {
                     reject(error);
                     return;
@@ -313,11 +322,12 @@ class FirebaseUtilities {
                 return resolve(true);
             });
         });
-    }
-    static changeUsername(user, newUsername) {
-        return new Promise((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl + "/users/" + user.key() + "/username");
-            return fb.set(newUsername, (error) => {
+    };
+    FirebaseUtilities.changeUsername = function (user, newUsername) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl + "/users/" + user.key() + "/username");
+            return fb.set(newUsername, function (error) {
                 if (error) {
                     reject(error);
                     return;
@@ -325,12 +335,13 @@ class FirebaseUtilities {
                 return resolve(true);
             });
         });
-    }
-    static addNewUser(user) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.addNewUser = function (user) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
             var email = user.email();
             var processedEmail = FormulaWednesdaysUtilities.getKeyFromEmail(email);
-            var fb = new Firebase(this.firebaseUrl + "users/" + processedEmail);
+            var fb = new Firebase(_this.firebaseUrl + "users/" + processedEmail);
             var newUser = {
                 "username": user.username(),
                 "fullname": user.fullname(),
@@ -339,13 +350,13 @@ class FirebaseUtilities {
                 "role": user.role(),
                 "key": processedEmail
             };
-            return fb.set(newUser).then(() => { return resolve(true); }).catch(reject);
+            return fb.set(newUser).then(function () { return resolve(true); }).catch(reject);
         });
-    }
-    static getUserByKey(key) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.getUserByKey = function (key) {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "users/" + key);
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var value = ds.val();
                 var userData = {
                     editing: ko.observable(false),
@@ -359,31 +370,32 @@ class FirebaseUtilities {
                 return resolve(userData);
             });
         });
-    }
-    static addNewBlogPost(post) {
-        return new Promise((resolve, reject) => {
+    };
+    FirebaseUtilities.addNewBlogPost = function (post) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
             var by = post.user.key();
             var title = post.title;
             var time = post.timestamp;
             var message = post.message;
             message = FirebaseUtilities.escape(message);
-            var fb = new Firebase(this.firebaseUrl + "blogPosts/" + time + by);
+            var fb = new Firebase(_this.firebaseUrl + "blogPosts/" + time + by);
             var newPost = {
                 "title": title,
                 "user": by,
                 "message": message,
                 "timestamp": time
             };
-            return fb.set(newPost).then(() => { return resolve(true); }).catch(reject);
+            return fb.set(newPost).then(function () { return resolve(true); }).catch(reject);
         });
-    }
-    static getBlogPosts(count) {
+    };
+    FirebaseUtilities.getBlogPosts = function (count) {
         if (!count) {
             count = 5;
         }
-        return new Promise((resolve, reject) => {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "blogPosts");
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var values = ds.val();
                 var blog = [];
                 var promises = [];
@@ -394,17 +406,17 @@ class FirebaseUtilities {
                     promises.push(key);
                     blog.push(b);
                 }
-                return Promise.all(blog.map((blog, i, a) => {
-                    return FirebaseUtilities.getUserByKey(blog.user).then((u) => {
+                return Promise.all(blog.map(function (blog, i, a) {
+                    return FirebaseUtilities.getUserByKey(blog.user).then(function (u) {
                         blog.user = u;
                     });
-                })).then((us) => {
-                    blog.sort((aB, bB) => {
+                })).then(function (us) {
+                    blog.sort(function (aB, bB) {
                         var aTime = +aB.timestamp;
                         var bTime = +bB.timestamp;
                         return bTime - aTime;
                     });
-                    blog.forEach((b) => {
+                    blog.forEach(function (b) {
                         b.timestamp = new Date(+b.timestamp).toLocaleDateString();
                     });
                     if (blog.length >= count) {
@@ -414,48 +426,50 @@ class FirebaseUtilities {
                 });
             }).catch(reject);
         });
-    }
-    static escape(inString) {
+    };
+    FirebaseUtilities.escape = function (inString) {
         var enc = encodeURIComponent(inString);
         var rep = enc.replace(/\./g, "%2E");
         return rep;
-    }
-    static unescape(inString) {
+    };
+    FirebaseUtilities.unescape = function (inString) {
         return decodeURIComponent(inString);
-    }
-    static setRaceResults(race) {
-        return new Promise((resolve, reject) => {
-            var fb = new Firebase(this.firebaseUrl + "races/" + race.season + "/" + race.name + "/results");
-            return fb.set(race.results).then(() => {
-                fb = new Firebase(this.firebaseUrl + "races/" + race.season + "/" + race.name + "/scored");
-                return fb.set(true).then(() => {
+    };
+    FirebaseUtilities.setRaceResults = function (race) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var fb = new Firebase(_this.firebaseUrl + "races/" + race.season + "/" + race.name + "/results");
+            return fb.set(race.results).then(function () {
+                fb = new Firebase(_this.firebaseUrl + "races/" + race.season + "/" + race.name + "/scored");
+                return fb.set(true).then(function () {
                     return resolve(race);
                 });
             }).catch(reject);
         });
-    }
-    static setPoints(user) {
+    };
+    FirebaseUtilities.setPoints = function (user) {
         var url = this.firebaseUrl + "users/" + user.key() + "/points";
         var fb = new Firebase(url);
         return fb.set(user.points());
-    }
-    static setDriverPoints(drivers) {
-        drivers.forEach((x) => {
-            var url = this.firebaseUrl + "drivers/" + x.key + "/points";
+    };
+    FirebaseUtilities.setDriverPoints = function (drivers) {
+        var _this = this;
+        drivers.forEach(function (x) {
+            var url = _this.firebaseUrl + "drivers/" + x.key + "/points";
             var fb = new Firebase(url);
             fb.set(+x.points);
-            url = this.firebaseUrl + "drivers/" + x.key + "/wins";
+            url = _this.firebaseUrl + "drivers/" + x.key + "/wins";
             fb = new Firebase(url);
             fb.set(+x.wins);
         });
-    }
-    static getNextRace(year) {
+    };
+    FirebaseUtilities.getNextRace = function (year) {
         if (!year) {
             year = 2016;
         }
-        return new Promise((resolve, reject) => {
+        return new Promise(function (resolve, reject) {
             var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + year.toString());
-            return fb.once("value").then((ds) => {
+            return fb.once("value").then(function (ds) {
                 var value = ds.val();
                 var currentDate = new Date(Date.now());
                 var dateArray = [];
@@ -467,8 +481,8 @@ class FirebaseUtilities {
                         date: raceDate
                     });
                 }
-                dateArray.sort((a, b) => { return a.date.getTime() - b.date.getTime(); });
-                var nextName = dateArray.filter((x) => { return x.date.getTime() > currentDate.getTime(); })[0].name;
+                dateArray.sort(function (a, b) { return a.date.getTime() - b.date.getTime(); });
+                var nextName = dateArray.filter(function (x) { return x.date.getTime() > currentDate.getTime(); })[0].name;
                 var nextData = value[nextName];
                 var nextRace = nextData;
                 nextRace.date = new Date(nextRace.date);
@@ -477,6 +491,7 @@ class FirebaseUtilities {
                 return resolve(nextRace);
             });
         });
-    }
-}
-FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
+    };
+    FirebaseUtilities.firebaseUrl = "https://formulawednesday.firebaseio.com/";
+    return FirebaseUtilities;
+}());

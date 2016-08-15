@@ -1,33 +1,42 @@
-class StandingsPage extends PageBase {
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var StandingsPage = (function (_super) {
+    __extends(StandingsPage, _super);
     // constructor will do heavy lifting
-    constructor(app) {
-        super(app);
+    function StandingsPage(app) {
+        _super.call(this, app);
         this.markupUri = "Pages/Standings/Standings.html";
         this.divId = "standings";
         this.sortedDrivers = ko.observableArray([]);
         this.sortedUsers = ko.observableArray([]);
         this.vmPromise = this.createVM();
     }
-    createVM() {
+    StandingsPage.prototype.createVM = function () {
+        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        return new Promise((resolve, reject) => {
-            this.sortedDrivers(this.app.sortedDrivers());
-            this.sortedUsers(this.app.sortedUsers());
-            resolve(this);
+        return new Promise(function (resolve, reject) {
+            _this.sortedDrivers(_this.app.sortedDrivers());
+            _this.sortedUsers(_this.app.sortedUsers());
+            resolve(_this);
         });
-    }
-    getMarkup() {
-        return new Promise((resolve, reject) => {
-            fetch(this.markupUri).then((value) => {
-                value.text().then((output) => {
+    };
+    StandingsPage.prototype.getMarkup = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            fetch(_this.markupUri).then(function (value) {
+                value.text().then(function (output) {
                     resolve(output);
                 });
             });
         });
-    }
-    getViewModel() {
+    };
+    StandingsPage.prototype.getViewModel = function () {
         return this.vmPromise;
-    }
-}
+    };
+    return StandingsPage;
+}(PageBase));

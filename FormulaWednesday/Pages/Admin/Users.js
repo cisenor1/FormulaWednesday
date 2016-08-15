@@ -1,6 +1,12 @@
-class UsersAdmin extends PageBase {
-    constructor(app) {
-        super(app);
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var UsersAdmin = (function (_super) {
+    __extends(UsersAdmin, _super);
+    function UsersAdmin(app) {
+        _super.call(this, app);
         this.markupUri = "Pages/Admin/Users.html";
         this.divId = "users-admin";
         this.users = ko.observableArray([]);
@@ -15,30 +21,32 @@ class UsersAdmin extends PageBase {
         this.newPassConfirm = ko.observable("");
         this.vmPromise = this.createVM();
     }
-    createVM() {
+    UsersAdmin.prototype.createVM = function () {
+        var _this = this;
         if (!this.app.user) {
             return false;
         }
-        return new Promise((resolve, reject) => {
-            FirebaseUtilities.getAllUsers().then((values) => {
-                this.users(values);
-                resolve(this);
+        return new Promise(function (resolve, reject) {
+            FirebaseUtilities.getAllUsers().then(function (values) {
+                _this.users(values);
+                resolve(_this);
             });
         });
-    }
-    getMarkup() {
-        return new Promise((resolve, reject) => {
-            fetch(this.markupUri).then((value) => {
-                value.text().then((output) => {
+    };
+    UsersAdmin.prototype.getMarkup = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            fetch(_this.markupUri).then(function (value) {
+                value.text().then(function (output) {
                     resolve(output);
                 });
             });
         });
-    }
-    getViewModel() {
+    };
+    UsersAdmin.prototype.getViewModel = function () {
         return this.vmPromise;
-    }
-    editUser(user) {
+    };
+    UsersAdmin.prototype.editUser = function (user) {
         this.cachedUser = {
             key: ko.observable(user.key()),
             points: ko.observable(user.points()),
@@ -50,15 +58,16 @@ class UsersAdmin extends PageBase {
         };
         this.editing(true);
         user.editing(true);
-    }
-    saveData(item) {
-        FirebaseUtilities.saveUser(item).then((success) => {
-            this.app.alert(item.username + " has been saved successfully.");
-        }).catch((e) => { this.app.alert(e.message); });
+    };
+    UsersAdmin.prototype.saveData = function (item) {
+        var _this = this;
+        FirebaseUtilities.saveUser(item).then(function (success) {
+            _this.app.alert(item.username + " has been saved successfully.");
+        }).catch(function (e) { _this.app.alert(e.message); });
         item.editing(false);
         this.editing(false);
-    }
-    cancel(item) {
+    };
+    UsersAdmin.prototype.cancel = function (item) {
         var c = this.cachedUser;
         item.key(c.key());
         item.fullname(c.fullname());
@@ -67,11 +76,12 @@ class UsersAdmin extends PageBase {
         item.role(c.role());
         item.editing(false);
         this.editing(false);
-    }
-    addUser() {
+    };
+    UsersAdmin.prototype.addUser = function () {
         this.showAddUserPane(true);
-    }
-    submitCreateUser() {
+    };
+    UsersAdmin.prototype.submitCreateUser = function () {
+        var _this = this;
         var fullName = this.newName();
         var username = this.newId();
         if (!FormulaWednesdaysUtilities.validateUsername(username)) {
@@ -97,15 +107,16 @@ class UsersAdmin extends PageBase {
             editing: ko.observable(false)
         };
         var hashedPass = FormulaWednesdaysUtilities.hashPassword(pass);
-        FirebaseUtilities.createUser(user, hashedPass).then((v) => {
+        FirebaseUtilities.createUser(user, hashedPass).then(function (v) {
             // go on to add user to database
             var uid = v.uid;
-            FirebaseUtilities.addNewUser(user).then((s) => {
-                this.app.alert(user.username + " has been created successfully");
+            FirebaseUtilities.addNewUser(user).then(function (s) {
+                _this.app.alert(user.username + " has been created successfully");
             });
-        }).catch((e) => {
+        }).catch(function (e) {
             // handle the error
-            this.app.alert(e);
+            _this.app.alert(e);
         });
-    }
-}
+    };
+    return UsersAdmin;
+}(PageBase));
