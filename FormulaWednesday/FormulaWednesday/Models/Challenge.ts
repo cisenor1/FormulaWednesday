@@ -9,3 +9,4 @@
     editing?: KnockoutObservable<boolean>;
     drivers?: KnockoutObservableArray<Driver>;
 }
+

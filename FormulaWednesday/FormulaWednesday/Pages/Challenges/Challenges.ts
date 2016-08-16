@@ -31,7 +31,7 @@
         }
         return new Promise<any>((resolve, reject) => {
             var promises = [];
-            promises.push(FirebaseUtilities.getChallengesForRace(this.app.selectedRace));
+            promises.push(RestUtilities.getChallengesForRace(this.app.selectedRace));
             promises.push(FirebaseUtilities.getTeams());
             promises.push(FirebaseUtilities.getDrivers());
             promises.push(FirebaseUtilities.getUserChoices(this.app.user));

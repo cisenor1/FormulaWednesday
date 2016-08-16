@@ -19,7 +19,7 @@
             return <any>false;
         }
         return new Promise<any>((resolve, reject) => {
-            FirebaseUtilities.getRaces("2016").then((values) => {
+            RestUtilities.getRaces("2016").then((values) => {
                 this.races(values);
                 this.currentRace = ko.observable(values[0]);
                 this.races().forEach((r) => {
@@ -34,7 +34,6 @@
             });
         });
     }
-
 
     getMarkup(): Promise<string> {
         return new Promise<string>((resolve, reject) => {

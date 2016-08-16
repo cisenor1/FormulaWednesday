@@ -14,6 +14,17 @@
     scored?: KnockoutObservable<boolean>;
 }
 
+interface RestRace {
+    key: string,
+    city: string,
+    country: string,
+    title: string,
+    latitude: number,
+    longitude: number,
+    cutoff: string,
+    raceDate: string
+}
+
 interface Result {
     challenge: string;
     winner: string;

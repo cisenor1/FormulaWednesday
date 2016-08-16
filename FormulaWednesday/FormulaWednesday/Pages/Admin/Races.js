@@ -15,7 +15,7 @@ class RacesAdmin extends PageBase {
             return false;
         }
         return new Promise((resolve, reject) => {
-            FirebaseUtilities.getRaces("2016").then((values) => {
+            RestUtilities.getRaces("2016").then((values) => {
                 this.races(values);
                 this.currentRace = ko.observable(values[0]);
                 this.races().forEach((r) => {
