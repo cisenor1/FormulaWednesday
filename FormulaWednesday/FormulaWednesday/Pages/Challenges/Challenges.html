@@ -10,7 +10,7 @@
     </div>
     <div class="alert alert-warning" data-bind="visible: isDirty">
         <span>Make sure you save your changes..</span>
-        <input type="button" value="Save" data-bind="click: save, enable: valid" />
+        <input type="button" data-bind="click: save, enable: valid, value:saveText" />
         <input type="button" value="Reset" data-bind="click: reset" />
     </div>
     <div class="alert alert-danger" data-bind="visible: errorMessage">
@@ -23,13 +23,21 @@
             <div class="form-group list-group-item">
                 <h2 data-bind="text: message" class="list-group-item-heading"></h2>
                 <p data-bind="text: description" class="list-group-item-text"></p>
-                    <div data-bind="if: drivers().length">
-                        <select class="form-control" data-bind="visible:$parent.valid, options: drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: $parent.change}"></select>
+                <div data-bind="if: $parent.valid()">
+                    <div data-bind="if: choice()">
+                        <select class="form-control" data-bind="options: drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: $parent.change}, value: choice().key"></select>
                     </div>
-                    <div data-bind="ifnot: drivers().length">
-                        <select class="form-control" data-bind="visible:$parent.valid, options: $parent.drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: $parent.change}"></select>
+                    <div data-bind="ifnot: choice()">
+                        <select class="form-control" data-bind="options: drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: $parent.change}"></select>
                     </div>
-                    <span class="form-control" data-bind="visible: !$parent.valid()"></span>
+                </div>
+                <div data-bind="ifnot: $parent.valid()">
+                    <div class="form-control">
+                        <div data-bind="if: choice()">
+                            <span data-bind="text: choice().name + ' - ' + choice().team"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

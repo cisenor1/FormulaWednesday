@@ -1,11 +1,7 @@
 ﻿class ChallengesPage extends PageBase implements Page {
-    originalChoices: any;
+    originalChoices: RestUserPick[];
     vm: ChallengesVM = {
-        drivers: ko.observableArray<Driver>(),
-        teams: ko.observableArray<Team>(),
         challenges: ko.observableArray<Challenge>(),
-        sortDriversByName: () => { this.sortDriversByName(); },
-        sortDriversByTeam: () => { this.sortDriversByTeam(); },
         title: ko.observable<string>(),
         date: ko.observable<string>(),
         cutoff: ko.observable<string>(),
@@ -14,7 +10,8 @@
         reset: () => { this.reset() },
         change: (item: Challenge, e: Event) => { this.changed(item, event) },
         isDirty: ko.observable<boolean>(false),
-        errorMessage: ko.observable<string>()
+        errorMessage: ko.observable<string>(),
+        saveText: ko.observable("Save Changes")
     };
     markupUri: string = "Pages/Challenges/Challenges.html";
     divId = "challenges";
@@ -25,26 +22,23 @@
         this.vmPromise = this.createVM();
     }
 
-    createVM(): Promise<any> {
+    createVM(): Promise<ChallengesVM> {
         if (!this.app.user) {
-            return <any>false;
+            return Promise.resolve(null);
         }
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<ChallengesVM>((resolve, reject) => {
             var promises = [];
             promises.push(RestUtilities.getChallengesForRace(this.app.selectedRace));
-            promises.push(FirebaseUtilities.getTeams());
-            promises.push(FirebaseUtilities.getDrivers());
-            promises.push(FirebaseUtilities.getUserChoices(this.app.user));
+            promises.push(RestUtilities.getUserPicksForRace(this.app.selectedRace, this.app.user));
             Promise.all(promises).then((values) => {
-                this.vm.challenges(<any>values[0]);
-                this.vm.teams(<any>values[1]);
-                this.vm.drivers(<any>values[2]);
+                var challenges = this.createChallengesFromRest(values[0]);
+                this.vm.challenges(challenges);
                 if (this.app.selectedRace) {
                     this.vm.title(this.app.selectedRace.title);
                     this.vm.date(this.app.selectedRace.date.toDateString());
                     this.vm.cutoff(this.app.selectedRace.cutoff.toDateString());
                     this.vm.valid(!this.app.selectedRace.done());
-                    this.originalChoices = values[3];
+                    this.originalChoices = values[1];
                     this.processChoices(this.originalChoices);
                 }
                 resolve(this.vm);
@@ -53,35 +47,42 @@
     }
 
     sortDriversByName() {
-        this.vm.drivers.sort((aDriver: Driver, bDriver: Driver) => {
-            var aName = aDriver.name;
-            var bName = bDriver.name;
-            return aName.localeCompare(bName);
+        this.vm.challenges().forEach(challenge => {
+            challenge.drivers.sort((aDriver: Driver, bDriver: Driver) => {
+                var aName = aDriver.name;
+                var bName = bDriver.name;
+                return aName.localeCompare(bName);
+            });
         });
     }
 
     sortDriversByTeam() {
-        this.vm.drivers.sort((aDriver: Driver, bDriver: Driver) => {
-            var aTeam = aDriver.team;
-            var bTeam = bDriver.team;
-            return aTeam.localeCompare(bTeam);
+        this.vm.challenges().forEach(challenge => {
+            challenge.drivers.sort((aDriver: Driver, bDriver: Driver) => {
+                var aTeam = aDriver.team;
+                var bTeam = bDriver.team;
+                return aTeam.localeCompare(bTeam);
+            });
         });
     }
 
-    processChoices(choices): void {
+    processChoices(choices: RestUserPick[]): void {
         if (!choices) {
             return;
         }
-        var targetChoices = choices[this.app.selectedRace.name];
-        if (!targetChoices) {
-            return;
-        }
         this.vm.challenges().forEach((challenge) => {
-            var choices = this.vm.drivers().filter((driver) => {
-                return driver.key == targetChoices[challenge.key()];
-            });
-            challenge.choice(choices[0]);
-            //challenge.choice(targetChoices[challenge.key]);
+            let userPick = choices.filter(restUserPick => {
+                return restUserPick.key === challenge.key();
+            })[0];
+            if (!!userPick) {
+                let challengeChoice = challenge.drivers().filter(driver => {
+                    return driver.key === userPick.value;
+                })[0];
+                challenge.choice(challengeChoice);
+            }
+            else {
+                challenge.choice(null);
+            }
         });
     }
 
@@ -100,40 +101,86 @@
     }
 
     saveRaceData(): void {
-        var race = this.app.selectedRace;
-        var challenges = this.createChallengeObject();
-        FirebaseUtilities.saveChallengeChoices(this.app.user, this.app.selectedRace, challenges)
-            .then((b) => {
-                this.vm.isDirty(false);
-                
-            })
-            .catch((e) => {
-                this.vm.errorMessage(e.message);
+        var userPicks = this.createUserPicks();
+        RestUtilities.saveUserPicksForRace(this.app.selectedRace, this.app.user, userPicks)
+            .then(success => {
+                if (success) {
+                    this.vm.isDirty(false);
+                }
+                else {
+                    this.vm.errorMessage("Unknown error occurred");
+                }
+            }).catch((error: Error) => {
+                this.vm.errorMessage(error.message);
             });
     }
     reset(): void {
         this.processChoices(this.originalChoices);
+        this.vm.isDirty(false);
     }
 
     changed(item: Challenge, e) {
         this.vm.isDirty(true);
         var key = e.target.value;
-        var driver = this.vm.drivers().filter((d) => {
+        var driver = item.drivers().filter((d) => {
             return d.key === key;
         })[0];
         item.choice(driver);
     }
 
-    createChallengeObject(): Object {
-        var o = {};
-        this.vm.challenges().forEach((c) => {
-            if (c.choice()) {
-                if (c.choice().key) {
-                    o[c.key()] = c.choice().key;
-                }
+    createUserPicks(): RestUserPick[] {
+        var userPicks: RestUserPick[] = [];
+
+        this.vm.challenges().forEach(challenge => {
+            if (challenge.choice()) {
+                var userPick: RestUserPick = {
+                    key: challenge.key(),
+                    value: challenge.choice().key
+                };
+                userPicks.push(userPick);
             }
         });
-        return o;
+
+        return userPicks;
+    }
+
+    createChallengesFromRest(restChallenges: RestChallenge[]): Challenge[] {
+        var challenges: Challenge[] = [];
+
+        restChallenges.forEach(restChallenge => {
+            var drivers: Driver[] = [];
+            restChallenge.driverChoices.forEach(restDriver => {
+                var driver: Driver = {
+                    active: restDriver.active > 0,
+                    key: restDriver.key,
+                    name: restDriver.name,
+                    team: restDriver.teamName,
+                    points: restDriver.points
+                };
+                drivers.push(driver);
+            });
+
+            drivers.sort((aDriver: Driver, bDriver: Driver) => {
+                var aTeam = aDriver.team;
+                var bTeam = bDriver.team;
+                return aTeam.localeCompare(bTeam);
+            });
+
+            var challenge: Challenge = {
+                allSeason: ko.observable(true),
+                choice: ko.observable(null),
+                description: ko.observable(restChallenge.description),
+                drivers: ko.observableArray(drivers),
+                editing: ko.observable(false),
+                key: ko.observable(restChallenge.key),
+                message: ko.observable(restChallenge.message),
+                type: ko.observable(restChallenge.type),
+                value: ko.observable(restChallenge.value)
+            };
+            challenges.push(challenge);
+        });
+
+        return challenges;
     }
 }
 
@@ -146,4 +193,5 @@ interface ChallengesVM extends ViewModelBase {
     change: (Challenge, Event) => void;
     isDirty: KnockoutObservable<boolean>;
     errorMessage: KnockoutObservable<string>;
+    saveText: KnockoutObservable<string>;
 }

@@ -27,9 +27,9 @@
                     r.date = <any>ko.observable(r.date.toDateString());
                     r.validating = ko.observable(false);
                 });
-                FirebaseUtilities.getDrivers().then((ds) => {
-                    this.drivers(ds);
-                });
+                //FirebaseUtilities.getDrivers().then((ds) => {
+                //    this.drivers(ds);
+                //});
                 resolve(this);
             });
         });

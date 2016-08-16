@@ -35,6 +35,5 @@ C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\bin\FormulaWednesday.d
 C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\bin\FormulaWednesday.pdb
 C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.csprojResolveAssemblyReference.cache
 C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.dll
 C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.pdb

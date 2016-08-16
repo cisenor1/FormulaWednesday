@@ -10,3 +10,26 @@
     drivers?: KnockoutObservableArray<Driver>;
 }
 
+interface RestChallenge {
+    key: string;
+    description: string;
+    message: string;
+    type: string;
+    value: number;
+    raceKey: string;
+    driverChoices: RestDriverChoice[];
+}
+
+interface RestDriverChoice {
+    key: string;
+    active: number;
+    name: string;
+    points: number;
+    teamKey: string;
+    teamName: string;
+}
+
+interface RestUserPick {
+    key: string;
+    value: string;
+}

@@ -46,7 +46,7 @@ class FormulaWednesdayApp {
     initialize() {
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
         if (this.credentials) {
-            this.logInProcedure(this.credentials.name, this.credentials.password).then((user) => {
+            RestUtilities.logIn(this.credentials.name, this.credentials.password).then((user) => {
                 this.refreshUserInfo(user);
             }).catch((e) => {
                 alert(e);
@@ -60,6 +60,8 @@ class FormulaWednesdayApp {
     }
     refreshUserInfo(user) {
         this.buildStandingsTable();
+        // TODO: We need to find a better way to do this. Right now to be able to refresh we'll be storing the password as plaintext.
+        // TODO: We could encode, or better yet, figure out a way to store a refresh token or similar.
         window.localStorage.setItem(this.credentialsKey, JSON.stringify(this.credentials));
         this.loggedIn(true);
         this.user = user;
@@ -74,8 +76,11 @@ class FormulaWednesdayApp {
             return;
         }
         RestUtilities.logIn(this.nameObservable(), this.pwObservable()).then((user) => {
+            this.credentials = {
+                name: this.nameObservable(),
+                password: this.pwObservable()
+            };
             this.refreshUserInfo(user);
-            RestUtilities.getAllUsers().then(u => { debugger; });
         }).catch((e) => {
             alert(e);
         });
@@ -90,17 +95,7 @@ class FormulaWednesdayApp {
         this.pwObservable("");
         this.launchHomepage();
     }
-    logInProcedure(name, password) {
-        this.credentials = {
-            name: name,
-            password: password
-        };
-        return FirebaseUtilities.getUserInfo(this.credentials);
-    }
     loadPage(page) {
-        //if (this.loggedIn()) {
-        //    window.localStorage.setItem(this.currentPageKey, page);
-        //}
         var newPage;
         switch (page.split("#")[0]) {
             case "homepage":
@@ -175,18 +170,18 @@ class FormulaWednesdayApp {
         this.currentPage("standings");
     }
     buildStandingsTable() {
-        FirebaseUtilities.getAllUsers().then((allUsers) => {
-            var sortedUsers = allUsers.sort((a, b) => {
-                return b.points() - a.points();
-            });
-            this.sortedUsers(sortedUsers);
-        });
-        FirebaseUtilities.getDrivers().then((d) => {
-            var sortedDrivers = d.sort((a, b) => {
-                return b.points - a.points;
-            });
-            this.sortedDrivers(sortedDrivers);
-        });
+        //FirebaseUtilities.getAllUsers().then((allUsers) => {
+        //    var sortedUsers = allUsers.sort((a, b) => {
+        //        return b.points() - a.points();
+        //    });
+        //    this.sortedUsers(sortedUsers);
+        //});
+        //FirebaseUtilities.getDrivers().then((d) => {
+        //    var sortedDrivers = d.sort((a, b) => {
+        //        return b.points - a.points;
+        //    });
+        //    this.sortedDrivers(sortedDrivers);
+        //});
     }
 }
 window.onload = function () {

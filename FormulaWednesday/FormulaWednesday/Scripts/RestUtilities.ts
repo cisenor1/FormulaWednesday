@@ -1,5 +1,7 @@
-﻿class RestUtilities {
-    static restUrl = "http://192.168.215.1:32187";
+﻿/// <reference path="typings/moment/moment.d.ts" />
+
+class RestUtilities {
+    static restUrl = "http://192.168.0.16:32187";
     static auth: AuthResponse;
 
     static logIn(email: string, password: string): Promise<User> {
@@ -15,7 +17,9 @@
             }).then((output) => {
                 this.auth = <AuthResponse>JSON.parse(output);
                 return this.getUser(this.auth.key, this.auth.id_token);
-            }).then(resolve).catch(reject);
+                }).then(user => {
+                    resolve(user);
+                }).catch(reject);
         });
     }
 
@@ -27,7 +31,7 @@
                 }
             }).then((response) => {
                 return response.text();
-            }).then((output) => {
+            }).then((output: string) => {
                 var ret = JSON.parse(output);
                 var outUser: User = {
                     displayName: ko.observable<string>(ret.displayName),
@@ -38,7 +42,7 @@
                     points: ko.observable<number>(ret.points || 0),
                     role: ko.observable<string>(ret.role),
                     editing: ko.observable<boolean>(false)
-                }
+                };
                 resolve(outUser);
             });
         });
@@ -80,10 +84,9 @@
         });
     }
 
-    static getChallengesForRace(race: Race): Promise<Challenge[]> {
-        return new Promise<Challenge[]>((resolve, reject) => {
-            debugger;
-            var url = this.restUrl + "/races/" + race.season.toString() + "/" + race.name;
+    static getChallengesForRace(race: Race): Promise<RestChallenge[]> {
+        return new Promise<RestChallenge[]>((resolve, reject) => {
+            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name;
             fetch(url, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
@@ -96,50 +99,50 @@
                 }
                 return response.text();
             }).then(out => {
-                
-                var outArray: any[] = JSON.parse(out);
-                 
+                var restChallenges: RestChallenge[] = JSON.parse(out);
+                resolve(restChallenges);
             });
-            var fb = new Firebase(FirebaseUtilities.firebaseUrl + "races/" + race.season + "/" + race.name + "/selectedChallenges");
-            return fb.once("value").then((ds) => {
-                var values = ds.val();
-                var c: Challenge[] = [];
-                var promises = [];
-                for (var p in values) {
-                    if (typeof values[p] === "string") {
-                        promises.push(FirebaseUtilities.getChallengeByKey(values[p]));
-                    } else {
-                        promises.push(FirebaseUtilities.getBestOfTheWorstCandidates(values[p]));
-                    }
-                }
-                if (promises.length) {
-                    Promise.all(promises).then((values) => {
-                        values.forEach((x) => {
-                            if (x.length) {
-                                // it's a driver array
-                                var drivers: Driver[] = x;
+        });
+    }
 
-                                var chal: Challenge = {
-                                    description: ko.observable("Of the slowest drivers, who will finish highest."),
-                                    allSeason: ko.observable(false),
-                                    choice: ko.observable(null),
-                                    editing: ko.observable(false),
-                                    key: ko.observable("bestofworst"),
-                                    message: ko.observable("Best of the Worst"),
-                                    type: ko.observable("driver"),
-                                    value: ko.observable(5),
-                                    drivers: ko.observableArray(drivers)
-                                };
-                                c.push(chal);
-                            } else {
-                                // it's a challenge
-                                c.push(x);
-                            }
-                            return resolve(c);
-                        });
-                    }).catch((e) => { debugger; });
+    static saveUserPicksForRace(race: Race, user: User, userPicks: RestUserPick[]): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
+            fetch(url, {
+                body: JSON.stringify(userPicks),
+                headers: {
+                    Authorization: "Bearer " + this.auth.id_token
+                },
+                method: "POST"
+            }).then(response => {
+                if (response.status !== 200) {
+                    reject(new Error(response.statusText));
+                    return;
                 }
-            }).catch(reject);
+                resolve(true);
+            });
+        });
+    }
+
+    static getUserPicksForRace(race: Race, user: User): Promise<RestUserPick[]> {
+        return new Promise<RestUserPick[]>((resolve, reject) => {
+            // challenges/{season } /{raceKey}/{userKey } /picks/{challenge key ?}
+            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
+            fetch(url, {
+                headers: {
+                    Authorization: "Bearer " + this.auth.id_token
+                },
+                method: "GET"
+            }).then(response => {
+                if (response.status !== 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.text();
+            }).then(out => {
+                var restUserPicks: RestUserPick[] = JSON.parse(out);
+                resolve(restUserPicks);
+            });
         });
     }
 
@@ -161,30 +164,26 @@
                 var outArray: RestRace[] = JSON.parse(out);
                 var races: Race[] = [];
                 outArray.forEach(restRace => {
+                    var raceDateMoment = moment(restRace.raceDate);
+                    var cutoffMoment = moment(restRace.cutoff);
                     var race: Race = {
                         name: restRace.key,
-                        date: new Date(Date.parse(restRace.raceDate)),
-                        cutoff: new Date(Date.parse(restRace.cutoff)),
+                        date: raceDateMoment.toDate(),
+                        cutoff: cutoffMoment.toDate(),
                         title: restRace.title,
                         season: 2016,
                         city: restRace.city,
                         country: restRace.country,
                         done: ko.observable(false)
                     };
+                    race.done(new Date() > race.cutoff);
                     races.push(race);
                 });
-
-                //Promise.map(races, (r, i, l) => {
-                //    this.getChallengesForRace(r).then((chal) => {
-                //        r.challenges = ko.observableArray(chal);
-                //    });
-                //});
-
+                
                 races = races.sort((r1, r2) => {
                     return r1.date.getTime() - r2.date.getTime();
                 });
                 resolve(races);
-                return;
             }).catch(reject);
         });
     }
