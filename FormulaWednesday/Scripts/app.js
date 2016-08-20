@@ -32,6 +32,7 @@ var FormulaWednesdayApp = (function () {
         this.countdownValue = ko.observable("");
         this.errors = ko.observableArray([]);
         this.longClicking = false;
+        this.longClickTime = 1000;
         this.adminMenu = ko.observableArray([
             {
                 binding: "admin-users",
@@ -57,7 +58,7 @@ var FormulaWednesdayApp = (function () {
     FormulaWednesdayApp.prototype.beginLongClick = function (e) {
         var _this = this;
         this.longClicking = true;
-        this.longClickTimer = setTimeout(function () { _this.openLog(); }, 1500);
+        this.longClickTimer = setTimeout(function () { _this.openLog(); }, this.longClickTime);
         return e;
     };
     FormulaWednesdayApp.prototype.openLog = function () {
@@ -128,6 +129,7 @@ var FormulaWednesdayApp = (function () {
             _this.refreshUserInfo(user);
         }).catch(function (err) {
             _this.logError(err);
+            _this.alert("The email address or password is invalid.", "Error");
         });
     };
     FormulaWednesdayApp.prototype.doLogOut = function () {
@@ -141,14 +143,11 @@ var FormulaWednesdayApp = (function () {
         this.launchHomepage();
     };
     FormulaWednesdayApp.prototype.logInProcedure = function (name, password) {
-        var _this = this;
         this.credentials = {
             name: name,
             password: password
         };
-        return FirebaseUtilities.getUserInfo(this.credentials).catch(function (err) {
-            _this.logError(err);
-        });
+        return FirebaseUtilities.getUserInfo(this.credentials);
     };
     FormulaWednesdayApp.prototype.loadPage = function (page) {
         var _this = this;

@@ -36,6 +36,7 @@ class FormulaWednesdayApp {
     errors = ko.observableArray<FWEDError>([]);
     longClicking = false;
     longClickTimer;
+    longClickTime = 1000;
     adminMenu: KnockoutObservableArray<MenuItem> = ko.observableArray([
         {
             binding: "admin-users",
@@ -65,7 +66,7 @@ class FormulaWednesdayApp {
 
     beginLongClick(e) {
         this.longClicking = true;
-        this.longClickTimer = setTimeout(() => { this.openLog(); }, 1500);
+        this.longClickTimer = setTimeout(() => { this.openLog(); }, this.longClickTime);
         return e;
     }
 
@@ -138,6 +139,7 @@ class FormulaWednesdayApp {
             this.refreshUserInfo(user);
         }).catch((err) => {
             this.logError(err);
+            this.alert("The email address or password is invalid.", "Error");
         });
     }
 
@@ -158,9 +160,7 @@ class FormulaWednesdayApp {
             name: name,
             password: password
         };
-        return FirebaseUtilities.getUserInfo(this.credentials).catch((err) => {
-            this.logError(err);
-        });
+        return FirebaseUtilities.getUserInfo(this.credentials);
     }
 
     loadPage(page: string) {
