@@ -53,13 +53,14 @@ class RestUtilities {
                 },
                 method: "GET"
             }).then((response) => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
                 return response.text();
             }).then((out) => {
-                if (JSON.parse(out).statusCode !== 200) {
-                    return reject(JSON.parse(out).message);
-                }
-                var outArray = JSON.parse(out);
-                var users = [];
+                let outArray = JSON.parse(out);
+                let users = [];
                 outArray.forEach((x) => {
                     var user = {
                         displayName: ko.observable(x.displayName),
@@ -77,9 +78,35 @@ class RestUtilities {
             }).catch(reject);
         });
     }
+    static getDrivers(activeOnly) {
+        return new Promise((resolve, reject) => {
+            let url;
+            if (activeOnly) {
+                url = this.restUrl + "/drivers/active";
+            }
+            else {
+                url = this.restUrl + "/drivers";
+            }
+            fetch(url, {
+                headers: {
+                    Authorization: "Bearer " + this.auth.id_token
+                },
+                method: "GET"
+            }).then(response => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.text();
+            }).then(out => {
+                let drivers = JSON.parse(out);
+                resolve(drivers);
+            }).catch(reject);
+        });
+    }
     static getChallengesForRace(race) {
         return new Promise((resolve, reject) => {
-            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name;
+            let url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name;
             fetch(url, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
@@ -92,14 +119,14 @@ class RestUtilities {
                 }
                 return response.text();
             }).then(out => {
-                var restChallenges = JSON.parse(out);
+                let restChallenges = JSON.parse(out);
                 resolve(restChallenges);
             });
         });
     }
     static saveUserPicksForRace(race, user, userPicks) {
         return new Promise((resolve, reject) => {
-            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
+            let url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
             fetch(url, {
                 body: JSON.stringify(userPicks),
                 headers: {
@@ -118,7 +145,7 @@ class RestUtilities {
     static getUserPicksForRace(race, user) {
         return new Promise((resolve, reject) => {
             // challenges/{season } /{raceKey}/{userKey } /picks/{challenge key ?}
-            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
+            let url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
             fetch(url, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
@@ -131,14 +158,14 @@ class RestUtilities {
                 }
                 return response.text();
             }).then(out => {
-                var restUserPicks = JSON.parse(out);
+                let restUserPicks = JSON.parse(out);
                 resolve(restUserPicks);
             });
         });
     }
     static getRaces(season) {
         return new Promise((resolve, reject) => {
-            var url = this.restUrl + "/races/" + season;
+            let url = this.restUrl + "/races/" + season;
             fetch(url, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
@@ -151,12 +178,12 @@ class RestUtilities {
                 }
                 return response.text();
             }).then(out => {
-                var outArray = JSON.parse(out);
-                var races = [];
+                let outArray = JSON.parse(out);
+                let races = [];
                 outArray.forEach(restRace => {
-                    var raceDateMoment = moment(restRace.raceDate);
-                    var cutoffMoment = moment(restRace.cutoff);
-                    var race = {
+                    let raceDateMoment = moment(restRace.raceDate);
+                    let cutoffMoment = moment(restRace.cutoff);
+                    let race = {
                         name: restRace.key,
                         date: raceDateMoment.toDate(),
                         cutoff: cutoffMoment.toDate(),

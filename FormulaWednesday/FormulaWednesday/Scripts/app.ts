@@ -46,7 +46,6 @@ class FormulaWednesdayApp {
         }
     ]);
 
-
     constructor() {
 
     }
@@ -171,7 +170,6 @@ class FormulaWednesdayApp {
         window.location.href = window.location.origin + "/admin.html";
     }
 
-
     launchChallenges() {
         this.currentPage('challenges');
     }
@@ -179,6 +177,7 @@ class FormulaWednesdayApp {
     launchAdminPage(item: MenuItem) {
         this.currentPage(item.binding);
     }
+
     launchUserPreferences() {
         this.currentPage("preferences");
     }
@@ -193,20 +192,19 @@ class FormulaWednesdayApp {
     }
 
     buildStandingsTable() {
-        //FirebaseUtilities.getAllUsers().then((allUsers) => {
-        //    var sortedUsers = allUsers.sort((a, b) => {
-        //        return b.points() - a.points();
-        //    });
-        //    this.sortedUsers(sortedUsers);
-        //});
-        //FirebaseUtilities.getDrivers().then((d) => {
-        //    var sortedDrivers = d.sort((a, b) => {
-        //        return b.points - a.points;
-        //    });
-        //    this.sortedDrivers(sortedDrivers);
-        //});
+        RestUtilities.getAllUsers().then((allUsers) => {
+            var sortedUsers = allUsers.sort((a, b) => {
+                return b.points() - a.points();
+            });
+            this.sortedUsers(sortedUsers);
+        });
+        RestUtilities.getDrivers(false).then((d) => {
+            var sortedDrivers = d.sort((a, b) => {
+                return b.points - a.points;
+            });
+            this.sortedDrivers(sortedDrivers);
+        });
     }
-
 }
 
 window.onload = function () {
@@ -214,6 +212,7 @@ window.onload = function () {
     var formulawednesdayapp = new FormulaWednesdayApp();
     formulawednesdayapp.initialize();
 }
+
 // Prevent Bootstrap dialog from blocking focusin
 $(document).on('focusin', function (e) {
     if ($(e.target).closest(".mce-window").length) {

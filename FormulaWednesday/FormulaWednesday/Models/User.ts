@@ -10,3 +10,7 @@
     firstName?: KnockoutObservable<string>;
     lastName?: KnockoutObservable<string>;
 }
+
+interface NewUser {
+
+}

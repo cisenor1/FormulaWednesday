@@ -37,3 +37,4 @@ C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\bin\Microsoft.CodeDom.
 C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.dll
 C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.pdb
+C:\dev\FormulaWednesday\FormulaWednesday\FormulaWednesday\obj\Debug\FormulaWednesday.csprojResolveAssemblyReference.cache

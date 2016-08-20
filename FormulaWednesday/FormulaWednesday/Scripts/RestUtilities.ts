@@ -23,6 +23,8 @@ class RestUtilities {
         });
     }
 
+    
+
     static getUser(key: string, token: string): Promise<User> {
         return new Promise<User>((resolve, reject) => {
             fetch(this.restUrl + "/users/" + this.auth.key, {
@@ -59,13 +61,14 @@ class RestUtilities {
                 },
                 method: "GET"
             }).then((response) => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
                 return response.text();
             }).then((out) => {
-                if (JSON.parse(out).statusCode !== 200) {
-                    return reject(JSON.parse(out).message);
-                }
-                var outArray: any[] = JSON.parse(out);
-                var users: User[] = [];
+                let outArray: any[] = JSON.parse(out);
+                let users: User[] = [];
                 outArray.forEach((x) => {
                     var user: User = {
                         displayName: ko.observable<string>(x.displayName),
@@ -84,9 +87,37 @@ class RestUtilities {
         });
     }
 
+    static getDrivers(activeOnly: boolean): Promise<Driver[]> {
+        return new Promise<Driver[]>((resolve, reject) => {
+            let url: string;
+            if (activeOnly) {
+                url = this.restUrl + "/drivers/active";
+            }
+            else {
+                url = this.restUrl + "/drivers";
+            }
+
+            fetch(url, {
+                headers: {
+                    Authorization: "Bearer " + this.auth.id_token
+                },
+                method: "GET"
+            }).then(response => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.text();
+            }).then(out => {
+                let drivers = JSON.parse(out);
+                resolve(drivers);
+            }).catch(reject);
+        });
+    }
+
     static getChallengesForRace(race: Race): Promise<RestChallenge[]> {
         return new Promise<RestChallenge[]>((resolve, reject) => {
-            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name;
+            let url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name;
             fetch(url, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
@@ -99,7 +130,7 @@ class RestUtilities {
                 }
                 return response.text();
             }).then(out => {
-                var restChallenges: RestChallenge[] = JSON.parse(out);
+                let restChallenges: RestChallenge[] = JSON.parse(out);
                 resolve(restChallenges);
             });
         });
@@ -107,7 +138,7 @@ class RestUtilities {
 
     static saveUserPicksForRace(race: Race, user: User, userPicks: RestUserPick[]): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
+            let url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
             fetch(url, {
                 body: JSON.stringify(userPicks),
                 headers: {
@@ -127,7 +158,7 @@ class RestUtilities {
     static getUserPicksForRace(race: Race, user: User): Promise<RestUserPick[]> {
         return new Promise<RestUserPick[]>((resolve, reject) => {
             // challenges/{season } /{raceKey}/{userKey } /picks/{challenge key ?}
-            var url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
+            let url = this.restUrl + "/challenges/" + race.season.toString() + "/" + race.name + "/" + user.key() + "/picks";
             fetch(url, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
@@ -140,7 +171,7 @@ class RestUtilities {
                 }
                 return response.text();
             }).then(out => {
-                var restUserPicks: RestUserPick[] = JSON.parse(out);
+                let restUserPicks: RestUserPick[] = JSON.parse(out);
                 resolve(restUserPicks);
             });
         });
@@ -148,7 +179,7 @@ class RestUtilities {
 
     static getRaces(season: string): Promise<Race[]> {
         return new Promise<Race[]>((resolve, reject) => {
-            var url = this.restUrl + "/races/" + season;
+            let url = this.restUrl + "/races/" + season;
             fetch(url, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
@@ -161,12 +192,12 @@ class RestUtilities {
                 }
                 return response.text();
             }).then(out => {
-                var outArray: RestRace[] = JSON.parse(out);
-                var races: Race[] = [];
+                let outArray: RestRace[] = JSON.parse(out);
+                let races: Race[] = [];
                 outArray.forEach(restRace => {
-                    var raceDateMoment = moment(restRace.raceDate);
-                    var cutoffMoment = moment(restRace.cutoff);
-                    var race: Race = {
+                    let raceDateMoment = moment(restRace.raceDate);
+                    let cutoffMoment = moment(restRace.cutoff);
+                    let race: Race = {
                         name: restRace.key,
                         date: raceDateMoment.toDate(),
                         cutoff: cutoffMoment.toDate(),

@@ -170,18 +170,18 @@ class FormulaWednesdayApp {
         this.currentPage("standings");
     }
     buildStandingsTable() {
-        //FirebaseUtilities.getAllUsers().then((allUsers) => {
-        //    var sortedUsers = allUsers.sort((a, b) => {
-        //        return b.points() - a.points();
-        //    });
-        //    this.sortedUsers(sortedUsers);
-        //});
-        //FirebaseUtilities.getDrivers().then((d) => {
-        //    var sortedDrivers = d.sort((a, b) => {
-        //        return b.points - a.points;
-        //    });
-        //    this.sortedDrivers(sortedDrivers);
-        //});
+        RestUtilities.getAllUsers().then((allUsers) => {
+            var sortedUsers = allUsers.sort((a, b) => {
+                return b.points() - a.points();
+            });
+            this.sortedUsers(sortedUsers);
+        });
+        RestUtilities.getDrivers(false).then((d) => {
+            var sortedDrivers = d.sort((a, b) => {
+                return b.points - a.points;
+            });
+            this.sortedDrivers(sortedDrivers);
+        });
     }
 }
 window.onload = function () {
