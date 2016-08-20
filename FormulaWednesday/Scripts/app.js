@@ -23,6 +23,7 @@ var FormulaWednesdayApp = (function () {
         this.teams = ko.observableArray([]);
         this.nextRaceId = ko.observable();
         this.modalVisible = ko.observable(false);
+        this.logIsVisible = ko.observable(true);
         this.modalText = ko.observable("");
         this.modalTitle = ko.observable("");
         this.modalOKText = ko.observable("");
@@ -30,6 +31,7 @@ var FormulaWednesdayApp = (function () {
         this.countdownText = ko.observable("");
         this.countdownValue = ko.observable("");
         this.errors = ko.observableArray([]);
+        this.longClicking = false;
         this.adminMenu = ko.observableArray([
             {
                 binding: "admin-users",
@@ -52,6 +54,26 @@ var FormulaWednesdayApp = (function () {
             }
         ]);
     }
+    FormulaWednesdayApp.prototype.beginLongClick = function (e) {
+        var _this = this;
+        this.longClicking = true;
+        this.longClickTimer = setTimeout(function () { _this.openLog(); }, 1500);
+        return e;
+    };
+    FormulaWednesdayApp.prototype.openLog = function () {
+        if (this.longClickTimer) {
+            clearTimeout(this.longClickTimer);
+        }
+        if (this.longClicking) {
+            this.logIsVisible(!this.logIsVisible());
+        }
+    };
+    FormulaWednesdayApp.prototype.endLongClick = function (e) {
+        if (this.longClickTimer) {
+            clearTimeout(this.longClickTimer);
+        }
+        this.longClicking = false;
+    };
     FormulaWednesdayApp.prototype.initialize = function () {
         var _this = this;
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
@@ -77,7 +99,9 @@ var FormulaWednesdayApp = (function () {
                 var countdown;
                 _this.countdownValue(moment().countdown(race.cutoff).toString());
             }, 1000);
-        }).catch(function (err) { _this.errors.push(err); });
+        }).catch(function (err) {
+            _this.logError(err);
+        });
         ;
     };
     FormulaWednesdayApp.prototype.refreshUserInfo = function (user) {
@@ -88,7 +112,9 @@ var FormulaWednesdayApp = (function () {
         this.user = user;
         FirebaseUtilities.getRaces("2016").then(function (races) {
             _this.races(races);
-        }).catch(function (err) { _this.errors.push(err); });
+        }).catch(function (err) {
+            _this.logError(err);
+        });
         this.isAdmin(user.role().toLowerCase() == "admin");
         this.logOutMessage(this.logOutText + user.username());
     };
@@ -100,7 +126,9 @@ var FormulaWednesdayApp = (function () {
         var hashed = md5(this.pwObservable());
         this.logInProcedure(this.nameObservable(), hashed).then(function (user) {
             _this.refreshUserInfo(user);
-        }).catch(function (err) { _this.errors.push(err); });
+        }).catch(function (err) {
+            _this.logError(err);
+        });
     };
     FormulaWednesdayApp.prototype.doLogOut = function () {
         window.localStorage.removeItem(this.credentialsKey);
@@ -118,12 +146,11 @@ var FormulaWednesdayApp = (function () {
             name: name,
             password: password
         };
-        return FirebaseUtilities.getUserInfo(this.credentials).catch(function (err) { _this.errors.push(err); });
+        return FirebaseUtilities.getUserInfo(this.credentials).catch(function (err) {
+            _this.logError(err);
+        });
     };
     FormulaWednesdayApp.prototype.loadPage = function (page) {
-        //if (this.loggedIn()) {
-        //    window.localStorage.setItem(this.currentPageKey, page);
-        //}
         var _this = this;
         var newPage;
         switch (page.split("#")[0]) {
@@ -258,6 +285,10 @@ var FormulaWednesdayApp = (function () {
         this.modalTitle("");
         this.modalOKText("");
         this.modalText("");
+    };
+    FormulaWednesdayApp.prototype.logError = function (err) {
+        var f = FirebaseUtilities.getError(err);
+        this.errors.push(f);
     };
     return FormulaWednesdayApp;
 }());
