@@ -18,6 +18,55 @@ class RestUtilities {
             }).catch(reject);
         });
     }
+    static updateUserPassword(user, newPassword) {
+        return new Promise((resolve, reject) => {
+            let url = this.restUrl + "/users/" + user.key() + "/updatePassword";
+            let payload = {
+                newPassword: newPassword
+            };
+            fetch(url, {
+                headers: {
+                    'Authorization': "Bearer " + this.auth.id_token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload),
+                method: 'PUT'
+            }).then(response => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.text();
+            }).then(out => {
+                resolve(true);
+            }).catch(reject);
+        });
+    }
+    static updateUserInfo(user) {
+        return new Promise((resolve, reject) => {
+            if (!user.key) {
+                reject(new Error("need key to update user"));
+                return;
+            }
+            let url = this.restUrl + "/users/" + user.key;
+            fetch(url, {
+                headers: {
+                    'Authorization': "Bearer " + this.auth.id_token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user),
+                method: 'PUT'
+            }).then(response => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.text();
+            }).then(out => {
+                resolve(true);
+            }).catch(reject);
+        });
+    }
     static getUser(key, token) {
         return new Promise((resolve, reject) => {
             fetch(this.restUrl + "/users/" + this.auth.key, {

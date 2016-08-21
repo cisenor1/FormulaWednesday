@@ -23,7 +23,57 @@ class RestUtilities {
         });
     }
 
-    
+    static updateUserPassword(user: User, newPassword: string): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            let url = this.restUrl + "/users/" + user.key() + "/updatePassword";
+            let payload = {
+                newPassword: newPassword
+            };
+            fetch(url, {
+                headers: {
+                    'Authorization': "Bearer " + this.auth.id_token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload),
+                method: 'PUT'
+            }).then(response => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.text();
+            }).then(out => {
+                resolve(true);
+            }).catch(reject);
+        });
+    }
+
+    static updateUserInfo(user: RestUser): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            if (!user.key) {
+                reject(new Error("need key to update user"));
+                return;
+            }
+
+            let url = this.restUrl + "/users/" + user.key;
+            fetch(url, {
+                headers: {
+                    'Authorization': "Bearer " + this.auth.id_token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user),
+                method: 'PUT'
+            }).then(response => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.text();
+            }).then(out => {
+                resolve(true);
+            }).catch(reject);
+        });
+    }
 
     static getUser(key: string, token: string): Promise<User> {
         return new Promise<User>((resolve, reject) => {

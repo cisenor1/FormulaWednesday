@@ -50,26 +50,28 @@
             return false;
         }
         this.passwordAlert("");
-        var oldPassword = FormulaWednesdaysUtilities.hashPassword(this.oldPass());
-        var hashed = FormulaWednesdaysUtilities.hashPassword(newpass);
-        FirebaseUtilities.changePassword(this.app.user, oldPassword, hashed).then((b) => {
+        RestUtilities.updateUserPassword(this.app.user, newpass).then(success => {
             this.passwordSuccess("Your password has been changed successfully.");
             this.newPass("");
             this.oldPass("");
             this.confirmPass("");
-            this.app.credentials.password = hashed;
+            this.app.credentials.password = newpass;
             this.app.refreshUserInfo(this.app.user);
-        }).catch((e) => {
+        }).catch(error => {
             this.newPass("");
             this.oldPass("");
             this.confirmPass("");
-            this.passwordAlert(e.message);
+            this.passwordAlert(error.message);
         });
     }
 
     changedisplayName() {
         var displayName = this.displayName();
-        return FirebaseUtilities.changedisplayName(this.app.user, displayName).then((b) => {
+        let restUser: RestUser = {
+            displayName: displayName,
+            key: this.app.user.key()
+        };
+        return RestUtilities.updateUserInfo(restUser).then((b) => {
             this.displayNameSuccess("Your displayName has been changed successfully.");
             this.app.user.displayName(displayName);
             this.app.refreshUserInfo(this.app.user);

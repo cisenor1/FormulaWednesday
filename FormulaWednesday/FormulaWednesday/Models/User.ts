@@ -11,6 +11,11 @@
     lastName?: KnockoutObservable<string>;
 }
 
-interface NewUser {
-
+interface RestUser {
+    displayName?: string;
+    firstName?: string;
+    lastName?: string;
+    role?: string;
+    points?: number;
+    key?: string;
 }
