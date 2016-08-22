@@ -6,7 +6,8 @@
     showAddUserPane = ko.observable(false);
     editing = ko.observable(false);
     cachedUser: User;
-    newName = ko.observable("");
+    firstName = ko.observable("");
+    lastName = ko.observable("");
     newEmail = ko.observable("");
     newId = ko.observable("");
     roles = ["admin", "user"];
@@ -24,7 +25,7 @@
             return <any>false;
         }
         return new Promise<any>((resolve, reject) => {
-            FirebaseUtilities.getAllUsers().then((values) => {
+            RestUtilities.getAllUsers().then((values) => {
                 this.users(values);
                 resolve(this);
             });
@@ -52,6 +53,8 @@
             points: ko.observable(user.points()),
             role: ko.observable(user.role()),
             fullname: ko.observable(user.fullname()),
+            firstName: ko.observable(user.firstName()),
+            lastName: ko.observable(user.lastName()),
             displayName: ko.observable(user.displayName()),
             email: ko.observable(user.email()),
             editing: ko.observable(false)
@@ -61,11 +64,30 @@
     }
 
     saveData(item: User) {
-        FirebaseUtilities.saveUser(item).then((success) => {
-            this.app.alert(item.displayName() + " has been saved successfully.");
-        }).catch((e: Error) => { this.app.alert(e.message); });
-        item.editing(false);
-        this.editing(false);
+        let userKey = item.key();
+        let updatedUser: RestUser = {
+            displayName: item.displayName(),
+            role: item.role(),
+            firstName: item.firstName(),
+            lastName: item.lastName(),
+            points: item.points(),
+            key: userKey
+        };
+        RestUtilities.updateUserInfo(updatedUser).then(success => {
+            return RestUtilities.getUser(userKey);
+        }).then(user => {
+            this.app.alert("User successfully updated.");
+            item.editing(false);
+            item.displayName(user.displayName());
+            item.role(user.role());
+            item.firstName(user.firstName());
+            item.lastName(user.lastName());
+            item.points(user.points());
+            this.editing(false);
+            this.app.buildStandingsTable();
+        }).catch((error: Error) => {
+            this.app.alert(error.message);
+        });
     }
 
     cancel(item: User) {
@@ -84,41 +106,47 @@
     }
 
     submitCreateUser() {
-        var fullName = this.newName();
-        var username = this.newId();
-        if (!FormulaWednesdaysUtilities.validateUsername(username)) {
+        let firstName = this.firstName();
+        let lastName = this.lastName();
+        let userName = this.newId();
+
+        if (!FormulaWednesdaysUtilities.validateUsername(userName)) {
             this.app.alert("Bad Username");
             return false;
         }
+        
         var pass = this.newPass();
         var passConfirm = this.newPassConfirm();
         var email = this.newEmail();
-        var role = this.role();
         if (pass.localeCompare(passConfirm)) {
             this.app.alert("Passwords must match.");
             return;
         }
-        var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
-        var user: User = {
-            key: ko.observable(key),
-            displayName: ko.observable(username),
-            fullname: ko.observable(fullName),
-            points: ko.observable(0),
-            role: ko.observable(role),
-            email: ko.observable(email),
-            editing: ko.observable(false)
-        }
-        var hashedPass = FormulaWednesdaysUtilities.hashPassword(pass);
-        FirebaseUtilities.createUser(user, hashedPass).then((v: any) => {
-            // go on to add user to database
-            var uid = v.uid;
-            FirebaseUtilities.addNewUser(user).then((s) => {
-                this.app.alert(user.displayName() + " has been created successfully");
-            });
 
-        }).catch((e) => {
-            // handle the error
-            this.app.alert(e);
+        let user: RestUser = {
+            displayName: userName,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: pass
+        };
+
+        RestUtilities.createUser(user).then(newUser => {
+            this.app.alert(newUser.displayName() + " has been created successfully");
+            this.users.push(newUser);
+            this.clearAdd();
+        }).catch((error: Error) => {
+            this.app.alert(error.message);
         });
+    }
+
+    clearAdd() {
+        this.firstName("");
+        this.lastName("");
+        this.newEmail("");
+        this.newId("");
+        this.newPass("");
+        this.newPassConfirm("");
+        this.showAddUserPane(false);
     }
 }

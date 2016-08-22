@@ -12,7 +12,7 @@ class RestUtilities {
                 return response.text();
             }).then((output) => {
                 this.auth = JSON.parse(output);
-                return this.getUser(this.auth.key, this.auth.id_token);
+                return this.getUser(this.auth.key);
             }).then(user => {
                 resolve(user);
             }).catch(reject);
@@ -42,6 +42,31 @@ class RestUtilities {
             }).catch(reject);
         });
     }
+    static createUser(user) {
+        return new Promise((resolve, reject) => {
+            let url = this.restUrl + "/users";
+            fetch(url, {
+                headers: {
+                    'Authorization': "Bearer " + this.auth.id_token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user),
+                method: 'POST'
+            }).then(response => {
+                if (response.status != 201) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.json();
+            }).then((out) => {
+                return this.getUser(out.key);
+            }).then((newUser) => {
+                resolve(newUser);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    }
     static updateUserInfo(user) {
         return new Promise((resolve, reject) => {
             if (!user.key) {
@@ -67,25 +92,25 @@ class RestUtilities {
             }).catch(reject);
         });
     }
-    static getUser(key, token) {
+    static getUser(key) {
         return new Promise((resolve, reject) => {
-            fetch(this.restUrl + "/users/" + this.auth.key, {
+            fetch(this.restUrl + "/users/" + key, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
                 }
             }).then((response) => {
-                return response.text();
+                return response.json();
             }).then((output) => {
-                var ret = JSON.parse(output);
                 var outUser = {
-                    displayName: ko.observable(ret.displayName),
-                    email: ko.observable(ret.email),
-                    firstName: ko.observable(ret.firstName),
-                    lastName: ko.observable(ret.lastName),
-                    key: ko.observable(ret.key),
-                    points: ko.observable(ret.points || 0),
-                    role: ko.observable(ret.role),
-                    editing: ko.observable(false)
+                    displayName: ko.observable(output.displayName),
+                    email: ko.observable(output.email),
+                    firstName: ko.observable(output.firstName),
+                    lastName: ko.observable(output.lastName),
+                    key: ko.observable(output.key),
+                    points: ko.observable(output.points || 0),
+                    role: ko.observable(output.role),
+                    editing: ko.observable(false),
+                    fullname: ko.observable(output.firstName + " " + output.lastName)
                 };
                 resolve(outUser);
             });
@@ -106,9 +131,8 @@ class RestUtilities {
                     reject(new Error(response.statusText));
                     return;
                 }
-                return response.text();
-            }).then((out) => {
-                let outArray = JSON.parse(out);
+                return response.json();
+            }).then((outArray) => {
                 let users = [];
                 outArray.forEach((x) => {
                     var user = {
@@ -119,7 +143,8 @@ class RestUtilities {
                         key: ko.observable(x.key),
                         role: ko.observable(x.role),
                         points: ko.observable(x.points || 0),
-                        editing: ko.observable(false)
+                        editing: ko.observable(false),
+                        fullname: ko.observable(x.firstName + " " + x.lastName)
                     };
                     users.push(user);
                 });

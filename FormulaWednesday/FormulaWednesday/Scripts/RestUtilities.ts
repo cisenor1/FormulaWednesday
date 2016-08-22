@@ -16,7 +16,7 @@ class RestUtilities {
                 return response.text();
             }).then((output) => {
                 this.auth = <AuthResponse>JSON.parse(output);
-                return this.getUser(this.auth.key, this.auth.id_token);
+                return this.getUser(this.auth.key);
                 }).then(user => {
                     resolve(user);
                 }).catch(reject);
@@ -48,6 +48,32 @@ class RestUtilities {
         });
     }
 
+    static createUser(user: RestUser): Promise<User> {
+        return new Promise<User>((resolve, reject) => {
+            let url = this.restUrl + "/users";
+            fetch(url, {
+                headers: {
+                    'Authorization': "Bearer " + this.auth.id_token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user),
+                method: 'POST'
+            }).then(response => {
+                if (response.status != 201) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.json();
+            }).then((out: AuthResponse) => {
+                return this.getUser(out.key);
+            }).then((newUser: User) => {
+                resolve(newUser);
+            }).catch((error: Error) => {
+                reject(error);
+            });
+        });
+    }
+
     static updateUserInfo(user: RestUser): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             if (!user.key) {
@@ -75,25 +101,25 @@ class RestUtilities {
         });
     }
 
-    static getUser(key: string, token: string): Promise<User> {
+    static getUser(key: string): Promise<User> {
         return new Promise<User>((resolve, reject) => {
-            fetch(this.restUrl + "/users/" + this.auth.key, {
+            fetch(this.restUrl + "/users/" + key, {
                 headers: {
                     Authorization: "Bearer " + this.auth.id_token
                 }
             }).then((response) => {
-                return response.text();
-            }).then((output: string) => {
-                var ret = JSON.parse(output);
+                return response.json();
+            }).then((output: RestUser) => {
                 var outUser: User = {
-                    displayName: ko.observable<string>(ret.displayName),
-                    email: ko.observable<string>(ret.email),
-                    firstName: ko.observable<string>(ret.firstName),
-                    lastName: ko.observable<string>(ret.lastName),
-                    key: ko.observable<string>(ret.key),
-                    points: ko.observable<number>(ret.points || 0),
-                    role: ko.observable<string>(ret.role),
-                    editing: ko.observable<boolean>(false)
+                    displayName: ko.observable<string>(output.displayName),
+                    email: ko.observable<string>(output.email),
+                    firstName: ko.observable<string>(output.firstName),
+                    lastName: ko.observable<string>(output.lastName),
+                    key: ko.observable<string>(output.key),
+                    points: ko.observable<number>(output.points || 0),
+                    role: ko.observable<string>(output.role),
+                    editing: ko.observable<boolean>(false),
+                    fullname: ko.observable(output.firstName + " " + output.lastName)
                 };
                 resolve(outUser);
             });
@@ -115,9 +141,8 @@ class RestUtilities {
                     reject(new Error(response.statusText));
                     return;
                 }
-                return response.text();
-            }).then((out) => {
-                let outArray: any[] = JSON.parse(out);
+                return response.json();
+            }).then((outArray: RestUser[]) => {
                 let users: User[] = [];
                 outArray.forEach((x) => {
                     var user: User = {
@@ -128,7 +153,8 @@ class RestUtilities {
                         key: ko.observable<string>(x.key),
                         role: ko.observable<string>(x.role),
                         points: ko.observable<number>(x.points || 0),
-                        editing: ko.observable<boolean>(false)
+                        editing: ko.observable<boolean>(false),
+                        fullname: ko.observable(x.firstName + " " + x.lastName)
                     }
                     users.push(user);
                 });

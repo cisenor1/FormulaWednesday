@@ -19,4 +19,5 @@ interface RestUser {
     points?: number;
     key?: string;
     email?: string;
+    password?: string;
 }
