@@ -1,7 +1,7 @@
 ﻿<div class="panel">
     <ul>
         <li class="form-group list-group-item">
-            <button data-bind="click: addUser, visible: !showAddUserPane()" class="fwed-button" >Add User</button>
+            <button data-bind="click: addUser, visible: !showAddUserPane()" class="fwed-button">Add User</button>
             <form id="new-user-form" data-bind="visible: showAddUserPane, submit: submitCreateUser">
                 <h3>Add User</h3>
                 <div class="input-group">
@@ -9,7 +9,7 @@
                     <input class="form-control" type="text" required data-bind="value: newName" />
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">displayName:</span>
+                    <span class="input-group-addon" id="basic-addon1">Username:</span>
                     <input class="form-control" type="text" pattern="^[a-z0-9_-]{3,16}$" title="Must contain no punctuation or spaces." required data-bind="value: newId" />
                 </div>
                 <div class="input-group">
@@ -37,7 +37,7 @@
             <div data-bind="visible: !editing()">
                 <div class="fwed-user-details">
                     <h3 data-bind="text: fullname" class="list-group-item-heading fwed-user-fullname"></h3>
-                    <p data-bind="text: displayName" class="list-group-item-text fwed-user-displayName"></p>
+                    <p data-bind="text: username" class="list-group-item-text fwed-user-username"></p>
                     <p data-bind="text: key" class="list-group-item-text fwed-user-key"></p>
                     <p data-bind="text: email" class="list-group-item-text fwed-user-email"></p>
                 </div>
@@ -52,8 +52,8 @@
                     <input class="form-control" type="text" data-bind="value: fullname" />
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">displayName:</span>
-                    <input class="form-control" type="text" required data-bind="value: displayName" />
+                    <span class="input-group-addon" id="basic-addon1">Username:</span>
+                    <input class="form-control" type="text" required data-bind="value: username" />
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon" id="basic-addon1">Key:</span>

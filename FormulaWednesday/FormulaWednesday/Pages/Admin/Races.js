@@ -15,7 +15,7 @@ class RacesAdmin extends PageBase {
             return false;
         }
         return new Promise((resolve, reject) => {
-            RestUtilities.getRaces("2016").then((values) => {
+            FirebaseUtilities.getRaces("2016").then((values) => {
                 this.races(values);
                 this.currentRace = ko.observable(values[0]);
                 this.races().forEach((r) => {
@@ -23,9 +23,9 @@ class RacesAdmin extends PageBase {
                     r.date = ko.observable(r.date.toDateString());
                     r.validating = ko.observable(false);
                 });
-                //FirebaseUtilities.getDrivers().then((ds) => {
-                //    this.drivers(ds);
-                //});
+                FirebaseUtilities.getDrivers().then((ds) => {
+                    this.drivers(ds);
+                });
                 resolve(this);
             });
         });
@@ -74,7 +74,6 @@ class RacesAdmin extends PageBase {
                         }
                     }
                     FirebaseUtilities.setPoints(u).then(() => {
-                        this.updateDriverStandings();
                     });
                 }
             });
@@ -92,8 +91,6 @@ class RacesAdmin extends PageBase {
         });
         race.validating(true);
     }
-    updateDriverStandings() {
-    }
     change(challenge, race, e, vm) {
         var driverKey = e.target.value;
         var currRace = vm.currentRace();
@@ -103,5 +100,8 @@ class RacesAdmin extends PageBase {
         var key = challenge.key();
         currRace.results[challenge.key()] = driverKey;
         vm.currentRace(currRace);
+    }
+    getLapTimes() {
+        FormulaWednesdaysUtilities.getLapTimes(7);
     }
 }

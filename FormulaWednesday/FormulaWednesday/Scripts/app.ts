@@ -24,6 +24,19 @@ class FormulaWednesdayApp {
     sortedDrivers: KnockoutObservableArray<Driver> = ko.observableArray([]);
     teams: KnockoutObservableArray<Team> = ko.observableArray([]);
     user: User;
+    nextRaceId = ko.observable();
+    modalVisible = ko.observable(false);
+    logIsVisible = ko.observable(false);
+    modalText = ko.observable("");
+    modalTitle = ko.observable("");
+    modalOKText = ko.observable("");
+    modalCancelText = ko.observable("");
+    countdownText = ko.observable("");
+    countdownValue = ko.observable("");
+    errors = ko.observableArray<FWEDError>([]);
+    longClicking = false;
+    longClickTimer;
+    longClickTime = 1000;
     adminMenu: KnockoutObservableArray<MenuItem> = ko.observableArray([
         {
             binding: "admin-users",
@@ -50,6 +63,28 @@ class FormulaWednesdayApp {
 
     }
 
+    beginLongClick(e) {
+        this.longClicking = true;
+        this.longClickTimer = setTimeout(() => { this.openLog(); }, this.longClickTime);
+        return e;
+    }
+
+    openLog() {
+        if (this.longClickTimer) {
+            clearTimeout(this.longClickTimer);
+        }
+        if (this.longClicking) {
+            this.logIsVisible(!this.logIsVisible());
+        }
+    }
+
+    endLongClick(e) {
+        if (this.longClickTimer) {
+            clearTimeout(this.longClickTimer);
+        }
+        this.longClicking = false;
+    }
+
     initialize() {
         this.credentials = JSON.parse(window.localStorage.getItem(this.credentialsKey));
         if (this.credentials) {
@@ -65,6 +100,18 @@ class FormulaWednesdayApp {
         this.currentPage("homepage");
         ko.applyBindings(this);
     }
+
+    //buildCountdown() {
+    //    FirebaseUtilities.getNextRace().then((race) => {
+    //        this.countdownText("Cutoff for the " + race.title + ": ");
+    //        setInterval(() => {
+    //            var countdown;
+    //            this.countdownValue((<any>moment()).countdown(race.cutoff).toString());
+    //        }, 1000);
+    //    }).catch((err) => {
+    //        this.logError(err);
+    //    });
+    //}
 
     refreshUserInfo(user: User) {
         this.buildStandingsTable();
@@ -204,6 +251,70 @@ class FormulaWednesdayApp {
             });
             this.sortedDrivers(sortedDrivers);
         });
+    }
+
+    confirm(inString: string, title?: string, okText?: string, cancelText?: string, okCallback?: () => any, cancelCallback?: () => any) {
+        this.modalText(inString);
+        this.modalTitle(title || "Formula Wednesday");
+        this.modalOKText(okText || "OK");
+        this.modalCancelText(cancelText || "Cancel");
+        $("#confirm-modal").modal({
+            backdrop: "static",
+            show: true,
+            keyboard: false
+        }).one(
+            "click",
+            "#modal-ok",
+            () => {
+                $("#confirm-modal").modal('hide');
+                this.cleanUpModal();
+                if (okCallback) {
+                    okCallback();
+                }
+            }
+            ).one(
+            "click",
+            "#modal-cancel",
+            () => {
+                this.cleanUpModal();
+                if (cancelCallback) {
+                    cancelCallback();
+                }
+            }
+            );
+    }
+
+    alert(inString: string, title?: string, okText?: string, callback?: () => any) {
+        this.modalText(inString);
+        this.modalTitle(title || "Formula Wednesday");
+        this.modalOKText(okText || "OK");
+        $("#alert-modal").modal({
+            backdrop: "static",
+            show: true,
+            keyboard: false
+        }).one(
+            "click",
+            "#modal-ok",
+            () => {
+                $("#alert-modal").modal('hide');
+                this.cleanUpModal();
+                if (callback) {
+                    callback();
+                }
+            });
+    }
+
+    cleanUpModal() {
+        this.modalCancelText("");
+        this.modalTitle("");
+        this.modalOKText("");
+        this.modalText("");
+    }
+
+    logError(err: Error): void {
+        let f = new FWEDError(err.message);
+        //let f = FirebaseUtilities.getError(err);
+        this.errors.push(f);
     }
 }
 

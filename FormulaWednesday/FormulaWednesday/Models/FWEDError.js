@@ -1,0 +1,2 @@
+class FWEDError extends Error {
+}

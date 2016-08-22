@@ -1,6 +1,7 @@
 ﻿<div class="panel">
     <ul>
         <li class="form-group list-group-item">
+            <button data-bind="click: getLapTimes">La</button>
             <button data-bind="click: validateRace, visible: !showValidateRacePane()" class="fwed-button">Validate Race</button>
             <form id="new-challenge-form" data-bind="visible: showValidateRacePane, submit: submitValidateRace">
                 <h3>Validate Race</h3>
@@ -22,7 +23,7 @@
             <div data-bind="if:validating()">
                 <div class="panel">
                     <ul data-bind="foreach: challenges" class="race-validation">
-                        <li>    
+                        <li>
                             <div class="input-group">
                                 <span class="input-group-addon" id="basic-addon1" data-bind="text: message"></span>
                                 <select class="form-control" data-bind="options: drivers, optionsText: function(item){return item.name + ' - ' + item.team }, optionsValue: 'key', optionsCaption: 'Select a driver... ', event: {change: function($context, e){$parents[1].change($context,$parent, e, $root)}}"></select>

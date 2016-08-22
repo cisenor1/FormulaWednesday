@@ -71,7 +71,7 @@
                     if (typeof values[p] === "string") {
                         promises.push(FirebaseUtilities.getChallengeByKey(values[p]));
                     } else {
-                        promises.push(FirebaseUtilities.getBestOfTheWorstCandidates(values[p]));
+                       // promises.push(FirebaseUtilities.getBestOfTheWorstCandidates(values[p]));
                     }
                 }
                 if (promises.length) {
@@ -105,15 +105,15 @@
         });
     }
 
-    static getBestOfTheWorstCandidates(names: string[]): Promise<Driver[]> {
-        return new Promise<Driver[]>((resolve, reject) => {
-            Promise.map(names, (name, index, array) => {
-                return FirebaseUtilities.getDriverByName(name);
-            }).then((values) => {
-                return resolve(values);
-            });
-        });
-    }
+    //static getBestOfTheWorstCandidates(names: string[]): Promise<Driver[]> {
+    //    return new Promise<Driver[]>((resolve, reject) => {
+    //        Promise.map(names, (name, index, array) => {
+    //            return FirebaseUtilities.getDriverByName(name);
+    //        }).then((values) => {
+    //            return resolve(values);
+    //        });
+    //    });
+    //}
 
     static getChallenges(): Promise<Challenge[]> {
         return new Promise<Challenge[]>((resolve, reject) => {
@@ -192,11 +192,11 @@
                     race.done = ko.observable(new Date() > race.cutoff);
                     c.push(race);
                 }
-                Promise.map(c, (r, i, l) => {
-                    this.getChallengesForRace(r).then((chal) => {
-                        r.challenges = ko.observableArray(chal);
-                    });
-                });
+                //Promise.map(c, (r, i, l) => {
+                //    this.getChallengesForRace(r).then((chal) => {
+                //        r.challenges = ko.observableArray(chal);
+                //    });
+                //});
                 c = c.sort((r1, r2) => {
                     return r1.date.getTime() - r2.date.getTime();
                 });

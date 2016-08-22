@@ -42,7 +42,7 @@
     getViewModel(): Promise<any> {
         return this.vmPromise;
     }
-    
+
     saveData(item: User) {
         FirebaseUtilities.saveUser(item).then((success) => {
         }).catch((e: Error) => { alert(e); });
@@ -54,7 +54,7 @@
         ////var c = this.cachedUser;
         //item.key(c.key());
         //item.fullname(c.fullname());
-        //item.displayName(c.displayName());
+        //item.username(c.username());
         //item.points(c.points());
         //item.role(c.role());
         //item.editing(false);
@@ -70,9 +70,9 @@
 
     submitCreateChallenge() {
         //var fullName = this.newName();
-        //var displayName = this.newId();
-        //if (!FormulaWednesdaysUtilities.validatedisplayName(displayName)) {
-        //    alert("Bad displayName");
+        //var username = this.newId();
+        //if (!FormulaWednesdaysUtilities.validateUsername(username)) {
+        //    alert("Bad Username");
         //    return false;
         //}
         //var pass = this.newPass();
@@ -86,7 +86,7 @@
         //var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
         //var user: User = {
         //    key: ko.observable(key),
-        //    displayName: ko.observable(displayName),
+        //    username: ko.observable(username),
         //    fullname: ko.observable(fullName),
         //    points: ko.observable(0),
         //    role: ko.observable(role),

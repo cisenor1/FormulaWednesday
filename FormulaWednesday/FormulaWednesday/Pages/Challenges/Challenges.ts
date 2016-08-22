@@ -106,12 +106,13 @@
             .then(success => {
                 if (success) {
                     this.vm.isDirty(false);
+                    this.app.alert("Save was successful", "Save");
                 }
                 else {
                     this.vm.errorMessage("Unknown error occurred");
                 }
             }).catch((error: Error) => {
-                this.vm.errorMessage(error.message);
+                this.app.alert(error.message, "Save");
             });
     }
     reset(): void {

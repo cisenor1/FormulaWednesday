@@ -1,6 +1,6 @@
 ﻿class AdminPage extends PageBase implements Page {
     markupUri: string = "Pages/Admin/Admin.html";
-    vm:any = {};
+    vm: any = {};
     subPage: Page;
     divId = "admin";
 

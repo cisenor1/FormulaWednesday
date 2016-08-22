@@ -53,7 +53,8 @@ class UsersAdmin extends PageBase {
     }
     saveData(item) {
         FirebaseUtilities.saveUser(item).then((success) => {
-        }).catch((e) => { alert(e); });
+            this.app.alert(item.displayName() + " has been saved successfully.");
+        }).catch((e) => { this.app.alert(e.message); });
         item.editing(false);
         this.editing(false);
     }
@@ -72,9 +73,9 @@ class UsersAdmin extends PageBase {
     }
     submitCreateUser() {
         var fullName = this.newName();
-        var displayName = this.newId();
-        if (!FormulaWednesdaysUtilities.validatedisplayName(displayName)) {
-            alert("Bad displayName");
+        var username = this.newId();
+        if (!FormulaWednesdaysUtilities.validateUsername(username)) {
+            this.app.alert("Bad Username");
             return false;
         }
         var pass = this.newPass();
@@ -82,13 +83,13 @@ class UsersAdmin extends PageBase {
         var email = this.newEmail();
         var role = this.role();
         if (pass.localeCompare(passConfirm)) {
-            alert("nope");
+            this.app.alert("Passwords must match.");
             return;
         }
         var key = FormulaWednesdaysUtilities.getKeyFromEmail(email);
         var user = {
             key: ko.observable(key),
-            displayName: ko.observable(displayName),
+            displayName: ko.observable(username),
             fullname: ko.observable(fullName),
             points: ko.observable(0),
             role: ko.observable(role),
@@ -100,11 +101,11 @@ class UsersAdmin extends PageBase {
             // go on to add user to database
             var uid = v.uid;
             FirebaseUtilities.addNewUser(user).then((s) => {
-                debugger;
+                this.app.alert(user.displayName() + " has been created successfully");
             });
         }).catch((e) => {
             // handle the error
-            alert(e);
+            this.app.alert(e);
         });
     }
 }
