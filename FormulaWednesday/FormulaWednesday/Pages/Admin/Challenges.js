@@ -14,7 +14,7 @@ class ChallengesAdmin extends PageBase {
     }
     createVM() {
         if (!this.app.user) {
-            return false;
+            return Promise.resolve(false);
         }
         return new Promise((resolve, reject) => {
             FirebaseUtilities.getChallengesForRace(this.app.selectedRace).then((values) => {

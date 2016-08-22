@@ -18,7 +18,7 @@
 
     createVM(): Promise<any> {
         if (!this.app.user) {
-            return <any>false;
+            return Promise.resolve(false);
         }
         return new Promise<any>((resolve, reject) => {
             FirebaseUtilities.getChallengesForRace(this.app.selectedRace).then((values) => {

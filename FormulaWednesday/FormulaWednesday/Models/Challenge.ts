@@ -22,7 +22,7 @@ interface RestChallenge {
 
 interface RestDriverChoice {
     key: string;
-    active: number;
+    active: boolean;
     name: string;
     points: number;
     teamKey: string;

@@ -1,13 +1,19 @@
 ﻿class RacesAdmin extends PageBase implements Page {
 
+    races = ko.observableArray([]);
+    selectedRace = ko.observable(null);
     markupUri: string = "Pages/Admin/Races.html";
-    divId: string = "races-admin";
-    races: KnockoutObservableArray<Race> = ko.observableArray([]);
-    challenges: KnockoutObservableArray<Challenge> = ko.observableArray([]);
-    showValidateRacePane = ko.observable(false);
+    challenges = ko.observableArray([]);
+    allDrivers: Driver[];
+    showAddChallengePane = ko.observable(false);
+    showEditChallengesForRace = ko.observable(false);
     editing = ko.observable(false);
-    drivers = ko.observableArray([]);
-    currentRace: KnockoutObservable<Race>;
+    cachedChallenge: Challenge;
+    newChallengeName = ko.observable("");
+    newChallengeKey = ko.observable("");
+    newPointValue = ko.observable(2);
+    roles = ["admin", "user"];
+    role = ko.observable("");
 
     constructor(app: FormulaWednesdayApp) {
         super(app);
@@ -16,32 +22,45 @@
 
     createVM(): Promise<any> {
         if (!this.app.user) {
-            return <any>false;
+            return Promise.resolve(false);
         }
-        return new Promise<any>((resolve, reject) => {
-            FirebaseUtilities.getRaces("2016").then((values) => {
-                this.races(values);
-                this.currentRace = ko.observable(values[0]);
-                this.races().forEach((r) => {
-                    r.done = ko.observable(r.cutoff < new Date(Date.now()));
-                    r.date = <any>ko.observable(r.date.toDateString());
-                    r.validating = ko.observable(false);
+        return new Promise((resolve, reject) => {
+            let promises = [];
+            promises.push(RestUtilities.getRaces("2016"));
+            promises.push(RestUtilities.getAllChallenges());
+            promises.push(RestUtilities.getDrivers(true));
+            Promise.all(promises).then(values => {
+                let races: Race[] = values[0];
+                let allRestChallenges: RestChallenge[] = values[1];
+                let allDrivers: Driver[] = values[2];
+                this.races(races);
+                this.allDrivers = allDrivers;
+                allRestChallenges.forEach(restChallenge => {
+                    let adminChallenge: AdminChallenge = {
+                        allSeason: ko.observable(true),
+                        description: ko.observable(restChallenge.description),
+                        key: ko.observable(restChallenge.key),
+                        drivers: ko.observableArray([]),
+                        selected: ko.observable(false),
+                        message: ko.observable(restChallenge.message),
+                        useAllActiveDrivers: ko.observable(true),
+                        value: ko.observable(restChallenge.value),
+                        editing: ko.observable(false)
+                    }
+                    this.challenges.push(adminChallenge);
                 });
-                FirebaseUtilities.getDrivers().then((ds) => {
-                    this.drivers(ds);
-                });
+
                 resolve(this);
             });
         });
     }
 
-
     getMarkup(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             fetch(this.markupUri).then((value) => {
-                value.text().then((output) => {
-                    resolve(output);
-                });
+                return value.text();
+            }).then(output => {
+                resolve(output);
             });
         });
     }
@@ -50,70 +69,50 @@
         return this.vmPromise;
     }
 
-    submitValidateRace(race: Race, vm: RacesAdmin) {
-        race.validating(false);
-        FirebaseUtilities.setRaceResults(race).then((r) => {
-            var self = vm;
-            vm.app.sortedUsers().forEach((u) => {
-                var results = r.results;
-                var chals = r.challenges();
-                if (!u.results) {
-                    return;
-                }
-                var season = u.results[r.season];
-                if (!season) {
-                    return;
-                }
-                var picks = u.results[r.season][r.name];
-                if (picks) {
-                    for (var p in picks) {
-                        var currentChal = chals.filter((c) => {
-                            return c.key() == p;
-                        })[0];
-                        if (!currentChal) {
-                            return;
-                        }
-                        var win = r.results[p];
-                        var picked = picks[p];
-                        if (win == picked) {
-                            var currPts = u.points();
-                            currPts += currentChal.value();
-                            u.points(currPts);
-                        }
-                    }
-                    FirebaseUtilities.setPoints(u).then(() => {
-                    });
+    raceChange() {
+        let thisRace = this.selectedRace();
+        let promises = [];
+        promises.push(RestUtilities.getChallengesForRace(thisRace));
+
+        Promise.all(promises).then(outputs => {
+            let restChallenges: RestChallenge[] = outputs[0];
+            debugger;
+            restChallenges.forEach(restChallenge => {
+                let adminChallenge: AdminChallenge = this.challenges().filter((adminChallenge: AdminChallenge) => {
+                    return adminChallenge.key() == restChallenge.key;
+                })[0];
+                if (adminChallenge) {
+                    adminChallenge.selected(true);
+                    adminChallenge.useAllActiveDrivers(restChallenge.driverChoices.length == this.allDrivers.length);
                 }
             });
+            this.showEditChallengesForRace(true);
+        }).catch(error => {
+            this.app.alert(error);
         });
     }
 
-    cancelValidate(race: Race) {
-        race.validating(false);
+    addChallenge() {
+        this.showAddChallengePane(true);
     }
 
-    validateRace(race: Race) {
-        this.currentRace(race);
-        this.races().forEach((x) => {
-            if (x.validating) {
-                x.validating(false);
-            }
-        });
-        race.validating(true);
+    editChallenge(item) {
     }
 
-    change(challenge: Challenge, race: Race, e, vm: RacesAdmin) {
-        var driverKey = e.target.value;
-        var currRace = vm.currentRace()
-        if (!currRace.results) {
-            currRace.results = [];
-        }
-        var key = challenge.key();
-        currRace.results[challenge.key()] = driverKey;
-        vm.currentRace(currRace);
-    }
+    submitCreateChallenge() {
 
-    getLapTimes() {
-        FormulaWednesdaysUtilities.getLapTimes(7);
     }
+}
+
+interface AdminChallenge {
+    key: KnockoutObservable<string>;
+    message: KnockoutObservable<string>;
+    value: KnockoutObservable<number>;
+    description: KnockoutObservable<string>;
+    selected: KnockoutObservable<boolean>;
+    useAllActiveDrivers: KnockoutObservable<boolean>;
+    allSeason?: KnockoutObservable<boolean>;
+    editing?: KnockoutObservable<boolean>;
+    drivers?: KnockoutObservableArray<Driver>;
+    finalChoice?: KnockoutObservable<Driver>;
 }

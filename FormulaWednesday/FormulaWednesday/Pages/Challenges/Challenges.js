@@ -137,7 +137,7 @@ class ChallengesPage extends PageBase {
             var drivers = [];
             restChallenge.driverChoices.forEach(restDriver => {
                 var driver = {
-                    active: restDriver.active > 0,
+                    active: restDriver.active,
                     key: restDriver.key,
                     name: restDriver.name,
                     team: restDriver.teamName,

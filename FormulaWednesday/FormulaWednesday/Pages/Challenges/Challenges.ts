@@ -152,7 +152,7 @@
             var drivers: Driver[] = [];
             restChallenge.driverChoices.forEach(restDriver => {
                 var driver: Driver = {
-                    active: restDriver.active > 0,
+                    active: restDriver.active,
                     key: restDriver.key,
                     name: restDriver.name,
                     team: restDriver.teamName,

@@ -237,6 +237,27 @@ class RestUtilities {
             });
         });
     }
+    static getAllChallenges() {
+        return new Promise((resolve, reject) => {
+            let url = this.restUrl + "/challenges";
+            fetch(url, {
+                headers: {
+                    Authorization: "Bearer " + this.auth.id_token
+                },
+                method: "GET"
+            }).then(response => {
+                if (response.status != 200) {
+                    reject(new Error(response.statusText));
+                    return;
+                }
+                return response.json();
+            }).then((output) => {
+                resolve(output);
+            }).catch(error => {
+                reject(error);
+            });
+        });
+    }
     static getRaces(season) {
         return new Promise((resolve, reject) => {
             let url = this.restUrl + "/races/" + season;
@@ -265,7 +286,9 @@ class RestUtilities {
                         season: 2016,
                         city: restRace.city,
                         country: restRace.country,
-                        done: ko.observable(false)
+                        done: ko.observable(false),
+                        scored: ko.observable(restRace.scored),
+                        key: restRace.key
                     };
                     race.done(new Date() > race.cutoff);
                     races.push(race);
