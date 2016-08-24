@@ -8,38 +8,47 @@
             <div>
                 <input type="checkbox" data-bind="checked: selected" />
             </div>
-            <div data-bind="visible: !editing()">
+            <div>
                 <div class="fwed-user-details">
-                    <h3 data-bind="text: message" class="list-group-item-heading fwed-user-fullname"></h3>
-                    <p data-bind="text: description" class="list-group-item-text fwed-user-username"></p>
-                    <p data-bind="text: value" class="list-group-item-text fwed-user-key"></p>
+                    <h3 data-bind="text: messageoverride" class="list-group-item-heading fwed-user-fullname"></h3>
+                    <p data-bind="text: descriptionoverride" class="list-group-item-text fwed-user-username"></p>
+                    <p data-bind="text: valueoverride" class="list-group-item-text fwed-user-key"></p>
                     <p data-bind="text: key" class="list-group-item-text fwed-user-email"></p>
                 </div>
                 <div class="fwed-user-points-box">
-                    <span> Value</span><p data-bind="text: value" class="list-group-item-text fwed-user-points"></p>
+                    <span> Value</span><p data-bind="text: valueoverride" class="list-group-item-text fwed-user-points"></p>
                 </div>
-                <button class="fwed-button" data-bind="click: function(item){$parent.editChallenge(item)}, visible: !editing() && !$parent.editing()">Edit</button>
+                <button class="fwed-button" data-bind="click: function() { $parent.editChallenge($index()) }">Edit</button>
             </div>
-            <form data-bind="visible: editing" class="form-group ">
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">Key:</span>
-                    <input class="form-control" type="text" data-bind="value: key" />
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">Message:</span>
-                    <input class="form-control" type="text" required data-bind="value: message" />
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">Value:</span>
-                    <input class="form-control" type="text" required data-bind="value: value" />
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="basic-addon1">Description:</span>
-                    <input class="form-control" type="text" required data-bind="value: description" />
-                </div>
-                <button class="fwed-button" data-bind="click: function(item){$parent.saveData(item)}">Save Changes</button>
-                <button class="fwed-button" data-bind="click: function(item){$parent.cancel(item)}">Cancel</button>
-            </form>
         </li>
     </ul>
+    <div class="modal fade" id="race-challenge-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <!--<h4 class="modal-title" data-bind="text:message"></h4>-->
+                </div>
+                <div class="modal-body">
+                    <span><input type="checkbox" data-bind="checked: useAllActiveDrivers" />Use all active drivers</span>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Message:</span>
+                        <input class="form-control" type="text" required data-bind="value: messageoverride" />
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Value:</span>
+                        <input class="form-control" type="text" required data-bind="value: valueoverride" />
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Description:</span>
+                        <input class="form-control" type="text" required data-bind="value: descriptionoverride" />
+                    </div>
+                    <select data-bind="visible: !useAllActiveDrivers(), options: allDrivers, selectedOptions: selectedDrivers, optionsText: function(item){return item.name}" size="10" multiple="true"></select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="race-challenge-ok" data-bind="text:modalOkText, click: function(){applyChallengeEdit()}"></button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </div>
